@@ -123,3 +123,6 @@
 ol {
   @apply list-inside list-decimal text-sm/6 text-center sm:text-left
 }
+li {
+  @apply tracking-[-.01em]
+}
