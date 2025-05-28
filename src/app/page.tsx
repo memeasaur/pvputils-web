@@ -4,26 +4,35 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
+        {/*<Image*/}
+        {/*  className="dark:invert"*/}
+        {/*  src="/next.svg"*/}
+        {/*  alt="Next.js logo"*/}
+        {/*  width={180}*/}
+        {/*  height={38}*/}
+        {/*  priority*/}
+        {/*/>*/}
+        <p>fabric-pvputils</p> {/*TODO idk why tf next has header tags all the same size*/}
+        <ol className="font-[family-name:var(--font-geist-mono)]">
           <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
+            removes miss penalty hit delay introduced in 1.8
+            {/*Get started by editing{" "}*/}
+            {/*<code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">*/}
+            {/*  src/app/page.tsx*/}
+            {/*</code>*/}
+            {/*.*/}
           </li>
           <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
+            toggle movement keybinds (autorun). also, 1.7 hcf-style toggle-sprint/toggle-sneak/fly-boost
+          </li>
+          <li className="tracking-[-.01em]">
+
           </li>
         </ol>
+        <div className={"flex w-full"}>{/*TODO -> idk why this needs w-full*/}
+          <ol className={"w-2/4"}>1.9 combat</ol>
+          <ol className={"w-2/4"}>1.8 combat</ol>
+        </div>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
           <a

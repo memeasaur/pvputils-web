@@ -120,3 +120,6 @@
     @apply bg-background text-foreground;
   }
 }
+ol {
+  @apply list-inside list-decimal text-sm/6 text-center sm:text-left
+}
