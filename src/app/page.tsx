@@ -19,7 +19,7 @@ export default function Home() {
                         <AccordionTrigger>
                             <div className="flex gap-4 self-end justify-center">
                                 <p className="text-lg self-center">
-                                    fabric-pvputils-oss
+                                    fabric-pvputils
                                 </p> {/*TODO idk why tf next has header tags all the same size*/}
                                 <p className={"self-center font-[family-name:var(--font-geist-mono)]"}>
                                     - (1.21.4) depends: fabric api
@@ -44,19 +44,19 @@ export default function Home() {
                         <AccordionContent>
                             <div className="flex gap-4 self-end">
                                 <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                    v0.9 -
+                                    v0.9 - init
                                 </p>
                                 <a
                                     href="https://github.com/pvputils/fabricpvputils-oss"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                 >
-                                    <Badge variant="secondary">github</Badge>
+                                    <Badge variant="secondary">source (github)</Badge>
                                 </a>
                             </div>
                             <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
                                 <li>
-                                    removes 1.8&#39;s .5s missed hit penalty cooldown, unless server disallows it
+                                    remove 1.8&#39;s .5s missed hit penalty cooldown, unless server disallows it
                                 </li>
                                 <li>
                                     toggle movement keybinds (autorun), with 1.7 hcf-style
