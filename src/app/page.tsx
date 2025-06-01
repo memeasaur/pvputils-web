@@ -1,7 +1,22 @@
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Badge} from "@/components/ui/badge";
+import {createClient} from '@supabase/supabase-js'
 
-export default function Home() {
+export async function getStaticProps() {
+    const supabase = createClient('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
+    const {data, error} = await supabase.from('fabricpvputils_updates').select('*')
+    if (error)
+        throw new Error(error.message)
+    else
+        return {
+            props: {
+                fabricPvpUtilsUpdates: data,
+            },
+            // revalidate: 60,
+        }
+}
+
+export default function Home({fabricPvpUtilsUpdates}) {
     return (
         <div
             className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -41,79 +56,52 @@ export default function Home() {
                                 </a>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent>
-                            <div className="flex gap-4 self-end">
-                                <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                    v0.9 - init
-                                </p>
-                                <a
-                                    href="https://github.com/pvputils/fabricpvputils-oss"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    <Badge variant="secondary">source (github)</Badge>
-                                </a>
-                            </div>
-                            <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
-                                <li>
-                                    remove 1.8&#39;s .5s missed hit penalty cooldown, unless server disallows it
-                                </li>
-                                <li>
-                                    toggle movement keybinds (autorun), with 1.7 hcf-style
-                                    toggle-sprint/toggle-sneak/server disallowable fly-boost. (autorun works in menus),
-                                    and (toggle-sneak works in both inventories and menus) unless server disallows them
-                                </li>
-                                <li>
-                                    customizable fake night vision-style fullbright
-                                </li>
-                                <li>
-                                    customizable last attack reach indicator
-                                </li>
-                                <li>
-                                    in-depth player nameplate color changer system
-                                </li>
-                                <li>
-                                    customizable sweep hit warning sound effect
-                                </li>
-                                <li>
-                                    customizable knockback/sweep/generic hit particles
-                                </li>
-                                <li>
-                                    toggleable potion enchantment glint revert (1.8)
-                                </li>
-                            </ol>
-                            <div className={"flex w-full gap-4"}>{/*TODO -> idk why this needs w-full*/}
-                                <div className={"w-2/4"}>
-                                    <p>1.9 combat</p>
-                                    <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
-                                        <li>
-                                            customizable attack cooldown notification sound effect
-                                        </li>
-                                        <li>
-                                            customizable attack cooldown warning sound effect
-                                        </li>
-                                        <li>
-                                            customizable last attack cooldown indicator
-                                        </li>
-                                    </ol>
+                        {fabricPvpUtilsUpdates.map((item) => (
+                            <AccordionContent>
+                                <div className="flex gap-4 self-end">
+                                    <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                        v{item.version} - {item.summary}
+                                    </p>
+                                    <a
+                                        href="https://github.com/pvputils/fabricpvputils-oss"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <Badge variant="secondary">source (github)</Badge>
+                                    </a>
                                 </div>
-                                <div className={"w-2/4"}>
-                                    <p>1.8 combat</p>
-                                    <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
-                                        <li>
-                                            disable vanilla miss sound effect option *TODO soontm*
-                                        </li>
-                                        <li>
-                                            disable vanilla attack-hand lowering animation option
-                                        </li>
-                                    </ol>
+                                <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
+                                    {item.generic_patchnotes.map((item) => (
+                                        <li>{item}</li>
+                                    ))}
+                                </ol>
+                                <div className={"flex w-full gap-4"}>{/*TODO -> idk why this needs w-full*/}
+                                    <div className={"w-2/4"}>
+                                        <p>1.9 combat</p>
+                                        <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
+                                            {item["1.9_patchnotes"].map((item) => (
+                                                <li>{item}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                    <div className={"w-2/4"}>
+                                        <p>1.8 combat</p>
+                                        <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
+                                            {item["1.8_patchnotes"].map((item) => (
+                                                <li>{item}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
                                 </div>
-                            </div>
-                            <ol>other recommended mods
-                                <li>sodium</li>
-                                <li>sodium extras</li>
-                            </ol>
-                        </AccordionContent>
+                                <ol>other recommended mods
+                                    {item.recommended_mods_info.map((item) => (
+                                        <li>{item.name}</li>
+                                    ))}
+                                    <li>sodium</li>
+                                    <li>sodium extras</li>
+                                </ol>
+                            </AccordionContent>
+                        ))}
                     </AccordionItem>
                     {/*<AccordionItem value="item-3">*/}
                     {/*    <AccordionTrigger>*/}
