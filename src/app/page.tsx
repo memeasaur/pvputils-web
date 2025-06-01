@@ -15,19 +15,6 @@ export default function Home() {
                 {/*  priority*/}
                 {/*/>*/}
                 <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2"}>
-                    <AccordionItem value="item-2">
-                        <AccordionTrigger>
-                            <div className="flex gap-4 self-end justify-center">
-                                <p className="text-lg self-center">
-                                    pack-updater
-                                </p> {/*TODO idk why tf next has header tags all the same size*/}
-                                <p className={"self-center font-[family-name:var(--font-geist-mono)]"}>
-                                    - (accepts 1.7.10 -{">"} returns 1.21.5)
-                                </p>
-                            </div>
-                        </AccordionTrigger>
-                        <AccordionContent></AccordionContent>
-                    </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger>
                             <div className="flex gap-4 self-end justify-center">
