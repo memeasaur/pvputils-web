@@ -15,6 +15,19 @@ export default function Home() {
                 {/*  priority*/}
                 {/*/>*/}
                 <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2"}>
+                    <AccordionItem value="item-2">
+                        <AccordionTrigger>
+                            <div className="flex gap-4 self-end justify-center">
+                                <p className="text-lg self-center">
+                                    pack-updater
+                                </p> {/*TODO idk why tf next has header tags all the same size*/}
+                                <p className={"self-center font-[family-name:var(--font-geist-mono)]"}>
+                                    - (accepts 1.7.10 -{">"} returns 1.21.5)
+                                </p>
+                            </div>
+                        </AccordionTrigger>
+                        <AccordionContent></AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger>
                             <div className="flex gap-4 self-end justify-center">
@@ -101,7 +114,7 @@ export default function Home() {
                                     <p>1.8 combat</p>
                                     <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
                                         <li>
-                                            disable vanilla miss sound effect option
+                                            disable vanilla miss sound effect option *TODO soontm*
                                         </li>
                                         <li>
                                             disable vanilla attack-hand lowering animation option
@@ -109,8 +122,20 @@ export default function Home() {
                                     </ol>
                                 </div>
                             </div>
+                            <ol>other recommended mods
+                                <li>sodium</li>
+                                <li>sodium extras</li>
+                            </ol>
                         </AccordionContent>
                     </AccordionItem>
+                    {/*<AccordionItem value="item-3">*/}
+                    {/*    <AccordionTrigger>*/}
+                    {/*        <s>fabric-pvputils+</s>*/}
+                    {/*    </AccordionTrigger>*/}
+                    {/*    <AccordionContent>*/}
+                    {/*        todo*/}
+                    {/*    </AccordionContent>*/}
+                    {/*</AccordionItem>TODO */}
                 </Accordion>
             </main>
             <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
