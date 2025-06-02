@@ -71,7 +71,7 @@ export default async function Home() {
                                 <div className={"flex w-full gap-4"}>{/*TODO -> idk why this needs w-full*/}
                                     <div className={"w-2/4"}>
                                         <p>1.9 combat</p>
-                                        <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
+                                        <ol start={item.generic_patchnotes.length + 1} className={"font-[family-name:var(--font-geist-mono)]"}>
                                             {item["1.9_patchnotes"].map((item) => (
                                                 <li key={item}>{item}</li>
                                             ))}
@@ -79,7 +79,7 @@ export default async function Home() {
                                     </div>
                                     <div className={"w-2/4"}>
                                         <p>1.8 combat</p>
-                                        <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
+                                        <ol start={item.generic_patchnotes.length + 1} className={"font-[family-name:var(--font-geist-mono)]"}>
                                             {item["1.8_patchnotes"].map((item) => (
                                                 <li key={item}>{item}</li>
                                             ))}
