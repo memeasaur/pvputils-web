@@ -1,22 +1,15 @@
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
+import {Database} from "@/app/supabase";
 
-export async function getStaticProps() {
-    const supabase = createClient('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
-    const {data, error} = await supabase.from('fabricpvputils_updates').select('*')
+export default async function Home() {
+    const {data, error} = await createClient<Database>('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
+        .from('fabricpvputils_updates')
+        .select('*')
     if (error)
         throw new Error(error.message)
-    else
-        return {
-            props: {
-                fabricPvpUtilsUpdates: data,
-            },
-            // revalidate: 60,
-        }
-}
 
-export default function Home({fabricPvpUtilsUpdates}) {
     return (
         <div
             className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -56,8 +49,8 @@ export default function Home({fabricPvpUtilsUpdates}) {
                                 </a>
                             </div>
                         </AccordionTrigger>
-                        {fabricPvpUtilsUpdates.map((item) => (
-                            <AccordionContent>
+                        {data.map((item) => (
+                            <AccordionContent key={item.version}>
                                 <div className="flex gap-4 self-end">
                                     <p className={"font-[family-name:var(--font-geist-mono)]"}>
                                         v{item.version} - {item.summary}
@@ -72,7 +65,7 @@ export default function Home({fabricPvpUtilsUpdates}) {
                                 </div>
                                 <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
                                     {item.generic_patchnotes.map((item) => (
-                                        <li>{item}</li>
+                                        <li key={item}>{item}</li>
                                     ))}
                                 </ol>
                                 <div className={"flex w-full gap-4"}>{/*TODO -> idk why this needs w-full*/}
@@ -80,7 +73,7 @@ export default function Home({fabricPvpUtilsUpdates}) {
                                         <p>1.9 combat</p>
                                         <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
                                             {item["1.9_patchnotes"].map((item) => (
-                                                <li>{item}</li>
+                                                <li key={item}>{item}</li>
                                             ))}
                                         </ol>
                                     </div>
@@ -88,18 +81,17 @@ export default function Home({fabricPvpUtilsUpdates}) {
                                         <p>1.8 combat</p>
                                         <ol start={9} className={"font-[family-name:var(--font-geist-mono)]"}>
                                             {item["1.8_patchnotes"].map((item) => (
-                                                <li>{item}</li>
+                                                <li key={item}>{item}</li>
                                             ))}
                                         </ol>
                                     </div>
                                 </div>
-                                <ol>other recommended mods
-                                    {item.recommended_mods_info.map((item) => (
-                                        <li>{item.name}</li>
-                                    ))}
-                                    <li>sodium</li>
-                                    <li>sodium extras</li>
-                                </ol>
+                                {item.recommended_mods_info && (
+                                    <ol>other recommended mods
+                                        {item.recommended_mods_info.map((item) => (
+                                            <li key={item.name}>{item.name}</li>
+                                        ))}
+                                    </ol>)}
                             </AccordionContent>
                         ))}
                     </AccordionItem>
