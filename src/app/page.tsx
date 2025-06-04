@@ -17,7 +17,7 @@ export default async function Home() {
     return (
         <div // TODO reactFragment ?
             className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-            <main className="grid grid-rows-[30%_1fr] gap-[16px] items-center sm:items-start w-full">
+            <main className="grid grid-rows-[20%_1fr] gap-[16px] items-center sm:items-start w-full">
                 <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2 w-full"}>
                     <AccordionItem value="item-2">
                         <AccordionTrigger className={"flex gap-4 items-center w-full"}>

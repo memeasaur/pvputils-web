@@ -1,4 +1,3 @@
 >low fire texture background sprite image (?)
->make accordion click not change the width of the accordion -> make text left-aligned and github badge right-aligned
 >make accordion y not change when clicking
->first in array meme for version on the accordion trigger. only leaving data and summary in the header
+>every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries

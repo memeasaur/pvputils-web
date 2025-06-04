@@ -120,6 +120,9 @@
     @apply bg-background text-foreground;
   }
 }
+html {
+  @apply overflow-y-scroll
+}
 ol {
   @apply list-inside list-decimal text-sm/6 text-center sm:text-left
 }
