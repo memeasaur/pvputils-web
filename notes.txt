@@ -1,3 +1,12 @@
 >low fire texture background sprite image (?)
 >make accordion y not change when clicking
 >every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
+
+>split particle.png into each particle
+>split widgets.png into each widget
+>split icons.png into each icon
+>fix blur causing fucky
+>option to customize the branding being added to the pack
+
+>(?) generate netherite textures, or show the user the diamond sword and have them edit it to be netherite
+>(?) fix main inventory programmatically somehow
