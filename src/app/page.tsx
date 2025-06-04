@@ -3,6 +3,7 @@ import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 export default async function Home() {
     const {
@@ -26,9 +27,18 @@ export default async function Home() {
                             </p>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <p className={"nextButton"}>
-                                upload
-                            </p>
+                            <Tabs defaultValue="changelog" className="w-[400px]">
+                                <TabsList>
+                                    <TabsTrigger value="changelog">changelog</TabsTrigger>
+                                    <TabsTrigger value="app">app</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="changelog"></TabsContent>
+                                <TabsContent value="app">
+                                    <p className={"nextButton"}>
+                                        upload
+                                    </p>
+                                </TabsContent>
+                            </Tabs>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-1">
@@ -63,51 +73,53 @@ export default async function Home() {
                                 <Badge variant="secondary">github</Badge>
                             </a>
                         </AccordionTrigger> {/*TODO -> video embed*/}
+                        <AccordionContent className={"flex flex-col gap-4"}>
                         {data.map((item, index) => (
-                            <AccordionContent key={item.version} className={"flex flex-col gap-4"}>
-                                <div className="flex gap-4">
-                                    <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                        {new Date(item.created_at).toLocaleDateString()} v{item.version} - {item.summary}
-                                    </p>
-                                    {index > 0 && (
-                                        <>
-                                            <UpdateData data={item}/>
-                                        </>
-                                    )}
-                                </div>
-                                <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
-                                    {item.generic_patchnotes.map((item) => (
-                                        <li key={item}>{item}</li>
-                                    ))}
-                                </ol>
-                                <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
-                                    <div className={"w-2/4 flex flex-col gap-2"}>
-                                        <p>1.9 combat</p>
-                                        <ol start={item.generic_patchnotes.length + 1}
-                                            className={"font-[family-name:var(--font-geist-mono)]"}>
-                                            {item["1.9_patchnotes"].map((item) => (
-                                                <li key={item}>{item}</li>
-                                            ))}
-                                        </ol>
+                                <div key={item.version} className={"flex flex-col gap-4"}>
+                                    <div className="flex gap-4">
+                                        <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                            {new Date(item.created_at).toLocaleDateString()} v{item.version} - {item.summary}
+                                        </p>
+                                        {index > 0 && (
+                                            <>
+                                                <UpdateData data={item}/>
+                                            </>
+                                        )}
                                     </div>
-                                    <div className={"w-2/4 flex flex-col gap-2"}>
-                                        <p>1.8 combat</p>
-                                        <ol start={item.generic_patchnotes.length + 1}
-                                            className={"font-[family-name:var(--font-geist-mono)]"}>
-                                            {item["1.8_patchnotes"].map((item) => (
-                                                <li key={item}>{item}</li>
-                                            ))}
-                                        </ol>
-                                    </div>
-                                </div>
-                                {item.nullable_recommended_mods_info && (
-                                    <ol>other recommended mods
-                                        {item.nullable_recommended_mods_info.map((item) => (
-                                            <li key={item.name}>{item.name}</li>
+                                    <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
+                                        {item.generic_patchnotes.map((item) => (
+                                            <li key={item}>{item}</li>
                                         ))}
-                                    </ol>)}
-                            </AccordionContent>
+                                    </ol>
+                                    <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
+                                        <div className={"w-2/4 flex flex-col gap-2"}>
+                                            <p>1.9 combat</p>
+                                            <ol start={item.generic_patchnotes.length + 1}
+                                                className={"font-[family-name:var(--font-geist-mono)]"}>
+                                                {item["1.9_patchnotes"].map((item) => (
+                                                    <li key={item}>{item}</li>
+                                                ))}
+                                            </ol>
+                                        </div>
+                                        <div className={"w-2/4 flex flex-col gap-2"}>
+                                            <p>1.8 combat</p>
+                                            <ol start={item.generic_patchnotes.length + 1}
+                                                className={"font-[family-name:var(--font-geist-mono)]"}>
+                                                {item["1.8_patchnotes"].map((item) => (
+                                                    <li key={item}>{item}</li>
+                                                ))}
+                                            </ol>
+                                        </div>
+                                    </div>
+                                    {item.nullable_recommended_mods_info && (
+                                        <ol>other recommended mods
+                                            {item.nullable_recommended_mods_info.map((item) => (
+                                                <li key={item.name}>{item.name}</li>
+                                            ))}
+                                        </ol>)}
+                                </div>
                         ))}
+                        </AccordionContent>
                     </AccordionItem>
                     {/*<AccordionItem value="item-3">*/}
                     {/*    <AccordionTrigger>*/}
