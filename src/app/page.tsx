@@ -3,7 +3,6 @@ import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
-import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 export default async function Home() {
     const {
@@ -18,62 +17,61 @@ export default async function Home() {
     return (
         <div // TODO reactFragment ?
             className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-            <main className="grid grid-rows-[30%_1fr] gap-[16px] items-center sm:items-start">
-                <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2"}>
+            <main className="grid grid-rows-[30%_1fr] gap-[16px] items-center sm:items-start w-full">
+                <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2 w-full"}>
                     <AccordionItem value="item-2">
-                        <AccordionTrigger>
-                            <p className="text-lg">
-                                pack-updater
-                            </p>
+                        <AccordionTrigger className={"flex gap-4 items-center w-full"}>
+                            <div> {/*TODO -> accordionTrigger should just be doing this*/}
+                                <p className="text-lg">
+                                    pack-updater
+                                </p>
+                                <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                    accepts (1.7.10) returns (1.21.4)
+                                </p>
+                            </div>
                         </AccordionTrigger>
-                        <AccordionContent>
-                            <Tabs defaultValue="changelog" className="w-[400px]">
-                                <TabsList>
-                                    <TabsTrigger value="changelog">changelog</TabsTrigger>
-                                    <TabsTrigger value="app">app</TabsTrigger>
-                                </TabsList>
-                                <TabsContent value="changelog"></TabsContent>
-                                <TabsContent value="app">
-                                    <p className={"nextButton"}>
-                                        upload
-                                    </p>
-                                </TabsContent>
-                            </Tabs>
+                        <AccordionContent className={"flex"}>
+                            <p className={"nextButton"}>
+                                upload
+                            </p>
                         </AccordionContent>
                     </AccordionItem>
-                    <AccordionItem value="item-1">
-                        <AccordionTrigger className="flex gap-4 items-center justify-center w-full"> {/*TODO -> make this piece of shit always w-full good fucking luck*/}
-                            <p className="text-lg">
-                                fabric-pvputils
-                            </p> {/*TODO idk why tf next has header tags all the same size*/}
-                            <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                <UpdateData data={data[0]}></UpdateData>
-                            </p>
-                            <a
-                                className="nextButton"
-                                href="https://modrinth.com"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {/*<Image*/}
-                                {/*  className="dark:invert"*/}
-                                {/*  src=""*/}
-                                {/*  alt="Modrinth logomark"*/}
-                                {/*  width={20}*/}
-                                {/*  height={20}*/}
-                                {/*/>TODO modrinth logo*/}
-                                modrinth
-                            </a>
+                    <AccordionItem value="item-1" className={"w-full"}>
+                        <AccordionTrigger className="flex gap-4 items-center w-full"> {/*TODO -> make this piece of shit always w-full good fucking luck*/}
+                            <div className={"flex items-center"}> {/*TODO -> accordionTrigger should just be doing this*/}
+                                <div className={""}>
+                                    <p className="text-lg">
+                                        fabric-pvputils
+                                    </p> {/*TODO idk why tf next has header tags all the same size*/}
+                                    <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                        <UpdateData data={data[0]}></UpdateData>
+                                    </p>
+                                </div>
+                                <a
+                                    className="nextButton"
+                                    href="https://modrinth.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    {/*<Image*/}
+                                    {/*  className="dark:invert"*/}
+                                    {/*  src=""*/}
+                                    {/*  alt="Modrinth logomark"*/}
+                                    {/*  width={20}*/}
+                                    {/*  height={20}*/}
+                                    {/*/>TODO modrinth logo*/}
+                                    modrinth
+                                </a>
+                            </div>
+                        </AccordionTrigger> {/*TODO -> video embed*/}
+                        <AccordionContent className={"flex flex-col gap-4"}>
                             <a
                                 href="https://github.com/pvputils/fabricpvputils-oss"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="justify-end"
                             >
                                 <Badge variant="secondary">github</Badge>
                             </a>
-                        </AccordionTrigger> {/*TODO -> video embed*/}
-                        <AccordionContent className={"flex flex-col gap-4"}>
                         {data.map((item, index) => (
                                 <div key={item.version} className={"flex flex-col gap-4"}>
                                     <div className="flex gap-4">
