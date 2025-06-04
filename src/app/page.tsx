@@ -1,10 +1,14 @@
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
-import {Database} from "@/app/supabase";
+import {Database} from "@/lib/supabase";
+import React from "react";
 
 export default async function Home() {
-    const {data, error} = await createClient<Database>('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
+    const {
+        data,
+        error
+    } = await createClient<Database>('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
         .from('fabricpvputils_updates')
         .select('*')
     if (error)
@@ -30,7 +34,7 @@ export default async function Home() {
                                     fabric-pvputils
                                 </p> {/*TODO idk why tf next has header tags all the same size*/}
                                 <p className={"self-center font-[family-name:var(--font-geist-mono)]"}>
-                                    - (1.21.4) depends: fabric api
+                                    <UpdateData data={data[0]}></UpdateData>
                                 </p>
                                 <a
                                     className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
@@ -49,7 +53,7 @@ export default async function Home() {
                                 </a>
                             </div>
                         </AccordionTrigger>
-                        {data.map((item) => (
+                        {data.map((item, index) => (
                             <AccordionContent key={item.version}>
                                 <div className="flex gap-4 self-end">
                                     <p className={"font-[family-name:var(--font-geist-mono)]"}>
@@ -62,7 +66,15 @@ export default async function Home() {
                                     >
                                         <Badge variant="secondary">source (github)</Badge>
                                     </a>
+                                    {index > 0 && (
+                                        <>
+                                            <UpdateData data={item}/>
+                                        </>
+                                    )}
                                 </div>
+                                <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                    {new Date(item.created_at).toLocaleDateString()}
+                                </p>
                                 <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
                                     {item.generic_patchnotes.map((item) => (
                                         <li key={item}>{item}</li>
@@ -71,7 +83,8 @@ export default async function Home() {
                                 <div className={"flex w-full gap-4"}>{/*TODO -> idk why this needs w-full*/}
                                     <div className={"w-2/4"}>
                                         <p>1.9 combat</p>
-                                        <ol start={item.generic_patchnotes.length + 1} className={"font-[family-name:var(--font-geist-mono)]"}>
+                                        <ol start={item.generic_patchnotes.length + 1}
+                                            className={"font-[family-name:var(--font-geist-mono)]"}>
                                             {item["1.9_patchnotes"].map((item) => (
                                                 <li key={item}>{item}</li>
                                             ))}
@@ -79,16 +92,17 @@ export default async function Home() {
                                     </div>
                                     <div className={"w-2/4"}>
                                         <p>1.8 combat</p>
-                                        <ol start={item.generic_patchnotes.length + 1} className={"font-[family-name:var(--font-geist-mono)]"}>
+                                        <ol start={item.generic_patchnotes.length + 1}
+                                            className={"font-[family-name:var(--font-geist-mono)]"}>
                                             {item["1.8_patchnotes"].map((item) => (
                                                 <li key={item}>{item}</li>
                                             ))}
                                         </ol>
                                     </div>
                                 </div>
-                                {item.recommended_mods_info && (
+                                {item.nullable_recommended_mods_info && (
                                     <ol>other recommended mods
-                                        {item.recommended_mods_info.map((item) => (
+                                        {item.nullable_recommended_mods_info.map((item) => (
                                             <li key={item.name}>{item.name}</li>
                                         ))}
                                     </ol>)}
@@ -109,4 +123,21 @@ export default async function Home() {
             </footer>
         </div>
     );
+}
+
+function UpdateData({data}: { data: Database["public"]["Tables"]["fabricpvputils_updates"]["Row"] }) {
+    return (
+        <>
+            ({data.minecraft_versions}) {data.nullable_dependencies && (
+            <>
+                depends: {data.nullable_dependencies.map((item, index) => (
+                <React.Fragment key={index}>
+                    {index > 0 && ', '}
+                    {item.name}
+                </React.Fragment>
+            ))}
+            </>
+        )}
+        </>
+    )
 }
