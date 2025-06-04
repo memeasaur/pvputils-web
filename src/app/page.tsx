@@ -3,6 +3,7 @@ import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
+import {PackInput} from "@/app/client";
 
 export default async function Home() {
     const {
@@ -31,9 +32,7 @@ export default async function Home() {
                             </div>
                         </AccordionTrigger>
                         <AccordionContent className={"flex"}>
-                            <p className={"nextButton"}>
-                                upload
-                            </p>
+                            <PackInput></PackInput>{/*TODO -> allow non-compressed files (?)*/}
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-1" className={"w-full"}>
