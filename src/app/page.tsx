@@ -15,13 +15,21 @@ export default async function Home() {
         throw new Error(error.message)
 
     return (
-        <div
+        <div // TODO reactFragment ?
             className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
             <main className="grid grid-rows-[30%_1fr] gap-[16px] items-center sm:items-start">
                 <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2"}>
                     <AccordionItem value="item-2">
-                        <AccordionTrigger></AccordionTrigger>
-                        <AccordionContent></AccordionContent>
+                        <AccordionTrigger>
+                            <p className="text-lg">
+                                pack-updater
+                            </p>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                            <p className={"nextButton"}>
+                                upload
+                            </p>
+                        </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-1">
                         <AccordionTrigger className="flex gap-4 items-center justify-center w-full"> {/*TODO -> make this piece of shit always w-full good fucking luck*/}
@@ -32,7 +40,7 @@ export default async function Home() {
                                 <UpdateData data={data[0]}></UpdateData>
                             </p>
                             <a
-                                className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
+                                className="nextButton"
                                 href="https://modrinth.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
@@ -46,20 +54,21 @@ export default async function Home() {
                                 {/*/>TODO modrinth logo*/}
                                 modrinth
                             </a>
-                        </AccordionTrigger>
+                            <a
+                                href="https://github.com/pvputils/fabricpvputils-oss"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="justify-end"
+                            >
+                                <Badge variant="secondary">github</Badge>
+                            </a>
+                        </AccordionTrigger> {/*TODO -> video embed*/}
                         {data.map((item, index) => (
                             <AccordionContent key={item.version} className={"flex flex-col gap-4"}>
                                 <div className="flex gap-4">
                                     <p className={"font-[family-name:var(--font-geist-mono)]"}>
                                         {new Date(item.created_at).toLocaleDateString()} v{item.version} - {item.summary}
                                     </p>
-                                    <a
-                                        href="https://github.com/pvputils/fabricpvputils-oss"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                    >
-                                        <Badge variant="secondary">source (github)</Badge>
-                                    </a>
                                     {index > 0 && (
                                         <>
                                             <UpdateData data={item}/>
@@ -110,8 +119,8 @@ export default async function Home() {
                     {/*</AccordionItem>TODO */}
                 </Accordion>
             </main>
-            <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-            </footer>
+            {/*<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">*/}
+            {/*</footer>*/}
         </div>
     );
 }
