@@ -3,7 +3,7 @@ import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
-import PackUpdater from "@/components/packUpdater";
+import PackUpdater from "@/components/packupdater/packUpdater";
 
 export default async function Home() {
     const {
