@@ -3,7 +3,7 @@ import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
-import {PackInput} from "@/app/client";
+import PackUpdater from "@/components/packUpdater";
 
 export default async function Home() {
     const {
@@ -32,11 +32,7 @@ export default async function Home() {
                             </div>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <PackInput></PackInput>{/*TODO -> allow non-compressed files (?)*/}
-                            <ol className={"font-[family-name:var(--font-geist-mono)]"}>
-                            </ol>
-                            <ol className={"font-[family-name:var(--font-geist-mono)]"}>
-                            </ol> {/*TODO -> just make this a link to the bucket*/}
+                            <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
                             {/*<p className={"font-[family-name:var(--font-geist-mono)]"}>*/}
                             {/*    history*/}
                             {/*</p>TODO remove*/}
@@ -150,6 +146,7 @@ export default async function Home() {
 }
 
 function UpdateData({data}: { data: Database["public"]["Tables"]["fabricpvputils_updates"]["Row"] }) {
+    console.log("updateData WAS CSR'd!")
     return (
         <>
             ({data.minecraft_versions}) {data.nullable_dependencies && (
