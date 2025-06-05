@@ -27,23 +27,19 @@ export default async function Home() {
                                     pack-updater
                                 </p>
                                 <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                    accepts (1.7.10) returns (1.21.4)
+                                    accepts (1.7.10.zip) returns (1.21.4.zip)
                                 </p>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className={"flex justify-between"}>
-                            <div>
-                                <PackInput></PackInput>{/*TODO -> allow non-compressed files (?)*/}
-                                <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                    console
-                                </p>
-                            </div>
-                            <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                history
-                            </p>
-                            <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                packs
-                            </p>
+                        <AccordionContent>
+                            <PackInput></PackInput>{/*TODO -> allow non-compressed files (?)*/}
+                            <ol className={"font-[family-name:var(--font-geist-mono)]"}>
+                            </ol>
+                            <ol className={"font-[family-name:var(--font-geist-mono)]"}>
+                            </ol> {/*TODO -> just make this a link to the bucket*/}
+                            {/*<p className={"font-[family-name:var(--font-geist-mono)]"}>*/}
+                            {/*    history*/}
+                            {/*</p>TODO remove*/}
                             {/*<p className={"font-[family-name:var(--font-geist-mono)]"}>*/}
                             {/*    changelog*/}
                             {/*</p>TODO remove*/}

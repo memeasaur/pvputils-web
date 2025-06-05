@@ -36,6 +36,12 @@ export function PackInput() {
         }
     }
     return (
-        <input type="file" className={"nextButton"} onChange={e => handle(e.target.files)}/>
+        <input multiple type="file" className={"nextButton"} onChange={e => handle(e.target.files)}/>
     )
+}
+export function PackOutput() {
+
+}
+export function PackConsole() {
+
 }
