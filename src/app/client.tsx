@@ -2,28 +2,40 @@
 import JSZip from "jszip";
 
 export function PackInput() {
-    async function handle(pack: File | undefined) {
-        if (!pack)
-            alert("invalid pack")
+    async function handle(packs: FileList | null) {
+        if (!packs)
+            alert("invalid upload")
+            // TODO -> refresh (?)
         else {
-            const updatedResources = await Promise.all(Object.entries((await new JSZip().loadAsync(pack)).files).map(async ([filename, file]) => {
-                // TODO -> option for maintaining backwards compatibility -> adding the old files too
-                // TODO -> progress bar
-                // TODO -> progress console
-                if (filename === "pack.mcmeta") {
-                    // TODO
+            const updatedPacks = Array.from(packs).map(async (pack) => {
+                const updatedResources = await Promise.all(Object.entries((await new JSZip().loadAsync(pack)).files).map(async ([filename, file]) => {
+                    // TODO -> option for maintaining backwards compatibility -> adding the old files too
+                    // TODO -> progress bar
+                    // TODO -> progress console
+                    return {
+                        filename: filename
+                            .replace("/blocks/", "/block/")
+                            .replace("/items/", "/item/"),
+                        content: file.dir
+                            ? null
+                            : filename === "pack.mcmeta"
+                                ? (await file.async("string")) // .replace() TODO
+                                    .replace('"pack_format": 1', '"pack_format": 46')
+                                : await file.async("uint8array")
+                    }; // TODO -> just use null content as isFile
+                }))
+                const updatedPack = new JSZip()
+                for (const {filename, content} of updatedResources) {
+                    if (content === null)
+                        updatedPack.folder(filename)
+                    else
+                        updatedPack.file(filename, content)
                 }
-                filename = filename.replace("/blocks/", "/block/")
-                filename = filename.replace("/items/", "/item/")
-                const isDir = file.dir
-                const content = isDir
-                    ? null
-                    : await file.async("uint8array")
-                return [filename, content, isDir]
-            }))
+                return updatedPack
+            })
         }
     }
     return (
-        <input type="file" className={"nextButton"} onChange={e => handle(e.target.files?.[0])}/>
+        <input type="file" className={"nextButton"} onChange={e => handle(e.target.files)}/>
     )
 }

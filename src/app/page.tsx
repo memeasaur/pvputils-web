@@ -31,17 +31,36 @@ export default async function Home() {
                                 </p>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent className={"flex"}>
-                            <PackInput></PackInput>{/*TODO -> allow non-compressed files (?)*/}
+                        <AccordionContent className={"flex justify-between"}>
+                            <div>
+                                <PackInput></PackInput>{/*TODO -> allow non-compressed files (?)*/}
+                                <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                    console
+                                </p>
+                            </div>
+                            <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                history
+                            </p>
+                            <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                packs
+                            </p>
+                            {/*<p className={"font-[family-name:var(--font-geist-mono)]"}>*/}
+                            {/*    changelog*/}
+                            {/*</p>TODO remove*/}
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-1" className={"w-full"}>
                         <AccordionTrigger className="flex gap-4 items-center w-full"> {/*TODO -> make this piece of shit always w-full good fucking luck*/}
                             <div className={"flex items-center"}> {/*TODO -> accordionTrigger should just be doing this*/}
                                 <div className={""}>
-                                    <p className="text-lg">
-                                        fabric-pvputils
-                                    </p> {/*TODO idk why tf next has header tags all the same size*/}
+                                    <div className={"flex items-center gap-2"}>
+                                        <p className="text-lg">
+                                            fabric-pvputils
+                                        </p> {/*TODO idk why tf next has header tags all the same size*/}
+                                        <p>
+                                            v{data[0].version} - {data[0].summary}
+                                        </p>
+                                    </div>
                                     <p className={"font-[family-name:var(--font-geist-mono)]"}>
                                         <UpdateData data={data[0]}></UpdateData>
                                     </p>
@@ -75,7 +94,7 @@ export default async function Home() {
                                 <div key={item.version} className={"flex flex-col gap-4"}>
                                     <div className="flex gap-4">
                                         <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                            {new Date(item.created_at).toLocaleDateString()} v{item.version} - {item.summary}
+                                            {new Date(item.created_at).toLocaleDateString()} {index > 0 && (<>v{item.version} - {item.summary}</>)}
                                         </p>
                                         {index > 0 && (
                                             <>
