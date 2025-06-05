@@ -1,4 +1,5 @@
-import JSZip from 'jszip';
+// import JSZip from "jszip"; TODO -> webpack this, next/react seems like it sucks dick for this
+importScripts('https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js');
 
 /** @param {MessageEvent<File>} e */
 self.onmessage = async e => {

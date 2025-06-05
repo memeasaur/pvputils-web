@@ -11,7 +11,11 @@ export default function PackUpdater() {
                     alert("invalid upload")
                 // TODO -> refresh (?)
                 else {
-
+                    for (const pack of packs) {
+                        const worker = new Worker('/packupdateworker.js');
+                        worker.onmessage = (e) => {}
+                        worker.postMessage(JSON.stringify(pack))TODO;
+                    }
                     setUpdatedPacks(currentUpdatedPacks => [...currentUpdatedPacks, ...newUpdatedPacks]))
                 }
             }}/>
