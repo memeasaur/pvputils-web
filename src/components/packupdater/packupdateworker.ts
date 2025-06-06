@@ -212,6 +212,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             handle(15, 8, "sga_x")
                             handle(15, 9, "sga_y")
                             handle(15, 10, "sga_z")
+
+                            updatedPack.remove(oldFilename) // TODO -> backwards compatiblity
                         }
                     }
                     break
