@@ -82,6 +82,8 @@ const replacements = Object.freeze({
     [OLD_BLOCKS_PATH + "hardened_clay_stained_white.png"]: NEW_BLOCKS_PATH + "white_terracotta.png",
     [OLD_BLOCKS_PATH + "hardened_clay_stained_yellow.png"]: NEW_BLOCKS_PATH + "yellow_terracotta.png",
 })
+const NEW_HUD_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/hud/"
+const NEW_WIDGET_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/widget/"
 
 self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
@@ -93,32 +95,45 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
             switch (oldFilename) {
                 case "assets/minecraft/textures/gui/icons.png": {
+                    const spriteSheet = await getSpriteSheetPromise(file)
+                    if (spriteSheet) {
+                        const resolutionFactor = spriteSheet.height / 512
+                        await Promise.all([
+                            await handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
+                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
+                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 69, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_progress.png"),
+                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_cooldown.png"),
+                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_background.png"),
+                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 79, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_progress.png"),
+                            // TODO -> recolor the pink progress bar and make the other colors
+                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
+                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png")
+                        ])
+                    }
+                    break
+                }
+                case "assets/minecraft/textures/gui/widgets.png": {
+                    const spriteSheet = await getSpriteSheetPromise(file)
+                    if (spriteSheet) {
+                        const resolutionFactor = spriteSheet.height / 512
+                        await Promise.all([
+                            handleSpriteTarget(182, resolutionFactor, 22, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar.png"),
+                            handleSpriteTarget(22, resolutionFactor, 22, spriteSheet, 0, 22, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar_selection.png"),
+                            handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 46, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_disabled.png"),
+                            handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 66, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_highlighted.png"),
+                            handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 86, updatedPack, NEW_WIDGET_SPRITES_PATH + "button.png")
+                        ])
+                    }
                     break
                 }
                 case "assets/minecraft/textures/particle/particles.png": {
-                    const spriteSheet = await new Promise<HTMLImageElement | null>(resolve => {
-                        file.async("blob")
-                            .catch(() => resolve(null))
-                            .then((blob) => {
-                                if (blob) {
-                                    const img = new Image();
-                                    img.onerror = () => resolve(null);
-                                    img.onload = () => resolve(img);
-                                    img.src = URL.createObjectURL(blob);
-
-                                    img.onload = img.onerror = () => URL.revokeObjectURL(img.src);
-                                }
-                            })
-                    });
+                    const spriteSheet = await getSpriteSheetPromise(file);
                     if (spriteSheet) {
-                        const canvas = document.createElement("canvas");
                         const spriteSize = spriteSheet.height / 16;
-                        canvas.width = spriteSize;
-                        canvas.height = spriteSize;
-                        const context = canvas.getContext("2d");
+                        const {context, canvas} = getSpriteCanvasContext(spriteSize, spriteSize)
                         if (context) {
                             const sprites: (Promise<Blob | null>)[][] = [];
-
+                            // TODO -> stream this (?)
                             for (let row = 0; row < spriteSheet.height / spriteSize; row++) {
                                 sprites[row] = [];
                                 for (let col = 0; col < spriteSheet.width / spriteSize; col++) {
@@ -129,89 +144,93 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 }
                             }
 
-                            function handle(y: number, x: number, newName: string) {
-                                const foo = await sprites[y][x]
-                                if (foo)
-                                    updatedPack.file("assets/minecraft/textures/particle/" + newName + ".png")
+                            async function handle(y: number, x: number, newName: string) {
+                                const sprite = await sprites[y][x]
+                                if (sprite)
+                                    updatedPack.file("assets/minecraft/textures/particle/" + newName + ".png", sprite)
                             }
-                            handle(0, 0, "big_smoke_0")
-                            handle(0, 1, "big_smoke_1")
-                            handle(0, 2, "big_smoke_2")
-                            handle(0, 3, "big_smoke_3")
-                            handle(0, 4, "big_smoke_4")
-                            handle(0, 5, "big_smoke_5")
-                            handle(0, 6, "big_smoke_6")
-                            handle(0, 7, "big_smoke_8")
-                            handle(0, 8, "big_smoke_9")
-                            handle(0, 9, "big_smoke_10")
-                            handle(0, 10, "big_smoke_11")
-                            handle(1, 0, "splash_0")
-                            handle(1, 4, "splash_1")
-                            handle(1, 5, "splash_2")
-                            handle(1, 6, "splash_3")
-                            handle(2, 0, "bubble")
-                            {
-                                const fishingHook = await sprites[2][1]
-                                if (fishingHook)
-                                    updatedPack.file("assets/minecraft/textures/entity/fishing_hook.png", fishingHook)
-                            }
-                            handle(3, 0, "flame")
-                            handle(3, 1, "lava")
-                            handle(4, 0, "note")
-                            handle(4, 1, "critical_hit")
-                            handle(4, 2, "enchanted_hit")
-                            handle(5, 0, "heart")
-                            handle(5, 1, "angry")
-                            handle(5, 2, "glint")
-                            // handle(5, 3, ) TODO (?) remove, it's the villager particle which probably is just removed
-                            // handle(6, 0, )
-                            // handle(6, 1) // TODO -> blue soul speed lookin shit ? no clue
-                            handle(7, 0, "drip_hang")
-                            handle(7, 1, "drip_fall")
-                            handle(7, 2, "drip_land")
-                            handle(8, 0, "effect_0")
-                            handle(8, 1, "effect_1")
-                            handle(8, 2, "effect_2")
-                            handle(8, 3, "effect_3")
-                            handle(8, 4, "effect_4")
-                            handle(8, 5, "effect_5")
-                            handle(8, 6, "effect_6")
-                            handle(8, 7, "effect_7")
-                            handle(9, 0, "spell_0")
-                            handle(9, 1, "spell_1")
-                            handle(9, 2, "spell_2")
-                            handle(9, 3, "spell_3")
-                            handle(9, 4, "spell_4")
-                            handle(9, 5, "spell_5")
-                            handle(9, 6, "spell_6")
-                            handle(9, 7, "spell_7")
+                            await Promise.all([
+                                handle(0, 0, "big_smoke_0"),
+                                handle(0, 1, "big_smoke_1"),
+                                handle(0, 2, "big_smoke_2"),
+                                handle(0, 3, "big_smoke_3"),
+                                handle(0, 4, "big_smoke_4"),
+                                handle(0, 5, "big_smoke_5"),
+                                handle(0, 6, "big_smoke_6"),
+                                handle(0, 7, "big_smoke_8"),
+                                handle(0, 8, "big_smoke_9"),
+                                handle(0, 9, "big_smoke_10"),
+                                handle(0, 10, "big_smoke_11"),
+                                handle(1, 0, "splash_0"),
+                                handle(1, 4, "splash_1"),
+                                handle(1, 5, "splash_2"),
+                                handle(1, 6, "splash_3"),
+                                handle(2, 0, "bubble"),
 
-                            handle(14, 1, "sga_a")
-                            handle(14, 2, "sga_b")
-                            handle(14, 3, "sga_c")
-                            handle(14, 4, "sga_d")
-                            handle(14, 5, "sga_e")
-                            handle(14, 6, "sga_f")
-                            handle(14, 7, "sga_g")
-                            handle(14, 8, "sga_h")
-                            handle(14, 9, "sga_i")
-                            handle(14, 10, "sga_j")
-                            handle(14, 11, "sga_k")
-                            handle(14, 12, "sga_l")
-                            handle(14, 13, "sga_m")
-                            handle(14, 14, "sga_n")
-                            handle(14, 15, "sga_o")
-                            handle(15, 0, "sga_p")
-                            handle(15, 1, "sga_q")
-                            handle(15, 2, "sga_r")
-                            handle(15, 3, "sga_s")
-                            handle(15, 4, "sga_t")
-                            handle(15, 5, "sga_u")
-                            handle(15, 6, "sga_v")
-                            handle(15, 7, "sga_w")
-                            handle(15, 8, "sga_x")
-                            handle(15, 9, "sga_y")
-                            handle(15, 10, "sga_z")
+                                async () => {
+                                    const fishingHook = await sprites[2][1]
+                                    if (fishingHook)
+                                        updatedPack.file("assets/minecraft/textures/entity/fishing_hook.png", fishingHook)
+                                },
+
+                                handle(3, 0, "flame"),
+                                handle(3, 1, "lava"),
+                                handle(4, 0, "note"),
+                                handle(4, 1, "critical_hit"),
+                                handle(4, 2, "enchanted_hit"),
+                                handle(5, 0, "heart"),
+                                handle(5, 1, "angry"),
+                                handle(5, 2, "glint"),
+                                // handle(5, 3, ) TODO (?) remove, it's the villager particle which probably is just removed
+                                // handle(6, 0, )
+                                // handle(6, 1) // TODO -> blue soul speed lookin shit ? no clue
+                                handle(7, 0, "drip_hang"),
+                                handle(7, 1, "drip_fall"),
+                                handle(7, 2, "drip_land"),
+                                handle(8, 0, "effect_0"),
+                                handle(8, 1, "effect_1"),
+                                handle(8, 2, "effect_2"),
+                                handle(8, 3, "effect_3"),
+                                handle(8, 4, "effect_4"),
+                                handle(8, 5, "effect_5"),
+                                handle(8, 6, "effect_6"),
+                                handle(8, 7, "effect_7"),
+                                handle(9, 0, "spell_0"),
+                                handle(9, 1, "spell_1"),
+                                handle(9, 2, "spell_2"),
+                                handle(9, 3, "spell_3"),
+                                handle(9, 4, "spell_4"),
+                                handle(9, 5, "spell_5"),
+                                handle(9, 6, "spell_6"),
+                                handle(9, 7, "spell_7"),
+
+                                handle(14, 1, "sga_a"),
+                                handle(14, 2, "sga_b"),
+                                handle(14, 3, "sga_c"),
+                                handle(14, 4, "sga_d"),
+                                handle(14, 5, "sga_e"),
+                                handle(14, 6, "sga_f"),
+                                handle(14, 7, "sga_g"),
+                                handle(14, 8, "sga_h"),
+                                handle(14, 9, "sga_i"),
+                                handle(14, 10, "sga_j"),
+                                handle(14, 11, "sga_k"),
+                                handle(14, 12, "sga_l"),
+                                handle(14, 13, "sga_m"),
+                                handle(14, 14, "sga_n"),
+                                handle(14, 15, "sga_o"),
+                                handle(15, 0, "sga_p"),
+                                handle(15, 1, "sga_q"),
+                                handle(15, 2, "sga_r"),
+                                handle(15, 3, "sga_s"),
+                                handle(15, 4, "sga_t"),
+                                handle(15, 5, "sga_u"),
+                                handle(15, 6, "sga_v"),
+                                handle(15, 7, "sga_w"),
+                                handle(15, 8, "sga_x"),
+                                handle(15, 9, "sga_y"),
+                                handle(15, 10, "sga_z")
+                            ])
 
                             updatedPack.remove(oldFilename) // TODO -> backwards compatiblity
                         }
@@ -250,5 +269,37 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
         updatedPack: await updatedPack.generateAsync({type: "blob"}),
         updatedPackName: data.packName
     } as PackUpdateWorkerResponse);
+}
+
+function getSpriteSheetPromise(file: JSZip.JSZipObject) {
+    return new Promise<HTMLImageElement | null>(resolve => {
+        file.async("blob")
+            .catch(() => resolve(null))
+            .then((blob) => {
+                if (blob) {
+                    const img = new Image();
+                    img.onerror = () => resolve(null);
+                    img.onload = () => resolve(img);
+                    img.src = URL.createObjectURL(blob);
+
+                    img.onload = img.onerror = () => URL.revokeObjectURL(img.src);
+                }
+            })
+    });
+}
+function getSpriteCanvasContext(width: number, height: number) {
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    return {context: canvas.getContext("2d"), canvas};
+}
+async function handleSpriteTarget(width: number, resolutionFactor: number, height: number, spriteSheet: HTMLImageElement, x: number, y: number, updatedPack: JSZip, filename: string) {
+    const {context, canvas} = getSpriteCanvasContext(width * resolutionFactor, height * resolutionFactor)
+    if (context) {
+        context.drawImage(spriteSheet, x, y, canvas.width, canvas.height);
+        const hotbar = await new Promise<Blob | null>(res => canvas.toBlob(res, "image/png"));
+        if (hotbar)
+            updatedPack.file(filename, hotbar)
+    }
 }
 export {}

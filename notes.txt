@@ -2,21 +2,8 @@
 >make accordion y not change when clicking
 >every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
 
->split widgets.png into each widget
-    >hotbar is 182x22 block, top left is 0, 0
-    >selector is 22x22 block, top left is 0, 22
-    >dark button is 200x20 block, top left is 0, 46
-    >brighter button top left is 0, 66
-    >bright button top left is 0,86
->split icons.png into each icon
+>split icons.png into each icon (512x512)
     >9x9 sprites in 162x54 block, top left is 16, 0
-    >crosshair: 15x15 block, top left is 0, 0
-    >xp bar background: 5x128 block, top left is 0, 64
-    >xp bar foreground: 5x128 block, top left is 0, 69
-    >boss bar background: 0, 74
-    >boss bar foregroun: 0, 79
-    >horse bar background: 0, 84
-    >horse bar background: 0, 89
 >fix blur causing fucky
 
 >option to customize the branding being added to the pack
