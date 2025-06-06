@@ -1,5 +1,6 @@
 'use client';
 import React, {useRef, useState} from "react";
+import { PackUpdateWorkerRequest, PackUpdateWorkerResponse } from './types';
 
 export default function PackUpdater() {
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
@@ -27,7 +28,7 @@ export default function PackUpdater() {
                                         workersCounter.current = workersCounter.current - 1
                                     }
                                 }
-                                worker.postMessage(pack)
+                                worker.postMessage({pack, packName: pack.name} as PackUpdateWorkerRequest)
                             }
                             workersCounter.current = workersCounter.current + 1
                         }

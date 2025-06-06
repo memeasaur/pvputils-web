@@ -1,4 +1,5 @@
 import JSZip from "jszip";
+import { PackUpdateWorkerRequest, PackUpdateWorkerResponse } from './types';
 
 self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
