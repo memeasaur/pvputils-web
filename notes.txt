@@ -35,6 +35,18 @@ log_oak -> oak_log
 log_birch -> birch_log
 log_jungle -> jungle_log
 log_spruce -> spruce_log
+planks_oak -> oak_planks
+planks_birch -> birch_planks
+planks_jungle -> jungle_planks
+planks_spruce -> spruce_planks
+nether_brick -> nether_bricks
+wool_colored_black -> black_wool... blue, brown, cyan, gray, green, light_blue, lime, magenta, orange, pink, purple, red, light_gray, white, yellow
+sandstone_normal -> sandstone
+stone_slab_top -> smooth_stone
+stone_slab_side -> smooth_stone_slab
+stonebrick -> stone_bricks
+hardened_clay -> terracotta
+hardened_clay_stained_black -> black_terracotta,
 
 >option to customize the branding being added to the pack
 >link faithful 32x and faithful 64x etc.
