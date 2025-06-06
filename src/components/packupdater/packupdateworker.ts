@@ -96,33 +96,124 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     break
                 }
                 case "assets/minecraft/textures/particle/particles.png": {
-                    file.async("blob")
-                        .then((blob) => {
-                            const spriteSheet = await new Promise<HTMLImageElement | null>((resolve) => {
-                                const img = new Image();
-                                img.onerror = () => resolve(null);
-                                img.onload = () => resolve(img);
-                                img.src = URL.createObjectURL(blob);
-                            });
-                            if (spriteSheet) {
-                                const spriteSize = 128;
-                                const sprites = [];
-                                const canvas = document.createElement("canvas");
-                                canvas.width = spriteSize;
-                                canvas.height = spriteSize;
+                    const spriteSheet = await new Promise<HTMLImageElement | null>(resolve => {
+                        file.async("blob")
+                            .catch(() => resolve(null))
+                            .then((blob) => {
+                                if (blob) {
+                                    const img = new Image();
+                                    img.onerror = () => resolve(null);
+                                    img.onload = () => resolve(img);
+                                    img.src = URL.createObjectURL(blob);
 
-                                const ctx = canvas.getContext("2d");
+                                    img.onload = img.onerror = () => URL.revokeObjectURL(img.src);
+                                }
+                            })
+                    });
+                    if (spriteSheet) {
+                        const canvas = document.createElement("canvas");
+                        const spriteSize = spriteSheet.height / 16;
+                        canvas.width = spriteSize;
+                        canvas.height = spriteSize;
+                        const context = canvas.getContext("2d");
+                        if (context) {
+                            const sprites: (Promise<Blob | null>)[][] = [];
 
-                                for (let y = 0; y < spriteSheet.height; y += spriteSize)
-                                    for (let x = 0; x < spriteSheet.width; x += spriteSize) {
-                                        ctx.clearRect(0, 0, spriteSize, spriteSize);
-                                        ctx.drawImage(spriteSheet, x, y, spriteSize, spriteSize, 0, 0, spriteSize, spriteSize);
+                            for (let row = 0; row < spriteSheet.height / spriteSize; row++) {
+                                sprites[row] = [];
+                                for (let col = 0; col < spriteSheet.width / spriteSize; col++) {
+                                    context.clearRect(0, 0, spriteSize, spriteSize);
+                                    context.drawImage(spriteSheet, col * spriteSize, row * spriteSize, spriteSize, spriteSize);
 
-                                        const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
-                                        sprites.push({ x, y, blob });
-                                    }
+                                    sprites[row][col] = new Promise<Blob | null>(res => canvas.toBlob(res, "image/png"));
+                                }
                             }
-                    })
+
+                            function handle(y: number, x: number, newName: string) {
+                                const foo = await sprites[y][x]
+                                if (foo)
+                                    updatedPack.file("assets/minecraft/textures/particle/" + newName + ".png")
+                            }
+                            handle(0, 0, "big_smoke_0")
+                            handle(0, 1, "big_smoke_1")
+                            handle(0, 2, "big_smoke_2")
+                            handle(0, 3, "big_smoke_3")
+                            handle(0, 4, "big_smoke_4")
+                            handle(0, 5, "big_smoke_5")
+                            handle(0, 6, "big_smoke_6")
+                            handle(0, 7, "big_smoke_8")
+                            handle(0, 8, "big_smoke_9")
+                            handle(0, 9, "big_smoke_10")
+                            handle(0, 10, "big_smoke_11")
+                            handle(1, 0, "splash_0")
+                            handle(1, 4, "splash_1")
+                            handle(1, 5, "splash_2")
+                            handle(1, 6, "splash_3")
+                            handle(2, 0, "bubble")
+                            {
+                                const fishingHook = await sprites[2][1]
+                                if (fishingHook)
+                                    updatedPack.file("assets/minecraft/textures/entity/fishing_hook.png", fishingHook)
+                            }
+                            handle(3, 0, "flame")
+                            handle(3, 1, "lava")
+                            handle(4, 0, "note")
+                            handle(4, 1, "critical_hit")
+                            handle(4, 2, "enchanted_hit")
+                            handle(5, 0, "heart")
+                            handle(5, 1, "angry")
+                            handle(5, 2, "glint")
+                            // handle(5, 3, ) TODO (?) remove, it's the villager particle which probably is just removed
+                            // handle(6, 0, )
+                            // handle(6, 1) // TODO -> blue soul speed lookin shit ? no clue
+                            handle(7, 0, "drip_hang")
+                            handle(7, 1, "drip_fall")
+                            handle(7, 2, "drip_land")
+                            handle(8, 0, "effect_0")
+                            handle(8, 1, "effect_1")
+                            handle(8, 2, "effect_2")
+                            handle(8, 3, "effect_3")
+                            handle(8, 4, "effect_4")
+                            handle(8, 5, "effect_5")
+                            handle(8, 6, "effect_6")
+                            handle(8, 7, "effect_7")
+                            handle(9, 0, "spell_0")
+                            handle(9, 1, "spell_1")
+                            handle(9, 2, "spell_2")
+                            handle(9, 3, "spell_3")
+                            handle(9, 4, "spell_4")
+                            handle(9, 5, "spell_5")
+                            handle(9, 6, "spell_6")
+                            handle(9, 7, "spell_7")
+
+                            handle(14, 1, "sga_a")
+                            handle(14, 2, "sga_b")
+                            handle(14, 3, "sga_c")
+                            handle(14, 4, "sga_d")
+                            handle(14, 5, "sga_e")
+                            handle(14, 6, "sga_f")
+                            handle(14, 7, "sga_g")
+                            handle(14, 8, "sga_h")
+                            handle(14, 9, "sga_i")
+                            handle(14, 10, "sga_j")
+                            handle(14, 11, "sga_k")
+                            handle(14, 12, "sga_l")
+                            handle(14, 13, "sga_m")
+                            handle(14, 14, "sga_n")
+                            handle(14, 15, "sga_o")
+                            handle(15, 0, "sga_p")
+                            handle(15, 1, "sga_q")
+                            handle(15, 2, "sga_r")
+                            handle(15, 3, "sga_s")
+                            handle(15, 4, "sga_t")
+                            handle(15, 5, "sga_u")
+                            handle(15, 6, "sga_v")
+                            handle(15, 7, "sga_w")
+                            handle(15, 8, "sga_x")
+                            handle(15, 9, "sga_y")
+                            handle(15, 10, "sga_z")
+                        }
+                    }
                     break
                 }
                 default: {
