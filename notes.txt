@@ -6,7 +6,40 @@
 >split widgets.png into each widget
 >split icons.png into each icon
 >fix blur causing fucky
->option to customize the branding being added to the pack
+potion_bottle_splash -> splash_potion
+potion_bottle_drinkable -> potion
+potion_bottle_empty -> glass_bottle -> im pretty sure 1.7 just uses the drinkable for this, in which case make sure it's similar
+apple_golden -> golden_apple
+bow_standby -> bow
+beef_raw -> beef
+chicken_raw -> chicken
+porkchop_raw -> porkchop?
+bucket_empty -> bucket
+bucket_water -> water_bucket
+bucket_lava -> lava_bucket
+bucket_milk -> milk_bucket
+chicken_cooked -> cooked_chicken
+beef_cooked -> cooked_beef
+porkchop_cooked -> cooked_porkchop
+fireworks -> firework_rocket
+melon_speckled? -> glistering_melon_slice
+melon -> melon_slice
+? -> end_stone_bricks
+fire_layer_0 -> fire_0
+fire_layer_1 -> fire_1
+grass_side -> grass_block_side
+grass_top -> grass_block_top
+grass_side_overlay -> grass_block_side_overlay
+grass_side_snowed -> grass_block_snowed
+log_oak -> oak_log
+log_birch -> birch_log
+log_jungle -> jungle_log
+log_spruce -> spruce_log
 
+>option to customize the branding being added to the pack
+>link faithful 32x and faithful 64x etc.
+
+>use grass_block or something to associate a faithful base layer if appropriate, with toggle
+>(?) generate lingering potion (lol)
 >(?) generate netherite textures, or show the user the diamond sword and have them edit it to be netherite
 >(?) fix main inventory programmatically somehow
