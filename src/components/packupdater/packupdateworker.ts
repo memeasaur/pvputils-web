@@ -1,5 +1,87 @@
 import JSZip from "jszip";
-import { PackUpdateWorkerRequest, PackUpdateWorkerResponse } from './types';
+import {PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
+
+const OLD_ITEMS_PATH = "assets/minecraft/textures/items/"
+const NEW_ITEMS_PATH = "assets/minecraft/textures/item/"
+const OLD_BLOCKS_PATH = "assets/minecraft/textures/blocks/"
+const NEW_BLOCKS_PATH = "assets/minecraft/textures/block/"
+const NEW_POTION_PATH = NEW_ITEMS_PATH + "potion"
+const replacements = Object.freeze({
+    [OLD_ITEMS_PATH + "potion_bottle_splash.png"]: NEW_ITEMS_PATH + "splash_potion.png",
+    [OLD_ITEMS_PATH + "potion_bottle_drinkable.png"]: NEW_POTION_PATH,
+    [OLD_ITEMS_PATH + "apple_golden.png"]: NEW_ITEMS_PATH + "golden_apple.png",
+    [OLD_ITEMS_PATH + "bow_standby.png"]: NEW_ITEMS_PATH + "bow.png",
+    [OLD_ITEMS_PATH + "beef_raw.png"]: NEW_ITEMS_PATH + "beef.png",
+    [OLD_ITEMS_PATH + "chicken_raw.png"]: NEW_ITEMS_PATH + "chicken.png",
+    [OLD_ITEMS_PATH + "porkchop_raw.png"]: NEW_ITEMS_PATH + "porkchop.png",
+    [OLD_ITEMS_PATH + "bucket_empty.png"]: NEW_ITEMS_PATH + "bucket.png",
+    [OLD_ITEMS_PATH + "bucket_water.png"]: NEW_ITEMS_PATH + "water_bucket.png",
+    [OLD_ITEMS_PATH + "bucket_lava.png"]: NEW_ITEMS_PATH + "lava_bucket.png",
+    [OLD_ITEMS_PATH + "bucket_milk.png"]: NEW_ITEMS_PATH + "milk_bucket.png",
+    [OLD_ITEMS_PATH + "chicken_cooked.png"]: NEW_ITEMS_PATH + "cooked_chicken.png",
+    [OLD_ITEMS_PATH + "beef_cooked.png"]: NEW_ITEMS_PATH + "cooked_beef.png",
+    [OLD_ITEMS_PATH + "porkchop_cooked.png"]: NEW_ITEMS_PATH + "cooked_porkchop.png",
+    [OLD_ITEMS_PATH + "fireworks.png"]: NEW_ITEMS_PATH + "firework_rocket.png",
+    [OLD_ITEMS_PATH + "melon_speckled.png"]: NEW_ITEMS_PATH + "glistering_melon_slice.png",
+    [OLD_ITEMS_PATH + "melon.png"]: NEW_ITEMS_PATH + "melon_slice.png",
+
+    [OLD_BLOCKS_PATH + "fire_layer_0.png"]: NEW_BLOCKS_PATH + "fire_0.png",
+    [OLD_BLOCKS_PATH + "fire_layer_1.png"]: NEW_BLOCKS_PATH + "fire_1.png",
+    [OLD_BLOCKS_PATH + "fire_layer_0.png.mcmeta"]: NEW_BLOCKS_PATH + "fire_0.png.mcmeta",
+    [OLD_BLOCKS_PATH + "fire_layer_1.png.mcmeta"]: NEW_BLOCKS_PATH + "fire_1.png.mcmeta",
+    [OLD_BLOCKS_PATH + "grass_side.png"]: NEW_BLOCKS_PATH + "grass_block_side.png",
+    [OLD_BLOCKS_PATH + "grass_top.png"]: NEW_BLOCKS_PATH + "grass_block_top.png",
+    [OLD_BLOCKS_PATH + "grass_side_overlay.png"]: NEW_BLOCKS_PATH + "grass_block_side_overlay.png",
+    [OLD_BLOCKS_PATH + "grass_side_snowed.png"]: NEW_BLOCKS_PATH + "grass_block_snowed.png",
+    [OLD_BLOCKS_PATH + "log_oak.png"]: NEW_BLOCKS_PATH + "oak_log.png",
+    [OLD_BLOCKS_PATH + "log_birch.png"]: NEW_BLOCKS_PATH + "birch_log.png",
+    [OLD_BLOCKS_PATH + "log_jungle.png"]: NEW_BLOCKS_PATH + "jungle_log.png",
+    [OLD_BLOCKS_PATH + "log_spruce.png"]: NEW_BLOCKS_PATH + "spruce_log.png",
+    [OLD_BLOCKS_PATH + "planks_oak.png"]: NEW_BLOCKS_PATH + "oak_planks.png",
+    [OLD_BLOCKS_PATH + "planks_birch.png"]: NEW_BLOCKS_PATH + "birch_planks.png",
+    [OLD_BLOCKS_PATH + "planks_jungle.png"]: NEW_BLOCKS_PATH + "jungle_planks.png",
+    [OLD_BLOCKS_PATH + "planks_spruce.png"]: NEW_BLOCKS_PATH + "spruce_planks.png",
+    [OLD_BLOCKS_PATH + "nether_brick.png"]: NEW_BLOCKS_PATH + "nether_bricks.png",
+    [OLD_BLOCKS_PATH + "sandstone_normal.png"]: NEW_BLOCKS_PATH + "sandstone.png",
+    [OLD_BLOCKS_PATH + "stone_slab_top.png"]: NEW_BLOCKS_PATH + "smooth_stone.png",
+    [OLD_BLOCKS_PATH + "stone_slab_side.png"]: NEW_BLOCKS_PATH + "smooth_stone_slab.png",
+    [OLD_BLOCKS_PATH + "stonebrick.png"]: NEW_BLOCKS_PATH + "stone_bricks.png",
+
+    [OLD_BLOCKS_PATH + "wool_colored_black.png"]: NEW_BLOCKS_PATH + "black_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_blue.png"]: NEW_BLOCKS_PATH + "blue_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_brown.png"]: NEW_BLOCKS_PATH + "brown_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_cyan.png"]: NEW_BLOCKS_PATH + "cyan_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_gray.png"]: NEW_BLOCKS_PATH + "gray_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_green.png"]: NEW_BLOCKS_PATH + "green_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_light_blue.png"]: NEW_BLOCKS_PATH + "light_blue_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_lime.png"]: NEW_BLOCKS_PATH + "lime_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_magenta.png"]: NEW_BLOCKS_PATH + "magenta_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_orange.png"]: NEW_BLOCKS_PATH + "orange_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_pink.png"]: NEW_BLOCKS_PATH + "pink_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_purple.png"]: NEW_BLOCKS_PATH + "purple_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_red.png"]: NEW_BLOCKS_PATH + "red_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_light_gray.png"]: NEW_BLOCKS_PATH + "light_gray_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_white.png"]: NEW_BLOCKS_PATH + "white_wool.png",
+    [OLD_BLOCKS_PATH + "wool_colored_yellow.png"]: NEW_BLOCKS_PATH + "yellow_wool.png",
+
+    [OLD_BLOCKS_PATH + "hardened_clay.png"]: NEW_BLOCKS_PATH + "terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_black.png"]: NEW_BLOCKS_PATH + "black_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_blue.png"]: NEW_BLOCKS_PATH + "blue_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_brown.png"]: NEW_BLOCKS_PATH + "brown_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_cyan.png"]: NEW_BLOCKS_PATH + "cyan_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_gray.png"]: NEW_BLOCKS_PATH + "gray_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_green.png"]: NEW_BLOCKS_PATH + "green_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_light_blue.png"]: NEW_BLOCKS_PATH + "light_blue_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_lime.png"]: NEW_BLOCKS_PATH + "lime_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_magenta.png"]: NEW_BLOCKS_PATH + "magenta_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_orange.png"]: NEW_BLOCKS_PATH + "orange_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_pink.png"]: NEW_BLOCKS_PATH + "pink_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_purple.png"]: NEW_BLOCKS_PATH + "purple_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_red.png"]: NEW_BLOCKS_PATH + "red_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_light_gray.png"]: NEW_BLOCKS_PATH + "light_gray_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_white.png"]: NEW_BLOCKS_PATH + "white_terracotta.png",
+    [OLD_BLOCKS_PATH + "hardened_clay_stained_yellow.png"]: NEW_BLOCKS_PATH + "yellow_terracotta.png",
+})
 
 self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
@@ -9,25 +91,71 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
             // TODO -> progress bar
             // TODO -> progress console
 
-            const newFilename = oldFilename
-                .replace("/blocks/", "/block/")
-                .replace("/items/", "/item/")
-            const content = file.dir
-                ? null
-                : newFilename === "pack.mcmeta"
-                    ? (await file.async("string"))
-                        // .replace() TODO
-                        .replace('"pack_format": 1', '"pack_format": 46')
-                    : await file.async("uint8array")
+            switch (oldFilename) {
+                case "assets/minecraft/textures/gui/icons.png": {
+                    break
+                }
+                case "assets/minecraft/textures/particle/particles.png": {
+                    file.async("blob")
+                        .then((blob) => {
+                            const spriteSheet = await new Promise<HTMLImageElement | null>((resolve) => {
+                                const img = new Image();
+                                img.onerror = () => resolve(null);
+                                img.onload = () => resolve(img);
+                                img.src = URL.createObjectURL(blob);
+                            });
+                            if (spriteSheet) {
+                                const spriteSize = 128;
+                                const sprites = [];
+                                const canvas = document.createElement("canvas");
+                                canvas.width = spriteSize;
+                                canvas.height = spriteSize;
 
-            // TODO -> option for maintaining backwards compatibility
-            updatedPack.remove(oldFilename)
+                                const ctx = canvas.getContext("2d");
 
-            if (content === null) // TODO PRETTY SURE THIS IS SAFELY MUTATING UPDATED PACK BECAUSE JAVASCRIPT SINGLE THREADED EVENT LOOP!
-                updatedPack.folder(newFilename);
-            else
-                updatedPack.file(newFilename, content);
+                                for (let y = 0; y < spriteSheet.height; y += spriteSize)
+                                    for (let x = 0; x < spriteSheet.width; x += spriteSize) {
+                                        ctx.clearRect(0, 0, spriteSize, spriteSize);
+                                        ctx.drawImage(spriteSheet, x, y, spriteSize, spriteSize, 0, 0, spriteSize, spriteSize);
+
+                                        const blob = await new Promise(res => canvas.toBlob(res, "image/png"));
+                                        sprites.push({ x, y, blob });
+                                    }
+                            }
+                    })
+                    break
+                }
+                default: {
+                    const newFilename = (replacements[oldFilename] || oldFilename)
+                        .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
+                        .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH)
+
+                    if (oldFilename !== newFilename) {
+                        const content = file.dir
+                            ? null
+                            : newFilename === "pack.mcmeta"
+                                ? (await file.async("string"))
+                                    // .replace() TODO
+                                    .replace('"pack_format": 1', '"pack_format": 43')
+                                : await file.async("uint8array")
+
+                        if (newFilename === NEW_POTION_PATH && content !== null) // TODO -> this is specific to 1.7
+                            updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
+
+                        // TODO -> option for maintaining backwards compatibility
+                        updatedPack.remove(oldFilename)
+
+                        if (content === null) // TODO PRETTY SURE THIS IS SAFELY MUTATING UPDATED PACK BECAUSE JAVASCRIPT SINGLE THREADED EVENT LOOP!
+                            updatedPack.folder(newFilename);
+                        else
+                            updatedPack.file(newFilename, content);
+                    }
+                }
+            }
         }))
-    self.postMessage({ updatedPack: await updatedPack.generateAsync({ type: "blob" }), updatedPackName: data.packName } as PackUpdateWorkerResponse);
+    self.postMessage({
+        updatedPack: await updatedPack.generateAsync({type: "blob"}),
+        updatedPackName: data.packName
+    } as PackUpdateWorkerResponse);
 }
 export {}
