@@ -333,7 +333,20 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 ? (await file.async("string"))
                                     // .replace() TODO
                                     .replace('"pack_format": 1', '"pack_format": 43')
-                                : await file.async("uint8array")
+                                : newFilename === NEW_GLINT_PATH
+                                    ? await (async () => {
+                                        const image = await createImageBitmap(await file.async("blob"));
+                                        const canvas = new OffscreenCanvas(image.width, image.height);
+                                        const context = canvas.getContext("2d");
+                                        if (context) {
+                                            context.drawImage(image, 0, 0);
+                                            context.globalCompositeOperation = "multiply";
+                                            context.fillStyle = "rgba(167, 85, 255, 1.00)";
+                                            context.fillRect(0, 0, canvas.width, canvas.height);
+                                        }
+                                        return await canvas.convertToBlob({ type: "image/png" })
+                                    })()
+                                    : await file.async("uint8array")
 
                         if (content !== null) {
                             switch (newFilename) {
