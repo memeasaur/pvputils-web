@@ -3,19 +3,20 @@
 >every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
 
 >fix blur causing fucky
-
->TODO -> mob_effects
+>make counter for total packs updated -> one for each download
 >TODO -> option for removing blinking hearts
 >option to customize the branding being added to the pack
 >branding specifies what version of the pack updater you used + adds a required tattoo showing what version was used
 >link faithful 32x and faithful 64x etc.
 >use grass_block or something to associate a faithful base layer if appropriate, with toggle
+>(?) fix main inventory programmatically somehow
+>generate netherite textures
 
+>TODO -> mob_effects
 >TODO -> icons.png connection bars
 >TODO -> remaining widgets.png stuff
 >generate offhand sprites (?)
 >container/stats_icons (?)
 >(?) generate lingering potion (lol)
->(?) generate netherite textures, or show the user the diamond sword and have them edit it to be netherite
+>(?) show the user the diamond sword and have them edit it to be netherite
 >(?) provide template netherite textures
->(?) fix main inventory programmatically somehow
