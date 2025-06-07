@@ -1,7 +1,6 @@
 'use client';
 import React, {useRef, useState} from "react";
-import { PackUpdateWorkerRequest, PackUpdateWorkerResponse } from './types';
-import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
+import {PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
 
 export default function PackUpdater() {
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
@@ -9,53 +8,87 @@ export default function PackUpdater() {
     const workersCounter = useRef(0)
     const tasks = useRef<File[]>([])
     return (
-        <div className={"flex gap-4 w-1/2"}>
-            <div className={"flex flex-col gap-4 w-1/2"}>
-                <Popover>
-                    <PopoverTrigger className={"nextButton"}>start</PopoverTrigger>
-                    <PopoverContent className={"flex flex-col"}>
-                        <label className={"nextButton self-center"}>
-                            upload {/*TODO icon*/}
-                            <input hidden multiple type="file" onChange={e => {
-                                const packs = e.target.files;
-                                if (!packs)
-                                    alert("invalid upload")
-                                // TODO -> refresh (?)
-                                else {
-                                    for (const pack of packs) {
-                                        if (workersCounter.current < 4) { // TODO -> different handling per device (?)
-                                            const packName = pack.name
-                                            {
-                                                const worker = new Worker(new URL('./packupdateworker.ts', import.meta.url))
-                                                worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
-                                                    const data = e.data
-                                                    setUpdatedPacks(currentUpdatedPacks => [data, ...currentUpdatedPacks])
-                                                    setPackUpdaterMessages(current => [data.updatedPackName + " finished", ...current])
-                                                    const next = tasks.current.pop()
-                                                    if (next) {
-                                                        worker.postMessage(next)
-                                                        setPackUpdaterMessages(current => [next.name + " started", ...current])
-                                                    }
-                                                    else {
-                                                        worker.terminate()
-                                                        workersCounter.current = workersCounter.current - 1
-                                                    }
-                                                }
-                                                worker.postMessage({pack, packName} as PackUpdateWorkerRequest)
+        <div className={"flex gap-4"}>
+            <form className={"flex flex-col gap-4"}>
+                <label className={"flex gap-2"}>
+                    <input defaultChecked type={"checkbox"}></input>
+                    remove blinking heart sprites
+                </label>
+                <label className={"flex gap-2"}>
+                    <input type={"checkbox"}></input>
+                    maintain 1.7 backwards-compatibility (larger file size)
+                </label>
+
+                <label className={"flex gap-2"}>
+                    <input type={"checkbox"} onChange={e => {
+                        const div = document.getElementById("hiddenBasePackUploads");
+                        if (div)
+                            div.hidden = !e.target.checked;
+                    }}></input>
+                    use modern base pack <span>(<a href={"https://faithfulpack.net/"} target={"_blank"} style={{ color: "blue", textDecoration: 'underline' }}>faithful</a> recommended)</span>
+                </label>
+                <div id={"hiddenBasePackUploads"} hidden={true} className={"flex flex-col items-end w-full"}>
+                    <label className={"flex gap-2"}>
+                        16x16
+                        <input type={"file"}></input>
+                    </label>
+                    <label className={"flex gap-2"}>
+                        32x32
+                        <input type={"file"}></input>
+                    </label>
+                    <label className={"flex gap-2"}>
+                        64x64+
+                        <input type={"file"}></input>
+                    </label>
+                </div>
+
+                <label className={"flex gap-2"}>
+                    <input defaultChecked type={"checkbox"}></input>generate netherite textures from recolored diamond
+                </label>
+                {/*<label className={"flex gap-2"}>*/}
+                {/*    <input type={"text"}/>*/}
+                {/*</label>TODO -> custom netherite colors option*/}
+
+                <label className={"nextButton self-center"}>
+                    upload (1.7.10) {/*TODO icon*/}
+                    <input hidden multiple type="file" onChange={e => {
+                        const packs = e.target.files;
+                        if (!packs)
+                            alert("invalid upload")
+                        // TODO -> refresh (?)
+                        else {
+                            for (const pack of packs) {
+                                if (workersCounter.current < 4) { // TODO -> different handling per device (?)
+                                    const packName = pack.name
+                                    {
+                                        const worker = new Worker(new URL('./packupdateworker.ts', import.meta.url))
+                                        worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
+                                            const data = e.data
+                                            setUpdatedPacks(currentUpdatedPacks => [data, ...currentUpdatedPacks])
+                                            setPackUpdaterMessages(current => [data.updatedPackName + " finished", ...current])
+                                            const next = tasks.current.pop()
+                                            if (next) {
+                                                worker.postMessage(next)
+                                                setPackUpdaterMessages(current => [next.name + " started", ...current])
+                                            } else {
+                                                worker.terminate()
+                                                workersCounter.current = workersCounter.current - 1
                                             }
-                                            workersCounter.current = workersCounter.current + 1
-                                            setPackUpdaterMessages(current => [packName + " started", ...current])
                                         }
-                                        else {
-                                            tasks.current.push(pack)
-                                            setPackUpdaterMessages(current => [pack.name + " queued", ...current])
-                                        }
+                                        worker.postMessage({pack, packName} as PackUpdateWorkerRequest)
                                     }
+                                    workersCounter.current = workersCounter.current + 1
+                                    setPackUpdaterMessages(current => [packName + " started", ...current])
+                                } else {
+                                    tasks.current.push(pack)
+                                    setPackUpdaterMessages(current => [pack.name + " queued", ...current])
                                 }
-                            }}/>
-                        </label>
-                    </PopoverContent>
-                </Popover>
+                            }
+                        }
+                    }}/>
+                </label>
+            </form>
+            <div className={"flex flex-col gap-4 grow"}>
                 <ul className={"font-[family-name:var(--font-geist-mono)]"}> {/*TODO -> this scrolls and it's height is determined by updatedPacks ol height*/}
                     {packUpdaterMessages.map((message) => (
                         <li key={message}> {/*TODO -> this shouldn't remove any repeat messages*/}
@@ -64,7 +97,7 @@ export default function PackUpdater() {
                     ))}
                 </ul>
             </div>
-            <div className={"flex flex-col gap-4 w-1/2"}>
+            <div className={"flex flex-col gap-4 grow"}>
                 {updatedPacks.length > 0 && (
                     <button className={"nextButton"}>
                         download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}
@@ -73,12 +106,14 @@ export default function PackUpdater() {
                 <ol className={"font-[family-name:var(--font-geist-mono)]"} reversed>
                     {updatedPacks.map((pack) => (
                         <li key={pack.updatedPackName}>
-                            <a href={URL.createObjectURL(pack.updatedPack)} download={pack.updatedPackName} style={{ color: 'blue', textDecoration: 'underline' }}>
+                            <a href={URL.createObjectURL(pack.updatedPack)} download={pack.updatedPackName}
+                               style={{color: 'blue', textDecoration: 'underline'}}>
                                 {pack.updatedPackName}
                             </a>
                         </li>
                     ))}
-                </ol> {/*TODO -> just make this a link to the bucket*/}
+                </ol>
+                {/*TODO -> just make this a link to the bucket*/}
             </div>
         </div>
     )
