@@ -341,7 +341,7 @@ async function handleSpriteTarget(width: number, resolutionFactor: number, heigh
     const canvas = new OffscreenCanvas(width * resolutionFactor, height * resolutionFactor)
     const context = canvas.getContext("2d");
     if (context) {
-        context.drawImage(spriteSheet, x, y, canvas.width, canvas.height);
+        context.drawImage(spriteSheet, x * resolutionFactor, y * resolutionFactor, canvas.width, canvas.height);
         const hotbar = await canvas.convertToBlob({ type: "image/png" })
         if (hotbar)
             updatedPack.file(filename, hotbar)
