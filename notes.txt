@@ -2,16 +2,26 @@
 >make accordion y not change when clicking
 >every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
 
->fix blur causing fucky
+>fix blur causing fucky (?)
 >make counter for total packs updated -> one for each download
 >TODO -> option for removing blinking hearts
 >option to customize the branding being added to the pack
 >branding specifies what version of the pack updater you used + adds a required tattoo showing what version was used
->link faithful 32x and faithful 64x etc.
->use grass_block or something to associate a faithful base layer if appropriate, with toggle
->(?) fix main inventory programmatically somehow
->generate netherite textures
 
+>use grass_block or something to suggest base layer
+>allow importing template pack, with links to faithful (etc.?)
+
+>generate netherite textures
+    >pick netherite base color
+    >pick multiply or overlay
+
+>(?) fix main inventory programmatically somehow
+    >sprite starts at 87,25, 74 wide 36 tall
+    >template square is 87,25, 18 wide 18 tall
+    >destination sprite starts at 97, 17
+    >destination square starts at 76, 61
+
+>TODO -> worker console messaging
 >TODO -> mob_effects
 >TODO -> icons.png connection bars
 >TODO -> remaining widgets.png stuff

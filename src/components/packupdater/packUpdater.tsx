@@ -4,51 +4,76 @@ import { PackUpdateWorkerRequest, PackUpdateWorkerResponse } from './types';
 
 export default function PackUpdater() {
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
+    const [packUpdaterMessages, setPackUpdaterMessages] = useState<string[]>([]);
     const workersCounter = useRef(0)
     const tasks = useRef<File[]>([])
     return (
-        <>
-            <input multiple type="file" className={"nextButton"} onChange={e => {
-                const packs = e.target.files;
-                if (!packs)
-                    alert("invalid upload")
-                // TODO -> refresh (?)
-                else {
-                    for (const pack of packs) {
-                        if (workersCounter.current < 4) { // TODO -> different handling per device (?)
-                            {
-                                const worker = new Worker(new URL('./packupdateworker.ts', import.meta.url))
-                                worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
-                                    setUpdatedPacks(currentUpdatedPacks => [...currentUpdatedPacks, e.data])
-                                    const next = tasks.current.pop()
-                                    if (next)
-                                        worker.postMessage(next)
-                                    else {
-                                        worker.terminate()
-                                        workersCounter.current = workersCounter.current - 1
+        <div className={"flex gap-4 w-1/2"}>
+            <div className={"flex flex-col gap-4 w-1/2"}>
+                <label className={"nextButton"}>
+                    upload (1.7.10) {/*TODO icon*/}
+                    <input hidden multiple type="file" onChange={e => {
+                        const packs = e.target.files;
+                        if (!packs)
+                            alert("invalid upload")
+                        // TODO -> refresh (?)
+                        else {
+                            for (const pack of packs) {
+                                if (workersCounter.current < 4) { // TODO -> different handling per device (?)
+                                    const packName = pack.name
+                                    {
+                                        const worker = new Worker(new URL('./packupdateworker.ts', import.meta.url))
+                                        worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
+                                            const data = e.data
+                                            setUpdatedPacks(currentUpdatedPacks => [data, ...currentUpdatedPacks])
+                                            setPackUpdaterMessages(current => [data.updatedPackName + " finished", ...current])
+                                            const next = tasks.current.pop()
+                                            if (next) {
+                                                worker.postMessage(next)
+                                                setPackUpdaterMessages(current => [next.name + " started", ...current])
+                                            }
+                                            else {
+                                                worker.terminate()
+                                                workersCounter.current = workersCounter.current - 1
+                                            }
+                                        }
+                                        worker.postMessage({pack, packName} as PackUpdateWorkerRequest)
                                     }
+                                    workersCounter.current = workersCounter.current + 1
+                                    setPackUpdaterMessages(current => [packName + " started", ...current])
                                 }
-                                worker.postMessage({pack, packName: pack.name} as PackUpdateWorkerRequest)
+                                else {
+                                    tasks.current.push(pack)
+                                    setPackUpdaterMessages(current => [pack.name + " queued", ...current])
+                                }
                             }
-                            workersCounter.current = workersCounter.current + 1
                         }
-                        else
-                            tasks.current.push(pack)
-                    }
-                }
-            }}/>
-            <ol className={"font-[family-name:var(--font-geist-mono)]"}>
-                foo
-            </ol>
-            <ol className={"font-[family-name:var(--font-geist-mono)]"}>
-                {updatedPacks.map((pack) => (
-                    <li key={pack.updatedPackName}>
-                        <a href={URL.createObjectURL(pack.updatedPack)} download={pack.updatedPackName}>
-                            {pack.updatedPackName}
-                        </a>
-                    </li>
-                ))}
-            </ol> {/*TODO -> just make this a link to the bucket*/}
-        </>
+                    }}/>
+                </label>
+                <ul className={"font-[family-name:var(--font-geist-mono)]"}> {/*TODO -> this scrolls and it's height is determined by updatedPacks ol height*/}
+                    {packUpdaterMessages.map((message) => (
+                        <li key={message}> {/*TODO -> this shouldn't remove any repeat messages*/}
+                            {message}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+            <div className={"flex flex-col gap-4 w-1/2"}>
+                {updatedPacks.length > 0 && (
+                    <button className={"nextButton"}>
+                        download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}
+                    </button>
+                )}
+                <ol className={"font-[family-name:var(--font-geist-mono)]"} reversed>
+                    {updatedPacks.map((pack) => (
+                        <li key={pack.updatedPackName}>
+                            <a href={URL.createObjectURL(pack.updatedPack)} download={pack.updatedPackName} style={{ color: 'blue', textDecoration: 'underline' }}>
+                                {pack.updatedPackName}
+                            </a>
+                        </li>
+                    ))}
+                </ol> {/*TODO -> just make this a link to the bucket*/}
+            </div>
+        </div>
     )
 }
