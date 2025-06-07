@@ -95,215 +95,211 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
             switch (oldFilename) {
                 case "assets/minecraft/textures/gui/icons.png": {
-                    const spriteSheet = await getSpriteSheetPromise(file)
-                    if (spriteSheet) {
-                        const resolutionFactor = spriteSheet.height / 512
-                        await Promise.all([
-                            await handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
-                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
-                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 69, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_progress.png"),
-                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_cooldown.png"),
-                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_background.png"),
-                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 79, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_progress.png"),
-                            // TODO -> recolor the pink progress bar and make the other colors
-                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
-                            await handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png")
-                        ])
-                        {
-                            const {context, canvas} = getSpriteCanvasContext(162 * resolutionFactor, 54 * resolutionFactor)
-                            if (context) {
-                                const futureSprites = getSpriteTargetBlobPromises(spriteSheet, 9 * resolutionFactor, context, canvas)
-                                function handleHeart(y: number, x: number, newName: string) {
-                                    return handleSpriteIteration(futureSprites, y, x, updatedPack, "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png")
-                                }
-                                function handleHud(y: number, x: number, newName: string) {
-                                    return handleSpriteIteration(futureSprites, y, x, updatedPack, NEW_HUD_SPRITES_PATH + newName + ".png")
-                                }
-                                await handleHeart(0, 0, "container")
-                                await handleHeart(0, 1, "container_blinking")
-                                // await handleHeart(0, 2, "container")
-                                // await handleHeart(0, 3, "container") TODO (?) unused?
-                                await handleHeart(0, 4, "full")
-                                await handleHeart(0, 5, "half")
-                                await handleHeart(0, 6, "full_blinking")
-                                await handleHeart(0, 7, "half_blinking")
-                                await handleHeart(0, 8, "poisoned_full")
-                                await handleHeart(0, 9, "poisoned_half")
-                                await handleHeart(0, 10, "poisoned_full_blinking")
-                                await handleHeart(0, 11, "poisoned_half_blinking")
-                                await handleHeart(0, 12, "withered_full")
-                                await handleHeart(0, 13, "withered_half")
-                                await handleHeart(0, 14, "withered_full_blinking")
-                                await handleHeart(0, 15, "withered_half_blinking") // TODO
-                                await handleHeart(0, 16, "absorbing_full")
-                                await handleHeart(0, 17, "absorbing_half")
-                                // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
-
-                                await handleHud(1, 0, "armor_empty")
-                                await handleHud(1, 1, "armor_half")
-                                await handleHud(1, 2, "armor_full")
-                                // await handleHeart(1, 3, "absorbing_full") // TODO -> not sure which of these is actually used in 1.7, doesn't really matter I guess
-                                await handleHeart(1, 4, "vehicle_container")
-                                // await handleHeart(1, 5, "absorbing_full") TODO -> vehicle container blinking just isn't in and this game is an inconsistent piece of shit?
-                                // await handleHeart(1, 6, "absorbing_full")
-                                // await handleHeart(1, 7, "absorbing_full")
-                                await handleHeart(1, 8, "vehicle_full")
-                                await handleHeart(1, 9, "vehicle_half")
-                                // await handleHeart(1, 10, "absorbing_full")
-                                // await handleHeart(1, 11, "absorbing_full") TODO seems so
-
-                                await handleHud(2, 0, "air")
-                                await handleHud(2, 1, "air_bursting")
-
-                                await handleHud(3, 0, "food_empty")
-                                // await handleHud(3, 1, "absorbing_full")
-                                // await handleHud(3, 2, "absorbing_full")
-                                // await handleHud(3, 3, "absorbing_full")
-                                await handleHud(3, 4, "food_full")
-                                await handleHud(3, 5, "food_half")
-                                // await handleHud(3, 6, "absorbing_full")
-                                // await handleHud(3, 7, "absorbing_full")
-                                await handleHud(3, 8, "food_full_hunger")
-                                await handleHud(3, 9, "food_half_hunger")
-                                // await handleHud(3, 10, "absorbing_full")
-                                // await handleHud(3, 11, "absorbing_full")
-                                // await handleHud(3, 12, "absorbing_full")
-
-                                // await handleHud(4, 0, "food_empty_hunger")
-
-                                await handleHeart(5, 0, "container_hardcore")
-                                await handleHeart(5, 1, "container_hardcore_blinking")
-                                // await handleHeart(5, 2, "absorbing_full")
-                                // await handleHeart(5, 3, "absorbing_full")
-                                await handleHeart(5, 4, "hardcore_full")
-                                await handleHeart(5, 5, "hardcore_half")
-                                await handleHeart(5, 6, "hardcore_full_blinking") // TODO
-                                await handleHeart(5, 7, "hardcore_half_blinking")
-                                await handleHeart(5, 8, "poisoned_hardcore_full")
-                                await handleHeart(5, 9, "poisoned_hardcore_half")
-                                await handleHeart(5, 10, "poisoned_hardcore_full_blinking") // TODO
-                                await handleHeart(5, 11, "poisoned_hardcore_half_blinking")
-                                await handleHeart(5, 12, "withered_hardcore_full")
-                                await handleHeart(5, 13, "withered_hardcore_half")
-                                await handleHeart(5, 14, "withered_hardcore_full_blinking") // TODO
-                                await handleHeart(5, 15, "withered_hardcore_half_blinking")
-                                await handleHeart(5, 16, "absorbing_hardcore_full")
-                                await handleHeart(5, 17, "absorbing_hardcore_half")
-                                // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
+                    const spriteSheet = await createImageBitmap(await file.async("blob"))
+                    const resolutionFactor = spriteSheet.height / 512
+                    await Promise.all([
+                        handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
+                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
+                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 69, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_progress.png"),
+                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_cooldown.png"),
+                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_background.png"),
+                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 79, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_progress.png"),
+                        // TODO -> recolor the pink progress bar and make the other colors
+                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
+                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png")
+                    ])
+                    {
+                        const canvas = new OffscreenCanvas(162 * resolutionFactor, 54 * resolutionFactor)
+                        const context = canvas.getContext("2d");
+                        if (context) {
+                            const futureSprites = getSpriteTargetBlobPromises(spriteSheet, 9 * resolutionFactor, context, canvas)
+                            function handleHeart(y: number, x: number, newName: string) {
+                                return handleSpriteIteration(futureSprites, y, x, updatedPack, "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png")
                             }
+                            function handleHud(y: number, x: number, newName: string) {
+                                return handleSpriteIteration(futureSprites, y, x, updatedPack, NEW_HUD_SPRITES_PATH + newName + ".png")
+                            }
+                            await handleHeart(0, 0, "container")
+                            await handleHeart(0, 1, "container_blinking")
+                            // await handleHeart(0, 2, "container")
+                            // await handleHeart(0, 3, "container") TODO (?) unused?
+                            await handleHeart(0, 4, "full")
+                            await handleHeart(0, 5, "half")
+                            await handleHeart(0, 6, "full_blinking")
+                            await handleHeart(0, 7, "half_blinking")
+                            await handleHeart(0, 8, "poisoned_full")
+                            await handleHeart(0, 9, "poisoned_half")
+                            await handleHeart(0, 10, "poisoned_full_blinking")
+                            await handleHeart(0, 11, "poisoned_half_blinking")
+                            await handleHeart(0, 12, "withered_full")
+                            await handleHeart(0, 13, "withered_half")
+                            await handleHeart(0, 14, "withered_full_blinking")
+                            await handleHeart(0, 15, "withered_half_blinking") // TODO
+                            await handleHeart(0, 16, "absorbing_full")
+                            await handleHeart(0, 17, "absorbing_half")
+                            // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
+
+                            await handleHud(1, 0, "armor_empty")
+                            await handleHud(1, 1, "armor_half")
+                            await handleHud(1, 2, "armor_full")
+                            // await handleHeart(1, 3, "absorbing_full") // TODO -> not sure which of these is actually used in 1.7, doesn't really matter I guess
+                            await handleHeart(1, 4, "vehicle_container")
+                            // await handleHeart(1, 5, "absorbing_full") TODO -> vehicle container blinking just isn't in and this game is an inconsistent piece of shit?
+                            // await handleHeart(1, 6, "absorbing_full")
+                            // await handleHeart(1, 7, "absorbing_full")
+                            await handleHeart(1, 8, "vehicle_full")
+                            await handleHeart(1, 9, "vehicle_half")
+                            // await handleHeart(1, 10, "absorbing_full")
+                            // await handleHeart(1, 11, "absorbing_full") TODO seems so
+
+                            await handleHud(2, 0, "air")
+                            await handleHud(2, 1, "air_bursting")
+
+                            await handleHud(3, 0, "food_empty")
+                            // await handleHud(3, 1, "absorbing_full")
+                            // await handleHud(3, 2, "absorbing_full")
+                            // await handleHud(3, 3, "absorbing_full")
+                            await handleHud(3, 4, "food_full")
+                            await handleHud(3, 5, "food_half")
+                            // await handleHud(3, 6, "absorbing_full")
+                            // await handleHud(3, 7, "absorbing_full")
+                            await handleHud(3, 8, "food_full_hunger")
+                            await handleHud(3, 9, "food_half_hunger")
+                            // await handleHud(3, 10, "absorbing_full")
+                            // await handleHud(3, 11, "absorbing_full")
+                            // await handleHud(3, 12, "absorbing_full")
+
+                            // await handleHud(4, 0, "food_empty_hunger")
+
+                            await handleHeart(5, 0, "container_hardcore")
+                            await handleHeart(5, 1, "container_hardcore_blinking")
+                            // await handleHeart(5, 2, "absorbing_full")
+                            // await handleHeart(5, 3, "absorbing_full")
+                            await handleHeart(5, 4, "hardcore_full")
+                            await handleHeart(5, 5, "hardcore_half")
+                            await handleHeart(5, 6, "hardcore_full_blinking") // TODO
+                            await handleHeart(5, 7, "hardcore_half_blinking")
+                            await handleHeart(5, 8, "poisoned_hardcore_full")
+                            await handleHeart(5, 9, "poisoned_hardcore_half")
+                            await handleHeart(5, 10, "poisoned_hardcore_full_blinking") // TODO
+                            await handleHeart(5, 11, "poisoned_hardcore_half_blinking")
+                            await handleHeart(5, 12, "withered_hardcore_full")
+                            await handleHeart(5, 13, "withered_hardcore_half")
+                            await handleHeart(5, 14, "withered_hardcore_full_blinking") // TODO
+                            await handleHeart(5, 15, "withered_hardcore_half_blinking")
+                            await handleHeart(5, 16, "absorbing_hardcore_full")
+                            await handleHeart(5, 17, "absorbing_hardcore_half")
+                            // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
                         }
                     }
                     break
                 }
                 case "assets/minecraft/textures/gui/widgets.png": {
-                    const spriteSheet = await getSpriteSheetPromise(file)
-                    if (spriteSheet) {
-                        const resolutionFactor = spriteSheet.height / 512
-                        await Promise.all([
-                            handleSpriteTarget(182, resolutionFactor, 22, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar.png"),
-                            handleSpriteTarget(22, resolutionFactor, 22, spriteSheet, 0, 22, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar_selection.png"),
-                            handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 46, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_disabled.png"),
-                            handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 66, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_highlighted.png"),
-                            handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 86, updatedPack, NEW_WIDGET_SPRITES_PATH + "button.png")
-                        ])
-                    }
+                    const spriteSheet = await createImageBitmap(await file.async("blob"))
+                    const resolutionFactor = spriteSheet.height / 512
+                    await Promise.all([
+                        handleSpriteTarget(182, resolutionFactor, 22, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar.png"),
+                        handleSpriteTarget(22, resolutionFactor, 22, spriteSheet, 0, 22, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar_selection.png"),
+                        handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 46, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_disabled.png"),
+                        handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 66, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_highlighted.png"),
+                        handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 86, updatedPack, NEW_WIDGET_SPRITES_PATH + "button.png")
+                    ])
                     break
                 }
                 case "assets/minecraft/textures/particle/particles.png": {
-                    const spriteSheet = await getSpriteSheetPromise(file);
-                    if (spriteSheet) {
-                        const spriteSize = spriteSheet.height / 16;
-                        const {context, canvas} = getSpriteCanvasContext(spriteSize, spriteSize)
-                        if (context) {
-                            const sprites = getSpriteTargetBlobPromises(spriteSheet, spriteSize, context, canvas)
-                            function handle(y: number, x: number, newName: string) {
-                                return handleSpriteIteration(sprites, y, x, updatedPack, "assets/minecraft/textures/particle/" + newName + ".png")
-                            }
-                            await Promise.all([
-                                handle(0, 0, "big_smoke_0"),
-                                handle(0, 1, "big_smoke_1"),
-                                handle(0, 2, "big_smoke_2"),
-                                handle(0, 3, "big_smoke_3"),
-                                handle(0, 4, "big_smoke_4"),
-                                handle(0, 5, "big_smoke_5"),
-                                handle(0, 6, "big_smoke_6"),
-                                handle(0, 7, "big_smoke_8"),
-                                handle(0, 8, "big_smoke_9"),
-                                handle(0, 9, "big_smoke_10"),
-                                handle(0, 10, "big_smoke_11"),
-                                handle(1, 0, "splash_0"),
-                                handle(1, 4, "splash_1"),
-                                handle(1, 5, "splash_2"),
-                                handle(1, 6, "splash_3"),
-                                handle(2, 0, "bubble"),
-
-                                async () => {
-                                    const fishingHook = await sprites[2][1]
-                                    if (fishingHook)
-                                        updatedPack.file("assets/minecraft/textures/entity/fishing_hook.png", fishingHook)
-                                },
-
-                                handle(3, 0, "flame"),
-                                handle(3, 1, "lava"),
-                                handle(4, 0, "note"),
-                                handle(4, 1, "critical_hit"),
-                                handle(4, 2, "enchanted_hit"),
-                                handle(5, 0, "heart"),
-                                handle(5, 1, "angry"),
-                                handle(5, 2, "glint"),
-                                // handleSpriteIteration(5, 3, ) TODO (?) remove, it's the villager particle which probably is just removed
-                                // handleSpriteIteration(6, 0, )
-                                // handleSpriteIteration(6, 1) // TODO -> blue soul speed lookin shit ? no clue
-                                handle(7, 0, "drip_hang"),
-                                handle(7, 1, "drip_fall"),
-                                handle(7, 2, "drip_land"),
-                                handle(8, 0, "effect_0"),
-                                handle(8, 1, "effect_1"),
-                                handle(8, 2, "effect_2"),
-                                handle(8, 3, "effect_3"),
-                                handle(8, 4, "effect_4"),
-                                handle(8, 5, "effect_5"),
-                                handle(8, 6, "effect_6"),
-                                handle(8, 7, "effect_7"),
-                                handle(9, 0, "spell_0"),
-                                handle(9, 1, "spell_1"),
-                                handle(9, 2, "spell_2"),
-                                handle(9, 3, "spell_3"),
-                                handle(9, 4, "spell_4"),
-                                handle(9, 5, "spell_5"),
-                                handle(9, 6, "spell_6"),
-                                handle(9, 7, "spell_7"),
-
-                                handle(14, 1, "sga_a"),
-                                handle(14, 2, "sga_b"),
-                                handle(14, 3, "sga_c"),
-                                handle(14, 4, "sga_d"),
-                                handle(14, 5, "sga_e"),
-                                handle(14, 6, "sga_f"),
-                                handle(14, 7, "sga_g"),
-                                handle(14, 8, "sga_h"),
-                                handle(14, 9, "sga_i"),
-                                handle(14, 10, "sga_j"),
-                                handle(14, 11, "sga_k"),
-                                handle(14, 12, "sga_l"),
-                                handle(14, 13, "sga_m"),
-                                handle(14, 14, "sga_n"),
-                                handle(14, 15, "sga_o"),
-                                handle(15, 0, "sga_p"),
-                                handle(15, 1, "sga_q"),
-                                handle(15, 2, "sga_r"),
-                                handle(15, 3, "sga_s"),
-                                handle(15, 4, "sga_t"),
-                                handle(15, 5, "sga_u"),
-                                handle(15, 6, "sga_v"),
-                                handle(15, 7, "sga_w"),
-                                handle(15, 8, "sga_x"),
-                                handle(15, 9, "sga_y"),
-                                handle(15, 10, "sga_z")
-                            ])
-
-                            updatedPack.remove(oldFilename) // TODO -> backwards compatiblity
+                    const spriteSheet = await createImageBitmap(await file.async("blob"));
+                    const spriteSize = spriteSheet.height / 16;
+                    const canvas = new OffscreenCanvas(spriteSize, spriteSize)
+                    const context = canvas.getContext("2d")
+                    if (context) {
+                        const sprites = getSpriteTargetBlobPromises(spriteSheet, spriteSize, context, canvas)
+                        function handle(y: number, x: number, newName: string) {
+                            return handleSpriteIteration(sprites, y, x, updatedPack, "assets/minecraft/textures/particle/" + newName + ".png")
                         }
+                        await Promise.all([
+                            handle(0, 0, "big_smoke_0"),
+                            handle(0, 1, "big_smoke_1"),
+                            handle(0, 2, "big_smoke_2"),
+                            handle(0, 3, "big_smoke_3"),
+                            handle(0, 4, "big_smoke_4"),
+                            handle(0, 5, "big_smoke_5"),
+                            handle(0, 6, "big_smoke_6"),
+                            handle(0, 7, "big_smoke_8"),
+                            handle(0, 8, "big_smoke_9"),
+                            handle(0, 9, "big_smoke_10"),
+                            handle(0, 10, "big_smoke_11"),
+                            handle(1, 0, "splash_0"),
+                            handle(1, 4, "splash_1"),
+                            handle(1, 5, "splash_2"),
+                            handle(1, 6, "splash_3"),
+                            handle(2, 0, "bubble"),
+
+                            async () => {
+                                const fishingHook = await sprites[2][1]
+                                if (fishingHook)
+                                    updatedPack.file("assets/minecraft/textures/entity/fishing_hook.png", fishingHook)
+                            },
+
+                            handle(3, 0, "flame"),
+                            handle(3, 1, "lava"),
+                            handle(4, 0, "note"),
+                            handle(4, 1, "critical_hit"),
+                            handle(4, 2, "enchanted_hit"),
+                            handle(5, 0, "heart"),
+                            handle(5, 1, "angry"),
+                            handle(5, 2, "glint"),
+                            // handleSpriteIteration(5, 3, ) TODO (?) remove, it's the villager particle which probably is just removed
+                            // handleSpriteIteration(6, 0, )
+                            // handleSpriteIteration(6, 1) // TODO -> blue soul speed lookin shit ? no clue
+                            handle(7, 0, "drip_hang"),
+                            handle(7, 1, "drip_fall"),
+                            handle(7, 2, "drip_land"),
+                            handle(8, 0, "effect_0"),
+                            handle(8, 1, "effect_1"),
+                            handle(8, 2, "effect_2"),
+                            handle(8, 3, "effect_3"),
+                            handle(8, 4, "effect_4"),
+                            handle(8, 5, "effect_5"),
+                            handle(8, 6, "effect_6"),
+                            handle(8, 7, "effect_7"),
+                            handle(9, 0, "spell_0"),
+                            handle(9, 1, "spell_1"),
+                            handle(9, 2, "spell_2"),
+                            handle(9, 3, "spell_3"),
+                            handle(9, 4, "spell_4"),
+                            handle(9, 5, "spell_5"),
+                            handle(9, 6, "spell_6"),
+                            handle(9, 7, "spell_7"),
+
+                            handle(14, 1, "sga_a"),
+                            handle(14, 2, "sga_b"),
+                            handle(14, 3, "sga_c"),
+                            handle(14, 4, "sga_d"),
+                            handle(14, 5, "sga_e"),
+                            handle(14, 6, "sga_f"),
+                            handle(14, 7, "sga_g"),
+                            handle(14, 8, "sga_h"),
+                            handle(14, 9, "sga_i"),
+                            handle(14, 10, "sga_j"),
+                            handle(14, 11, "sga_k"),
+                            handle(14, 12, "sga_l"),
+                            handle(14, 13, "sga_m"),
+                            handle(14, 14, "sga_n"),
+                            handle(14, 15, "sga_o"),
+                            handle(15, 0, "sga_p"),
+                            handle(15, 1, "sga_q"),
+                            handle(15, 2, "sga_r"),
+                            handle(15, 3, "sga_s"),
+                            handle(15, 4, "sga_t"),
+                            handle(15, 5, "sga_u"),
+                            handle(15, 6, "sga_v"),
+                            handle(15, 7, "sga_w"),
+                            handle(15, 8, "sga_x"),
+                            handle(15, 9, "sga_y"),
+                            handle(15, 10, "sga_z")
+                        ])
+
+                        updatedPack.remove(oldFilename) // TODO -> backwards compatiblity
                     }
                     break
                 }
@@ -341,38 +337,17 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     } as PackUpdateWorkerResponse);
 }
 
-function getSpriteSheetPromise(file: JSZip.JSZipObject) {
-    return new Promise<HTMLImageElement | null>(resolve => {
-        file.async("blob")
-            .catch(() => resolve(null))
-            .then((blob) => {
-                if (blob) {
-                    const img = new Image();
-                    img.onerror = () => resolve(null);
-                    img.onload = () => resolve(img);
-                    img.src = URL.createObjectURL(blob);
-
-                    img.onload = img.onerror = () => URL.revokeObjectURL(img.src);
-                }
-            })
-    });
-}
-function getSpriteCanvasContext(width: number, height: number) {
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    return {context: canvas.getContext("2d"), canvas};
-}
-async function handleSpriteTarget(width: number, resolutionFactor: number, height: number, spriteSheet: HTMLImageElement, x: number, y: number, updatedPack: JSZip, filename: string) {
-    const {context, canvas} = getSpriteCanvasContext(width * resolutionFactor, height * resolutionFactor)
+async function handleSpriteTarget(width: number, resolutionFactor: number, height: number, spriteSheet: ImageBitmap, x: number, y: number, updatedPack: JSZip, filename: string) {
+    const canvas = new OffscreenCanvas(width * resolutionFactor, height * resolutionFactor)
+    const context = canvas.getContext("2d");
     if (context) {
         context.drawImage(spriteSheet, x, y, canvas.width, canvas.height);
-        const hotbar = await new Promise<Blob | null>(res => canvas.toBlob(res, "image/png"));
+        const hotbar = await canvas.convertToBlob({ type: "image/png" })
         if (hotbar)
             updatedPack.file(filename, hotbar)
     }
 }
-function getSpriteTargetBlobPromises(spriteSheet: HTMLImageElement, spriteSize: number, context: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
+function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: number, context: OffscreenCanvasRenderingContext2D, canvas: OffscreenCanvas) {
     // TODO -> stream this (?)
     const sprites: (Promise<Blob | null>)[][] = [];
     for (let row = 0; row < spriteSheet.height / spriteSize; row++) {
@@ -381,7 +356,7 @@ function getSpriteTargetBlobPromises(spriteSheet: HTMLImageElement, spriteSize: 
             context.clearRect(0, 0, spriteSize, spriteSize);
             context.drawImage(spriteSheet, col * spriteSize, row * spriteSize, spriteSize, spriteSize);
 
-            sprites[row][col] = new Promise<Blob | null>(res => canvas.toBlob(res, "image/png"));
+            sprites[row][col] = canvas.convertToBlob({ type: "image/png" })
         }
     }
     return sprites
