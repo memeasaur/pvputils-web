@@ -36,13 +36,16 @@ export default function PackUpdater() {
                             <input type={"file"}></input>
                         </label>
                         <label className={"flex gap-2"}>
-                            if 32x32
+                            else if 32x32
                             <input type={"file"}></input>
                         </label>
                         <label className={"flex gap-2"}>
-                            if 64x64+
+                            else if 64x64+
                             <input type={"file"}></input>
                         </label>
+                        <i title={"based on grass_top.png"}>
+                            updater picks from these, if present, for each pack
+                        </i>
                     </div>
                 </div>
 
