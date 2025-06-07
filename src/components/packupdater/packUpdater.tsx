@@ -1,6 +1,7 @@
 'use client';
 import React, {useRef, useState} from "react";
 import { PackUpdateWorkerRequest, PackUpdateWorkerResponse } from './types';
+import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 
 export default function PackUpdater() {
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
@@ -10,46 +11,51 @@ export default function PackUpdater() {
     return (
         <div className={"flex gap-4 w-1/2"}>
             <div className={"flex flex-col gap-4 w-1/2"}>
-                <label className={"nextButton"}>
-                    upload (1.7.10) {/*TODO icon*/}
-                    <input hidden multiple type="file" onChange={e => {
-                        const packs = e.target.files;
-                        if (!packs)
-                            alert("invalid upload")
-                        // TODO -> refresh (?)
-                        else {
-                            for (const pack of packs) {
-                                if (workersCounter.current < 4) { // TODO -> different handling per device (?)
-                                    const packName = pack.name
-                                    {
-                                        const worker = new Worker(new URL('./packupdateworker.ts', import.meta.url))
-                                        worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
-                                            const data = e.data
-                                            setUpdatedPacks(currentUpdatedPacks => [data, ...currentUpdatedPacks])
-                                            setPackUpdaterMessages(current => [data.updatedPackName + " finished", ...current])
-                                            const next = tasks.current.pop()
-                                            if (next) {
-                                                worker.postMessage(next)
-                                                setPackUpdaterMessages(current => [next.name + " started", ...current])
-                                            }
-                                            else {
-                                                worker.terminate()
-                                                workersCounter.current = workersCounter.current - 1
-                                            }
-                                        }
-                                        worker.postMessage({pack, packName} as PackUpdateWorkerRequest)
-                                    }
-                                    workersCounter.current = workersCounter.current + 1
-                                    setPackUpdaterMessages(current => [packName + " started", ...current])
-                                }
+                <Popover>
+                    <PopoverTrigger className={"nextButton"}>start</PopoverTrigger>
+                    <PopoverContent>
+                        <label className={"nextButton"}>
+                            upload {/*TODO icon*/}
+                            <input hidden multiple type="file" onChange={e => {
+                                const packs = e.target.files;
+                                if (!packs)
+                                    alert("invalid upload")
+                                // TODO -> refresh (?)
                                 else {
-                                    tasks.current.push(pack)
-                                    setPackUpdaterMessages(current => [pack.name + " queued", ...current])
+                                    for (const pack of packs) {
+                                        if (workersCounter.current < 4) { // TODO -> different handling per device (?)
+                                            const packName = pack.name
+                                            {
+                                                const worker = new Worker(new URL('./packupdateworker.ts', import.meta.url))
+                                                worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
+                                                    const data = e.data
+                                                    setUpdatedPacks(currentUpdatedPacks => [data, ...currentUpdatedPacks])
+                                                    setPackUpdaterMessages(current => [data.updatedPackName + " finished", ...current])
+                                                    const next = tasks.current.pop()
+                                                    if (next) {
+                                                        worker.postMessage(next)
+                                                        setPackUpdaterMessages(current => [next.name + " started", ...current])
+                                                    }
+                                                    else {
+                                                        worker.terminate()
+                                                        workersCounter.current = workersCounter.current - 1
+                                                    }
+                                                }
+                                                worker.postMessage({pack, packName} as PackUpdateWorkerRequest)
+                                            }
+                                            workersCounter.current = workersCounter.current + 1
+                                            setPackUpdaterMessages(current => [packName + " started", ...current])
+                                        }
+                                        else {
+                                            tasks.current.push(pack)
+                                            setPackUpdaterMessages(current => [pack.name + " queued", ...current])
+                                        }
+                                    }
                                 }
-                            }
-                        }
-                    }}/>
-                </label>
+                            }}/>
+                        </label>
+                    </PopoverContent>
+                </Popover>
                 <ul className={"font-[family-name:var(--font-geist-mono)]"}> {/*TODO -> this scrolls and it's height is determined by updatedPacks ol height*/}
                     {packUpdaterMessages.map((message) => (
                         <li key={message}> {/*TODO -> this shouldn't remove any repeat messages*/}
