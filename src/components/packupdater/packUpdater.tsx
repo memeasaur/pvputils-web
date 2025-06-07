@@ -13,8 +13,8 @@ export default function PackUpdater() {
             <div className={"flex flex-col gap-4 w-1/2"}>
                 <Popover>
                     <PopoverTrigger className={"nextButton"}>start</PopoverTrigger>
-                    <PopoverContent>
-                        <label className={"nextButton"}>
+                    <PopoverContent className={"flex flex-col"}>
+                        <label className={"nextButton self-center"}>
                             upload {/*TODO icon*/}
                             <input hidden multiple type="file" onChange={e => {
                                 const packs = e.target.files;
