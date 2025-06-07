@@ -9,11 +9,8 @@
 >branding specifies what version of the pack updater you used + adds a required tattoo showing what version was used
 
 >use grass_block or something to suggest base layer
->allow importing template pack, with links to faithful (etc.?)
-
+>impl base pack
 >generate netherite textures
-    >pick netherite base color
-    >pick multiply or overlay
 
 >(?) fix main inventory programmatically somehow
     >sprite starts at 87,25, 74 wide 36 tall
@@ -21,6 +18,7 @@
     >destination sprite starts at 97, 17
     >destination square starts at 76, 61
 
+>TODO -> pick netherite base color
 >TODO -> worker console messaging
 >TODO -> mob_effects
 >TODO -> icons.png connection bars

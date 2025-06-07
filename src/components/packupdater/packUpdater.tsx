@@ -1,5 +1,5 @@
 'use client';
-import React, {useRef, useState} from "react";
+import React, {ChangeEvent, useRef, useState} from "react";
 import {PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
 
 export default function PackUpdater() {
@@ -20,31 +20,47 @@ export default function PackUpdater() {
                 </label>
 
                 <label className={"flex gap-2"}>
-                    <input type={"checkbox"} onChange={e => {
-                        const div = document.getElementById("hiddenBasePackUploads");
-                        if (div)
-                            div.hidden = !e.target.checked;
-                    }}></input>
+                    <input type={"checkbox"} onChange={e =>
+                        handleCheckboxHiddenVanillaDiv("hiddenBasePackUploads", e)}></input>
                     use modern base pack <span>(<a href={"https://faithfulpack.net/"} target={"_blank"} style={{ color: "blue", textDecoration: 'underline' }}>faithful</a> recommended)</span>
                 </label>
-                <div id={"hiddenBasePackUploads"} hidden={true} className={"flex flex-col items-end w-full"}>
-                    <label className={"flex gap-2"}>
-                        16x16
-                        <input type={"file"}></input>
-                    </label>
-                    <label className={"flex gap-2"}>
-                        32x32
-                        <input type={"file"}></input>
-                    </label>
-                    <label className={"flex gap-2"}>
-                        64x64+
-                        <input type={"file"}></input>
-                    </label>
+                <div id={"hiddenBasePackUploads"} hidden={true} className={"flex gap-4"}>
+                    ...
+                    <div className={"flex flex-col gap-2"}>
+                        <label className={"flex gap-2"}>
+                            default
+                            <input type={"file"}></input>
+                        </label>
+                        <label className={"flex gap-2"}>
+                            if 16x16
+                            <input type={"file"}></input>
+                        </label>
+                        <label className={"flex gap-2"}>
+                            if 32x32
+                            <input type={"file"}></input>
+                        </label>
+                        <label className={"flex gap-2"}>
+                            if 64x64+
+                            <input type={"file"}></input>
+                        </label>
+                    </div>
                 </div>
 
                 <label className={"flex gap-2"}>
-                    <input defaultChecked type={"checkbox"}></input>generate netherite textures from recolored diamond
+                    <input defaultChecked type={"checkbox"} onChange={e =>
+                        handleCheckboxHiddenVanillaDiv("generatedNetheriteConfig", e)}></input>generate netherite by recoloring pack&#39;s diamond
                 </label>
+                <div id={"generatedNetheriteConfig"} className={"flex gap-4"}>
+                    ...
+                    <div className={"flex gap-2"}>
+                        <label className={"flex gap-2"}>
+                            <input name={"blendMode"} defaultChecked type={"radio"}/>multiply (darker)
+                        </label>
+                        <label className={"flex gap-2"}>
+                            <input name={"blendMode"} type={"radio"}/>overlay (lighter)
+                        </label>
+                    </div>
+                </div>
                 {/*<label className={"flex gap-2"}>*/}
                 {/*    <input type={"text"}/>*/}
                 {/*</label>TODO -> custom netherite colors option*/}
@@ -117,4 +133,9 @@ export default function PackUpdater() {
             </div>
         </div>
     )
+}
+function handleCheckboxHiddenVanillaDiv(divId: string, e: ChangeEvent<HTMLInputElement>) {
+    const div = document.getElementById(divId);
+    if (div)
+        div.hidden = !e.target.checked;
 }
