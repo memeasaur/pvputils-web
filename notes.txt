@@ -8,6 +8,8 @@
 >impl base pack
 >generate netherite textures
 >TODO -> option for removing blinking hearts
+>TODO -> recolor wither hearts
+>impl backwards compatibility
 >(?) fix main inventory programmatically somehow
     >sprite starts at 87,25, 74 wide 36 tall
     >template square is 87,25, 18 wide 18 tall
