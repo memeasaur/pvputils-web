@@ -23,5 +23,6 @@
 >generate offhand sprites (?)
 >container/stats_icons (?)
 >(?) generate lingering potion (lol)
+
 >(?) show the user the diamond sword and have them edit it to be netherite
 >(?) provide template netherite textures
