@@ -4,6 +4,7 @@
 
 >fix blur causing fucky
 >fix armor
+>fix glint
 
 >TODO -> option for removing blinking hearts
 >option to customize the branding being added to the pack

@@ -97,11 +97,11 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                 case "assets/minecraft/textures/gui/icons.png": {
                     const spriteSheet = await createImageBitmap(await file.async("blob"))
                     const resolutionFactor = spriteSheet.height / 256
-                    const canvas = new OffscreenCanvas(162 * resolutionFactor, 54 * resolutionFactor)
+                    const spriteSize = 9 * resolutionFactor;
+                    const canvas = new OffscreenCanvas(spriteSize, spriteSize);
                     const context = canvas.getContext("2d");
-
-                    if (context) {
-                        const futureSprites = getSpriteTargetBlobPromises(spriteSheet, 9 * resolutionFactor, context, canvas)
+                    if (context) { // TODO -> do this in one phase (?)
+                        const futureSprites = getSpriteTargetBlobPromises(await createImageBitmap(spriteSheet, 16 * resolutionFactor, 0, 162 * resolutionFactor, 54 * resolutionFactor), spriteSize, context, canvas)
                         function handleHeart(y: number, x: number, newName: string) {
                             return handleSpriteIteration(futureSprites, y, x, updatedPack, "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png")
                         }
@@ -118,6 +118,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             // TODO -> recolor the pink progress bar and make the other colors
                             handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
                             handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png"),
+
 
                             handleHeart(0, 0, "container"),
                             handleHeart(0, 1, "container_blinking"),
