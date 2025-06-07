@@ -96,107 +96,107 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
             switch (oldFilename) {
                 case "assets/minecraft/textures/gui/icons.png": {
                     const spriteSheet = await createImageBitmap(await file.async("blob"))
-                    const resolutionFactor = spriteSheet.height / 512
-                    await Promise.all([
-                        handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
-                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
-                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 69, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_progress.png"),
-                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_cooldown.png"),
-                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_background.png"),
-                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 79, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_progress.png"),
-                        // TODO -> recolor the pink progress bar and make the other colors
-                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
-                        handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png")
-                    ])
-                    {
-                        const canvas = new OffscreenCanvas(162 * resolutionFactor, 54 * resolutionFactor)
-                        const context = canvas.getContext("2d");
-                        if (context) {
-                            const futureSprites = getSpriteTargetBlobPromises(spriteSheet, 9 * resolutionFactor, context, canvas)
-                            function handleHeart(y: number, x: number, newName: string) {
-                                return handleSpriteIteration(futureSprites, y, x, updatedPack, "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png")
-                            }
-                            function handleHud(y: number, x: number, newName: string) {
-                                return handleSpriteIteration(futureSprites, y, x, updatedPack, NEW_HUD_SPRITES_PATH + newName + ".png")
-                            }
-                            await handleHeart(0, 0, "container")
-                            await handleHeart(0, 1, "container_blinking")
+                    const resolutionFactor = spriteSheet.height / 256
+                    const canvas = new OffscreenCanvas(162 * resolutionFactor, 54 * resolutionFactor)
+                    const context = canvas.getContext("2d");
+
+                    if (context) {
+                        const futureSprites = getSpriteTargetBlobPromises(spriteSheet, 9 * resolutionFactor, context, canvas)
+                        function handleHeart(y: number, x: number, newName: string) {
+                            return handleSpriteIteration(futureSprites, y, x, updatedPack, "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png")
+                        }
+                        function handleHud(y: number, x: number, newName: string) {
+                            return handleSpriteIteration(futureSprites, y, x, updatedPack, NEW_HUD_SPRITES_PATH + newName + ".png")
+                        }
+                        await Promise.all([
+                            handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
+                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
+                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 69, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_progress.png"),
+                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_cooldown.png"),
+                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_background.png"),
+                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 79, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_progress.png"),
+                            // TODO -> recolor the pink progress bar and make the other colors
+                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
+                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png"),
+
+                            handleHeart(0, 0, "container"),
+                            handleHeart(0, 1, "container_blinking"),
                             // await handleHeart(0, 2, "container")
                             // await handleHeart(0, 3, "container") TODO (?) unused?
-                            await handleHeart(0, 4, "full")
-                            await handleHeart(0, 5, "half")
-                            await handleHeart(0, 6, "full_blinking")
-                            await handleHeart(0, 7, "half_blinking")
-                            await handleHeart(0, 8, "poisoned_full")
-                            await handleHeart(0, 9, "poisoned_half")
-                            await handleHeart(0, 10, "poisoned_full_blinking")
-                            await handleHeart(0, 11, "poisoned_half_blinking")
-                            await handleHeart(0, 12, "withered_full")
-                            await handleHeart(0, 13, "withered_half")
-                            await handleHeart(0, 14, "withered_full_blinking")
-                            await handleHeart(0, 15, "withered_half_blinking") // TODO
-                            await handleHeart(0, 16, "absorbing_full")
-                            await handleHeart(0, 17, "absorbing_half")
+                            handleHeart(0, 4, "full"),
+                            handleHeart(0, 5, "half"),
+                            handleHeart(0, 6, "full_blinking"),
+                            handleHeart(0, 7, "half_blinking"),
+                            handleHeart(0, 8, "poisoned_full"),
+                            handleHeart(0, 9, "poisoned_half"),
+                            handleHeart(0, 10, "poisoned_full_blinking"),
+                            handleHeart(0, 11, "poisoned_half_blinking"),
+                            handleHeart(0, 12, "withered_full"),
+                            handleHeart(0, 13, "withered_half"),
+                            handleHeart(0, 14, "withered_full_blinking"),
+                            handleHeart(0, 15, "withered_half_blinking"), // TODO
+                            handleHeart(0, 16, "absorbing_full"),
+                            handleHeart(0, 17, "absorbing_half"),
                             // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
 
-                            await handleHud(1, 0, "armor_empty")
-                            await handleHud(1, 1, "armor_half")
-                            await handleHud(1, 2, "armor_full")
+                            handleHud(1, 0, "armor_empty"),
+                            handleHud(1, 1, "armor_half"),
+                            handleHud(1, 2, "armor_full"),
                             // await handleHeart(1, 3, "absorbing_full") // TODO -> not sure which of these is actually used in 1.7, doesn't really matter I guess
-                            await handleHeart(1, 4, "vehicle_container")
+                            handleHeart(1, 4, "vehicle_container"),
                             // await handleHeart(1, 5, "absorbing_full") TODO -> vehicle container blinking just isn't in and this game is an inconsistent piece of shit?
                             // await handleHeart(1, 6, "absorbing_full")
                             // await handleHeart(1, 7, "absorbing_full")
-                            await handleHeart(1, 8, "vehicle_full")
-                            await handleHeart(1, 9, "vehicle_half")
+                            handleHeart(1, 8, "vehicle_full"),
+                            handleHeart(1, 9, "vehicle_half"),
                             // await handleHeart(1, 10, "absorbing_full")
                             // await handleHeart(1, 11, "absorbing_full") TODO seems so
 
-                            await handleHud(2, 0, "air")
-                            await handleHud(2, 1, "air_bursting")
+                            handleHud(2, 0, "air"),
+                            handleHud(2, 1, "air_bursting"),
 
-                            await handleHud(3, 0, "food_empty")
+                            handleHud(3, 0, "food_empty"),
                             // await handleHud(3, 1, "absorbing_full")
                             // await handleHud(3, 2, "absorbing_full")
                             // await handleHud(3, 3, "absorbing_full")
-                            await handleHud(3, 4, "food_full")
-                            await handleHud(3, 5, "food_half")
+                            handleHud(3, 4, "food_full"),
+                            handleHud(3, 5, "food_half"),
                             // await handleHud(3, 6, "absorbing_full")
                             // await handleHud(3, 7, "absorbing_full")
-                            await handleHud(3, 8, "food_full_hunger")
-                            await handleHud(3, 9, "food_half_hunger")
+                            handleHud(3, 8, "food_full_hunger"),
+                            handleHud(3, 9, "food_half_hunger"),
                             // await handleHud(3, 10, "absorbing_full")
                             // await handleHud(3, 11, "absorbing_full")
                             // await handleHud(3, 12, "absorbing_full")
 
                             // await handleHud(4, 0, "food_empty_hunger")
 
-                            await handleHeart(5, 0, "container_hardcore")
-                            await handleHeart(5, 1, "container_hardcore_blinking")
+                            handleHeart(5, 0, "container_hardcore"),
+                            handleHeart(5, 1, "container_hardcore_blinking"),
                             // await handleHeart(5, 2, "absorbing_full")
                             // await handleHeart(5, 3, "absorbing_full")
-                            await handleHeart(5, 4, "hardcore_full")
-                            await handleHeart(5, 5, "hardcore_half")
-                            await handleHeart(5, 6, "hardcore_full_blinking") // TODO
-                            await handleHeart(5, 7, "hardcore_half_blinking")
-                            await handleHeart(5, 8, "poisoned_hardcore_full")
-                            await handleHeart(5, 9, "poisoned_hardcore_half")
-                            await handleHeart(5, 10, "poisoned_hardcore_full_blinking") // TODO
-                            await handleHeart(5, 11, "poisoned_hardcore_half_blinking")
-                            await handleHeart(5, 12, "withered_hardcore_full")
-                            await handleHeart(5, 13, "withered_hardcore_half")
-                            await handleHeart(5, 14, "withered_hardcore_full_blinking") // TODO
-                            await handleHeart(5, 15, "withered_hardcore_half_blinking")
-                            await handleHeart(5, 16, "absorbing_hardcore_full")
-                            await handleHeart(5, 17, "absorbing_hardcore_half")
+                            handleHeart(5, 4, "hardcore_full"),
+                            handleHeart(5, 5, "hardcore_half"),
+                            handleHeart(5, 6, "hardcore_full_blinking"), // TODO
+                            handleHeart(5, 7, "hardcore_half_blinking"),
+                            handleHeart(5, 8, "poisoned_hardcore_full"),
+                            handleHeart(5, 9, "poisoned_hardcore_half"),
+                            handleHeart(5, 10, "poisoned_hardcore_full_blinking"), // TODO
+                            handleHeart(5, 11, "poisoned_hardcore_half_blinking"),
+                            handleHeart(5, 12, "withered_hardcore_full"),
+                            handleHeart(5, 13, "withered_hardcore_half"),
+                            handleHeart(5, 14, "withered_hardcore_full_blinking"), // TODO
+                            handleHeart(5, 15, "withered_hardcore_half_blinking"),
+                            handleHeart(5, 16, "absorbing_hardcore_full"),
+                            handleHeart(5, 17, "absorbing_hardcore_half"),
                             // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
-                        }
+                        ])
                     }
                     break
                 }
                 case "assets/minecraft/textures/gui/widgets.png": {
                     const spriteSheet = await createImageBitmap(await file.async("blob"))
-                    const resolutionFactor = spriteSheet.height / 512
+                    const resolutionFactor = spriteSheet.height / 256
                     await Promise.all([
                         handleSpriteTarget(182, resolutionFactor, 22, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar.png"),
                         handleSpriteTarget(22, resolutionFactor, 22, spriteSheet, 0, 22, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar_selection.png"),
@@ -341,7 +341,7 @@ async function handleSpriteTarget(width: number, resolutionFactor: number, heigh
     const canvas = new OffscreenCanvas(width * resolutionFactor, height * resolutionFactor)
     const context = canvas.getContext("2d");
     if (context) {
-        context.drawImage(spriteSheet, x * resolutionFactor, y * resolutionFactor, canvas.width, canvas.height);
+        context.drawImage(spriteSheet, x * resolutionFactor, y * resolutionFactor, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
         const hotbar = await canvas.convertToBlob({ type: "image/png" })
         if (hotbar)
             updatedPack.file(filename, hotbar)
@@ -354,7 +354,7 @@ function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: numbe
         sprites[row] = [];
         for (let col = 0; col < spriteSheet.width / spriteSize; col++) {
             context.clearRect(0, 0, spriteSize, spriteSize);
-            context.drawImage(spriteSheet, col * spriteSize, row * spriteSize, spriteSize, spriteSize);
+            context.drawImage(spriteSheet, col * spriteSize, row * spriteSize, spriteSize, spriteSize, 0, 0, spriteSize, spriteSize);
 
             sprites[row][col] = canvas.convertToBlob({ type: "image/png" })
         }
