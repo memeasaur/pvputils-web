@@ -27,7 +27,7 @@ export default async function Home() {
                                     pack-updater
                                 </p>
                                 <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                    accepts (1.7.10.zip) returns (1.21.4.zip)
+                                    accepts (1.7.10).zip returns (1.21.4).zip
                                 </p>
                             </div>
                         </AccordionTrigger>
