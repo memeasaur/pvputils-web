@@ -3,7 +3,6 @@
 >every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
 
 >fix blur causing fucky
->fix armor
 
 >TODO -> mob_effects
 >TODO -> option for removing blinking hearts
