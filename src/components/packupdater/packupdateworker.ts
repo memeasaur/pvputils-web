@@ -5,7 +5,11 @@ const OLD_ITEMS_PATH = "assets/minecraft/textures/items/"
 const NEW_ITEMS_PATH = "assets/minecraft/textures/item/"
 const OLD_BLOCKS_PATH = "assets/minecraft/textures/blocks/"
 const NEW_BLOCKS_PATH = "assets/minecraft/textures/block/"
+const OLD_ARMOR_PATH = "assets/minecraft/textures/models/armor/"
+const NEW_ARMOR_PATH = "assets/minecraft/textures/entity/equipment/humanoid/"
+const NEW_LEGGINGS_PATH = "assets/minecraft/textures/entity/equipment/humanoid_leggings/"
 const NEW_POTION_PATH = NEW_ITEMS_PATH + "potion"
+const NEW_GLINT_PATH = "assets/minecraft/textures/misc/enchanted_glint_item.png"
 const replacements = Object.freeze({
     [OLD_ITEMS_PATH + "potion_bottle_splash.png"]: NEW_ITEMS_PATH + "splash_potion.png",
     [OLD_ITEMS_PATH + "potion_bottle_drinkable.png"]: NEW_POTION_PATH,
@@ -81,6 +85,19 @@ const replacements = Object.freeze({
     [OLD_BLOCKS_PATH + "hardened_clay_stained_light_gray.png"]: NEW_BLOCKS_PATH + "light_gray_terracotta.png",
     [OLD_BLOCKS_PATH + "hardened_clay_stained_white.png"]: NEW_BLOCKS_PATH + "white_terracotta.png",
     [OLD_BLOCKS_PATH + "hardened_clay_stained_yellow.png"]: NEW_BLOCKS_PATH + "yellow_terracotta.png",
+
+    [OLD_ARMOR_PATH + "diamond_layer_1"]: NEW_ARMOR_PATH + "diamond.png",
+    [OLD_ARMOR_PATH + "diamond_layer_2"]: NEW_LEGGINGS_PATH + "diamond.png",
+    [OLD_ARMOR_PATH + "gold_layer_1"]: NEW_ARMOR_PATH + "gold.png",
+    [OLD_ARMOR_PATH + "gold_layer_2"]: NEW_LEGGINGS_PATH + "gold.png",
+    [OLD_ARMOR_PATH + "iron_layer_1"]: NEW_ARMOR_PATH + "iron.png",
+    [OLD_ARMOR_PATH + "iron_layer_2"]: NEW_LEGGINGS_PATH + "iron.png",
+    [OLD_ARMOR_PATH + "chainmail_layer_1"]: NEW_ARMOR_PATH + "chainmail.png",
+    [OLD_ARMOR_PATH + "chainmail_layer_2"]: NEW_LEGGINGS_PATH + "chainmail.png",
+    [OLD_ARMOR_PATH + "leather_layer_1"]: NEW_ARMOR_PATH + "leather.png",
+    [OLD_ARMOR_PATH + "leather_layer_2"]: NEW_LEGGINGS_PATH + "leather.png",
+
+    ["assets/minecraft/textures/misc/enchanted_item_glint.png"]: NEW_GLINT_PATH,
 })
 const NEW_HUD_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/hud/"
 const NEW_WIDGET_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/widget/"
@@ -318,8 +335,18 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     .replace('"pack_format": 1', '"pack_format": 43')
                                 : await file.async("uint8array")
 
-                        if (newFilename === NEW_POTION_PATH && content !== null) // TODO -> this is specific to 1.7
-                            updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
+                        if (content !== null) {
+                            switch (newFilename) {
+                                case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
+                                    updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
+                                    break
+                                }
+                                case NEW_GLINT_PATH: {
+                                    updatedPack.file("assets/minecraft/textures/misc/enchanted_glint_armor.png", content)
+                                    break
+                                }
+                            }
+                        }
 
                         // TODO -> option for maintaining backwards compatibility
                         updatedPack.remove(oldFilename)

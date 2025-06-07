@@ -4,8 +4,8 @@
 
 >fix blur causing fucky
 >fix armor
->fix glint
 
+>TODO -> mob_effects
 >TODO -> option for removing blinking hearts
 >option to customize the branding being added to the pack
 >branding specifies what version of the pack updater you used + adds a required tattoo showing what version was used
