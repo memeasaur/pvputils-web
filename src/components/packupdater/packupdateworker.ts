@@ -105,6 +105,29 @@ const NEW_WIDGET_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/widget/"
 self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
     const updatedPack = await new JSZip().loadAsync(data.pack);
+    const formData = data.formData
+    if (formData.get("isModernBasePackEnabled")) {
+        let basePack: JSZip | null = null
+        const packDefault = formData.get("defaultPack")
+        const blob = await updatedPack.file(OLD_BLOCKS_PATH + "grass_top.png")?.async("blob")
+        if (blob) {
+            const resolution = (await createImageBitmap(blob)).height
+            const pack64 = formData.get("64xPack")
+            const pack32 = formData.get("32xPack")
+            const pack16 = formData.get("16xPack")
+            if (resolution >= 64 && pack64)
+                basePack = await new JSZip().loadAsync(pack64);
+            else if (resolution >= 32 && pack32)
+                basePack = await new JSZip().loadAsync(pack32)
+            else if (resolution >= 16 && pack16)
+                basePack = await new JSZip().loadAsync(pack16);
+        }
+        if (packDefault)
+            basePack = basePack || await new JSZip().loadAsync(packDefault)
+        if (basePack) {
+            for (const [filename, file] of basePack.files)
+        }
+    }
     await Promise.all(Object.entries(updatedPack.files) // TODO -> apparently object.entries is safely capturing a snapshot of the files, so mutating it is fine
         .map(async ([oldFilename, file]) => {
             // TODO -> progress bar
@@ -119,11 +142,54 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     const context = canvas.getContext("2d");
                     if (context) { // TODO -> do this in one phase (?)
                         const futureSprites = getSpriteTargetBlobPromises(await createImageBitmap(spriteSheet, 16 * resolutionFactor, 0, 162 * resolutionFactor, 54 * resolutionFactor), spriteSize, context, canvas)
+                        function getHeartNewPath(newName: string) {
+                            return "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png"
+                        }
                         function handleHeart(y: number, x: number, newName: string) {
-                            return handleSpriteIteration(futureSprites, y, x, updatedPack, "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png")
+                            return handleSpriteIteration(futureSprites, y, x, updatedPack, getHeartNewPath(newName));
                         }
                         function handleHud(y: number, x: number, newName: string) {
                             return handleSpriteIteration(futureSprites, y, x, updatedPack, NEW_HUD_SPRITES_PATH + newName + ".png")
+                        }
+                        const blankBlinkingHeartBlobIfEnabled = formData.get("isBlinkingHeartSpriteRemoved") !== null
+                            ? (async () => {
+                                const canvas = new OffscreenCanvas(spriteSize, spriteSize);
+                                const context1 = canvas.getContext('2d');
+                                if (context1) {
+                                    context1.clearRect(0, 0, 1, 1);
+                                    return canvas.convertToBlob({ type: "image/png" })
+                                }
+                            })()
+                            : null
+                        async function handleBlinkingHeart(newFilename: string, y: number, x: number) {
+                            const blob = await blankBlinkingHeartBlobIfEnabled
+                            if (blob)
+                                return updatedPack.file(getHeartNewPath(newFilename), blob)
+                            else
+                                return handleHeart(y, x, newFilename)
+                        }
+                        async function handleAbsentBlinkingHeart(newFilename: string) {
+                            const blob = await blankBlinkingHeartBlobIfEnabled
+                            if (blob)
+                                updatedPack.file(getHeartNewPath(newFilename), blob)
+                        }
+                        const isWitherHeartRecolored = formData.get("isWitherHeartSpriteRecolored") !== null
+                        async function handleWitherHeart(y: number, x: number, newName: string) {
+                            if (isWitherHeartRecolored) {
+                                const blob = await futureSprites[y][x]
+                                if (blob) {
+                                    const sprite = await createImageBitmap(blob)
+                                    const canvas = new OffscreenCanvas(spriteSize, spriteSize);
+                                    const context = canvas.getContext('2d');
+                                    if (context) {
+                                        context.filter = 'brightness(200%)';
+                                        context.drawImage(sprite, 0, 0);
+                                        return updatedPack.file(getHeartNewPath(newName), await canvas.convertToBlob({ type: 'image/png' }));
+                                    }
+                                }
+                            }
+                            else
+                                return handleHeart(y, x, newName)
                         }
                         await Promise.all([
                             handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
@@ -136,26 +202,30 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
                             handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png"),
 
-
                             handleHeart(0, 0, "container"),
-                            handleHeart(0, 1, "container_blinking"),
+                            handleHeart(0, 1, "container_blinking"), // TODO -> maybe remove this (?, pretty sure it's fine)
                             // await handleHeart(0, 2, "container")
                             // await handleHeart(0, 3, "container") TODO (?) unused?
                             handleHeart(0, 4, "full"),
                             handleHeart(0, 5, "half"),
-                            handleHeart(0, 6, "full_blinking"),
-                            handleHeart(0, 7, "half_blinking"),
+                            handleBlinkingHeart("full_blinking",0, 6),
+                            handleBlinkingHeart("half_blinking", 0, 7),
                             handleHeart(0, 8, "poisoned_full"),
                             handleHeart(0, 9, "poisoned_half"),
-                            handleHeart(0, 10, "poisoned_full_blinking"),
-                            handleHeart(0, 11, "poisoned_half_blinking"),
-                            handleHeart(0, 12, "withered_full"),
-                            handleHeart(0, 13, "withered_half"),
-                            handleHeart(0, 14, "withered_full_blinking"),
-                            handleHeart(0, 15, "withered_half_blinking"), // TODO
+                            handleBlinkingHeart("poisoned_full_blinking", 0, 10),
+                            handleBlinkingHeart("poisoned_half_blinking", 0, 11),
+                            handleWitherHeart(0, 12, "withered_full"),
+                            handleWitherHeart(0, 13, "withered_half"),
+                            (blankBlinkingHeartBlobIfEnabled
+                                ? handleBlinkingHeart("withered_full_blinking", 0, 14)
+                                : handleWitherHeart(0, 14, "withered_full_blinking")),
+                            (blankBlinkingHeartBlobIfEnabled
+                                ? handleBlinkingHeart("withered_half_blinking", 0, 15)
+                                : handleWitherHeart(0, 15, "withered_half_blinking")),
                             handleHeart(0, 16, "absorbing_full"),
                             handleHeart(0, 17, "absorbing_half"),
-                            // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
+                            handleAbsentBlinkingHeart("absorbing_full_blinking"),
+                            handleAbsentBlinkingHeart("absorbing_half_blinking"),
 
                             handleHud(1, 0, "armor_empty"),
                             handleHud(1, 1, "armor_half"),
@@ -195,19 +265,24 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             // await handleHeart(5, 3, "absorbing_full")
                             handleHeart(5, 4, "hardcore_full"),
                             handleHeart(5, 5, "hardcore_half"),
-                            handleHeart(5, 6, "hardcore_full_blinking"), // TODO
-                            handleHeart(5, 7, "hardcore_half_blinking"),
+                            handleBlinkingHeart("hardcore_full_blinking", 5, 6),
+                            handleBlinkingHeart("hardcore_half_blinking", 5, 7),
                             handleHeart(5, 8, "poisoned_hardcore_full"),
                             handleHeart(5, 9, "poisoned_hardcore_half"),
-                            handleHeart(5, 10, "poisoned_hardcore_full_blinking"), // TODO
-                            handleHeart(5, 11, "poisoned_hardcore_half_blinking"),
-                            handleHeart(5, 12, "withered_hardcore_full"),
-                            handleHeart(5, 13, "withered_hardcore_half"),
-                            handleHeart(5, 14, "withered_hardcore_full_blinking"), // TODO
-                            handleHeart(5, 15, "withered_hardcore_half_blinking"),
+                            handleBlinkingHeart("poisoned_hardcore_full_blinking", 5, 10),
+                            handleBlinkingHeart("poisoned_hardcore_half_blinking", 5, 11),
+                            handleWitherHeart(5, 12, "withered_hardcore_full"),
+                            handleWitherHeart(5, 13, "withered_hardcore_half"),
+                            (blankBlinkingHeartBlobIfEnabled
+                                ? handleBlinkingHeart("withered_hardcore_full_blinking", 5, 14)
+                                : handleWitherHeart(5, 14, "withered_hardcore_full_blinking")),
+                            (blankBlinkingHeartBlobIfEnabled
+                                ? handleBlinkingHeart("withered_hardcore_half_blinking", 5, 15)
+                                : handleWitherHeart(5, 15, "withered_hardcore_half_blinking")), // TODO clean this up
                             handleHeart(5, 16, "absorbing_hardcore_full"),
                             handleHeart(5, 17, "absorbing_hardcore_half"),
-                            // TODO -> toggle for blinking hearts + handling absorbing blinking full and absorbing blinking half
+                            handleAbsentBlinkingHeart("absorbing_hardcore_full_blinking"),
+                            handleAbsentBlinkingHeart("absorbing_hardcore_half_blinking")
                         ])
                     }
                     break
@@ -317,7 +392,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             handle(15, 10, "sga_z")
                         ])
 
-                        updatedPack.remove(oldFilename) // TODO -> backwards compatiblity
+                        if (!formData.get("isBackwardCompatible"))
+                            updatedPack.remove(oldFilename)
                     }
                     break
                 }
@@ -330,9 +406,13 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                         const content = file.dir
                             ? null
                             : newFilename === "pack.mcmeta"
-                                ? (await file.async("string"))
-                                    // .replace() TODO
-                                    .replace('"pack_format": 1', '"pack_format": 43')
+                                ? await (async () => {
+                                    const json = JSON.parse(await file.async("string"));
+                                    json.pack_format = 43;
+                                    if (formData.get("isPackDescriptionWatermarkEnabled"))
+                                        json.description = json.description + " - " + formData.get("packDescriptionWatermark")
+                                    return JSON.stringify(json)
+                                })()
                                 : newFilename === NEW_GLINT_PATH
                                     ? await (async () => {
                                         const image = await createImageBitmap(await file.async("blob"));
@@ -361,8 +441,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             }
                         }
 
-                        // TODO -> option for maintaining backwards compatibility
-                        updatedPack.remove(oldFilename)
+                        if (!formData.get("isBackwardCompatible"))
+                            updatedPack.remove(oldFilename)
 
                         if (content === null) // TODO PRETTY SURE THIS IS SAFELY MUTATING UPDATED PACK BECAUSE JAVASCRIPT SINGLE THREADED EVENT LOOP!
                             updatedPack.folder(newFilename);
@@ -372,9 +452,16 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                 }
             }
         }))
+    // updatedPack.file("pvputils.vercel.app", "v0.9") // TODO (?)
+    const packName = data.pack.name;
     self.postMessage({
         updatedPack: await updatedPack.generateAsync({type: "blob"}),
-        updatedPackName: data.packName
+        updatedPackName: (formData.get("isPackNameWatermarkEnabled")
+            ?
+            (packName.endsWith(".zip")
+                ? packName.slice(0, -4)
+                : packName) + formData.get("packNameWatermark") + ".zip"
+            : packName)
     } as PackUpdateWorkerResponse);
 }
 
