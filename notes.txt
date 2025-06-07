@@ -3,6 +3,7 @@
 >every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
 
 >make counter for total packs updated -> one for each download
+    >formatted messages like (verified minecraft name) updated (amount) packs. (packs if public)
 >branding specifies what version of the pack updater you used + adds a required tattoo showing what version was used
 >impl base pack
 >generate netherite textures
