@@ -16,10 +16,18 @@ export default async function Home() {
         throw new Error(error.message)
 
     return (
-        <div // TODO reactFragment ?
+        <div
             className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
             <main className="grid grid-rows-[20%_1fr] gap-[16px] items-center sm:items-start w-full">
                 <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2 w-full"}>
+                    <AccordionItem value={"item-3"}>
+                        <AccordionTrigger>
+
+                        </AccordionTrigger>
+                        <AccordionContent>
+
+                        </AccordionContent>
+                    </AccordionItem>
                     <AccordionItem value="item-2">
                         <AccordionTrigger className={"flex gap-4 items-center w-full"}>
                             <div> {/*TODO -> accordionTrigger should just be doing this*/}
@@ -146,7 +154,7 @@ export default async function Home() {
 }
 
 function UpdateData({data}: { data: Database["public"]["Tables"]["fabricpvputils_updates"]["Row"] }) {
-    console.log("updateData WAS CSR'd!")
+    console.log("client shouldn't see this")
     return (
         <>
             ({data.minecraft_versions}) {data.nullable_dependencies && (
