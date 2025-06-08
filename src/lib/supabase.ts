@@ -1,63 +1,94 @@
+// me start
 export type ModInfo = {
-  name: string,
-  link: string,
+    name: string,
+    link: string,
 }
+// export type Json =
+//     | string
+//     | number
+//     | boolean
+//     | null
+//     | { [key: string]: Json | undefined }
+//     | Json[]
+// me end
+
 export type Database = {
-  public: {
-    Tables: {
-      fabricpvputils_updates: {
-        Row: {
-          "1.8_patchnotes": string[]
-          "1.9_patchnotes": string[]
-          created_at: string
-          generic_patchnotes: string[]
-          is_critical: boolean
-          minecraft_versions: string
-          nullable_dependencies: ModInfo[] | null
-          nullable_recommended_mods_info: ModInfo[] | null
-          summary: string
-          version: number
+    public: {
+        Tables: {
+            fabricpvputils_updates: {
+                Row: {
+                    "1.8_patchnotes": string[]
+                    "1.9_patchnotes": string[]
+                    created_at: string
+                    generic_patchnotes: string[]
+                    is_critical: boolean
+                    minecraft_versions: string
+                    nullable_dependencies: ModInfo[] | null
+                    nullable_recommended_mods_info: ModInfo[] | null
+                    summary: string
+                    version: number
+                }
+                Insert: {
+                    "1.8_patchnotes": string[]
+                    "1.9_patchnotes": string[]
+                    created_at?: string
+                    generic_patchnotes: string[]
+                    is_critical: boolean
+                    minecraft_versions?: string
+                    nullable_dependencies?: ModInfo[] | null
+                    nullable_recommended_mods_info?: ModInfo[] | null
+                    summary: string
+                    version: number
+                }
+                Update: {
+                    "1.8_patchnotes"?: string[]
+                    "1.9_patchnotes"?: string[]
+                    created_at?: string
+                    generic_patchnotes?: string[]
+                    is_critical?: boolean
+                    minecraft_versions?: string
+                    nullable_dependencies?: ModInfo[] | null
+                    nullable_recommended_mods_info?: ModInfo[] | null
+                    summary?: string
+                    version?: number
+                }
+                Relationships: []
+            }
+            packupdater_updates: {
+                Row: {
+                    created_at: string
+                    generic_patchnotes: string[]
+                    summary: string
+                    version: number
+                }
+                Insert: {
+                    created_at?: string
+                    generic_patchnotes: string[]
+                    summary: string
+                    version: number
+                }
+                Update: {
+                    created_at?: string
+                    generic_patchnotes?: string[]
+                    summary?: string
+                    version?: number
+                }
+                Relationships: []
+            }
         }
-        Insert: {
-          "1.8_patchnotes": string[]
-          "1.9_patchnotes": string[]
-          created_at?: string
-          generic_patchnotes: string[]
-          is_critical: boolean
-          minecraft_versions?: string
-          nullable_dependencies?: ModInfo[] | null
-          nullable_recommended_mods_info?: ModInfo[] | null
-          summary: string
-          version: number
+        Views: {
+            [_ in never]: never
         }
-        Update: {
-          "1.8_patchnotes"?: string[]
-          "1.9_patchnotes"?: string[]
-          created_at?: string
-          generic_patchnotes?: string[]
-          is_critical?: boolean
-          minecraft_versions?: string
-          nullable_dependencies?: ModInfo[] | null
-          nullable_recommended_mods_info?: ModInfo[] | null
-          summary?: string
-          version?: number
+        Functions: {
+            [_ in never]: never
         }
-        Relationships: []
-      }
+        Enums: {
+            [_ in never]: never
+        }
+        CompositeTypes: {
+            [_ in never]: never
+        }
     }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      [_ in never]: never
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
 }
 
 type DefaultSchema = Database[Extract<keyof Database, "public">]
@@ -67,7 +98,7 @@ export type Tables<
             | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
         | { schema: keyof Database },
     TableName extends DefaultSchemaTableNameOrOptions extends {
-          schema: keyof Database
+            schema: keyof Database
         }
         ? keyof (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
             Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
@@ -75,7 +106,7 @@ export type Tables<
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
     ? (Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         Database[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
-          Row: infer R
+            Row: infer R
         }
         ? R
         : never
@@ -83,7 +114,7 @@ export type Tables<
             DefaultSchema["Views"])
         ? (DefaultSchema["Tables"] &
             DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-              Row: infer R
+                Row: infer R
             }
             ? R
             : never
@@ -94,19 +125,19 @@ export type TablesInsert<
             | keyof DefaultSchema["Tables"]
         | { schema: keyof Database },
     TableName extends DefaultSchemaTableNameOrOptions extends {
-          schema: keyof Database
+            schema: keyof Database
         }
         ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
         : never = never,
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
     ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-          Insert: infer I
+            Insert: infer I
         }
         ? I
         : never
     : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
         ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-              Insert: infer I
+                Insert: infer I
             }
             ? I
             : never
@@ -117,19 +148,19 @@ export type TablesUpdate<
             | keyof DefaultSchema["Tables"]
         | { schema: keyof Database },
     TableName extends DefaultSchemaTableNameOrOptions extends {
-          schema: keyof Database
+            schema: keyof Database
         }
         ? keyof Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
         : never = never,
 > = DefaultSchemaTableNameOrOptions extends { schema: keyof Database }
     ? Database[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-          Update: infer U
+            Update: infer U
         }
         ? U
         : never
     : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
         ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-              Update: infer U
+                Update: infer U
             }
             ? U
             : never
@@ -140,7 +171,7 @@ export type Enums<
             | keyof DefaultSchema["Enums"]
         | { schema: keyof Database },
     EnumName extends DefaultSchemaEnumNameOrOptions extends {
-          schema: keyof Database
+            schema: keyof Database
         }
         ? keyof Database[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
         : never = never,
@@ -155,7 +186,7 @@ export type CompositeTypes<
             | keyof DefaultSchema["CompositeTypes"]
         | { schema: keyof Database },
     CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
-          schema: keyof Database
+            schema: keyof Database
         }
         ? keyof Database[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
         : never = never,
@@ -166,7 +197,7 @@ export type CompositeTypes<
         : never
 
 export const Constants = {
-  public: {
-    Enums: {},
-  },
+    public: {
+        Enums: {},
+    },
 } as const

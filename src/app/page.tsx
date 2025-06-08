@@ -6,14 +6,24 @@ import React from "react";
 import PackUpdater from "@/components/packupdater/packUpdater";
 
 export default async function Home() {
+    const url = 'https://xapkbnegosbyhmondqti.supabase.co'
+    const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA'
     const {
-        data,
+        data: pvpUtilsData,
         error
-    } = await createClient<Database>('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
+    } = await createClient<Database>(url, key)
         .from('fabricpvputils_updates')
         .select('*')
     if (error)
         throw new Error(error.message)
+    const {
+        data: packUpdaterData,
+        error: error1
+    } = await createClient<Database>(url, key)
+        .from('packupdater_updates')
+        .select('*')
+    if (error1)
+        throw new Error(error1.message)
 
     return (
         <main className="grid grid-rows-[15vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">
@@ -47,7 +57,11 @@ export default async function Home() {
                     <AccordionContent className={"grid grid-cols-2 w-max auto-cols-auto gap-4"}>
                         <div className={"flex flex-col gap-4"}>
                             <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
-                            changelog
+                            <OverviewAccordionContent
+                                created_at={packUpdaterData[0].created_at}
+                                generic_patchnotes={packUpdaterData[0].generic_patchnotes}
+                                extra_patchnotes={null}
+                            />
                         </div>
                         <div className={"flex justify-end"}>
                             foo
@@ -57,9 +71,9 @@ export default async function Home() {
                 <AccordionItem value="item-1" className={"w-full"}>
                     <ChangelogAccordionTrigger
                         title={"fabric-pvputils"}
-                        version={data[0].version}
-                        summary={data[0].summary}
-                        updateData={<UpdateData data={data[0]}/>}
+                        version={pvpUtilsData[0].version}
+                        summary={pvpUtilsData[0].summary}
+                        updateData={<PvpUtilsUpdateData data={pvpUtilsData[0]}/>}
                     />
                     <AccordionContent className={"flex flex-col gap-4"}>
                         <a
@@ -69,9 +83,41 @@ export default async function Home() {
                         >
                             <Badge variant="secondary">github</Badge>
                         </a>
-                        {data.map((item, index) => (
-                            foo;
-                            ))}
+                        <OverviewAccordionContent
+                            created_at={pvpUtilsData[0].created_at}
+                            generic_patchnotes={pvpUtilsData[0].generic_patchnotes}
+                            extra_patchnotes={(
+                                <>
+                                    <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
+                                        <div className={"w-2/4 flex flex-col gap-2"}>
+                                            <p>1.9 combat</p>
+                                            <ol start={pvpUtilsData[0].generic_patchnotes.length + 1}>
+                                                {pvpUtilsData[0]["1.9_patchnotes"].map((item) => (
+                                                    <li key={item}>{item}</li>
+                                                ))}
+                                            </ol>
+                                        </div>
+                                        <div className={"w-2/4 flex flex-col gap-2"}>
+                                            <p>1.8 combat</p>
+                                            <ol start={pvpUtilsData[0].generic_patchnotes.length + 1}>
+                                                {pvpUtilsData[0]["1.8_patchnotes"].map((item) => (
+                                                    <li key={item}>{item}</li>
+                                                ))}
+                                            </ol>
+                                        </div>
+                                    </div>
+                                    {pvpUtilsData[0].nullable_recommended_mods_info && (
+                                        <ol>other recommended mods
+                                            {pvpUtilsData[0].nullable_recommended_mods_info.map((item) => (
+                                                <li key={item.name}>{item.name}</li>
+                                            ))}
+                                        </ol>)}
+                                </>
+                            )}
+                        />
+                        {pvpUtilsData.map((item, index) => index > 0 && (
+                            <PvpUtilsUpdateData key={index} data={item}/>
+                        ))}
                     </AccordionContent>
                 </AccordionItem>
                 {/*<AccordionItem value="item-3">*/}
@@ -130,51 +176,26 @@ function ChangelogAccordionTrigger(props: {
     )
 }
 
-function ChangelogAccordionContentIteration() {
-    return (<div key={item.version} className={"flex flex-col gap-4"}>
-        <div className="flex gap-4">
+function OverviewAccordionContent(props: {
+    created_at: string,
+    generic_patchnotes: string[],
+    extra_patchnotes: React.ReactNode
+}) {
+    return (
+        <div className={"flex flex-col gap-4"}>
             <p>
-                {new Date(item.created_at).toLocaleDateString()} {index > 0 && (<>v{item.version} - {item.summary}</>)}
+                {new Date(props.created_at).toLocaleDateString()}
             </p>
-            {index > 0 && (
-                <>
-                    <UpdateData data={item}/>
-                </>
-            )}
-        </div>
-        <ol className="">{/*TODO -> examples for each in accordions*/}
-            {item.generic_patchnotes.map((item) => (
-                <li key={item}>{item}</li>
-            ))}
-        </ol>
-        <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
-            <div className={"w-2/4 flex flex-col gap-2"}>
-                <p>1.9 combat</p>
-                <ol start={item.generic_patchnotes.length + 1}>
-                    {item["1.9_patchnotes"].map((item) => (
-                        <li key={item}>{item}</li>
-                    ))}
-                </ol>
-            </div>
-            <div className={"w-2/4 flex flex-col gap-2"}>
-                <p>1.8 combat</p>
-                <ol start={item.generic_patchnotes.length + 1}>
-                    {item["1.8_patchnotes"].map((item) => (
-                        <li key={item}>{item}</li>
-                    ))}
-                </ol>
-            </div>
-        </div>
-        {item.nullable_recommended_mods_info && (
-            <ol>other recommended mods
-                {item.nullable_recommended_mods_info.map((item) => (
-                    <li key={item.name}>{item.name}</li>
+            <ol className="">{/*TODO -> examples for each in accordions*/}
+                {props.generic_patchnotes.map((item) => (
+                    <li key={item}>{item}</li>
                 ))}
-            </ol>)}
-    </div>)
+            </ol>
+            {props.extra_patchnotes}
+        </div>)
 }
 
-function UpdateData({data}: { data: Database["public"]["Tables"]["fabricpvputils_updates"]["Row"] }) {
+function PvpUtilsUpdateData({data}: { data: Database["public"]["Tables"]["fabricpvputils_updates"]["Row"] }) {
     console.log("client shouldn't see this")
     return (
         <>
