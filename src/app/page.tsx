@@ -16,145 +16,140 @@ export default async function Home() {
         throw new Error(error.message)
 
     return (
-        <div
-            className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[var(--font-geist-sans-serif)]">
-            <main className="grid grid-rows-[20%_1fr] gap-[16px] items-center sm:items-start w-full">
-                <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2 w-full"}>
-                    <AccordionItem value={"item-3"}>
-                        <AccordionTrigger>
-                            <div> {/*TODO -> accordionTrigger should just be doing this*/}
-                                <p className="text-lg">
-                                    pack-archive
-                                </p>
-                                <p>
-                                    accepts (1.7.10).zip returns (1.21.4).zip
-                                </p>
-                            </div>
-                        </AccordionTrigger>
-                        <AccordionContent>
+        <main className="grid grid-rows-[15vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">
+            <Accordion type="single" collapsible className={"w-full row-start-2"}>{/*TODO defaultValue={"item-1"}*/}
+                <AccordionItem value={"item-3"}>
+                    <AccordionTrigger>
+                        <div> {/*TODO -> accordionTrigger should just be doing this*/}
+                            <p className="text-lg">
+                                pack-archive
+                            </p>
+                            <p>
+                                accepts (1.7.10).zip returns (1.21.4).zip
+                            </p>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
 
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-2">
-                        <AccordionTrigger className={"flex gap-4 items-center w-full"}>
-                            <div> {/*TODO -> accordionTrigger should just be doing this*/}
-                                <p className="text-lg">
-                                    pack-updater
-                                </p>
-                                <p>
-                                    accepts (1.7.10).zip, returns (1.21.4).zip
-                                </p>
-                            </div>
-                        </AccordionTrigger>
-                        <AccordionContent className={"flex gap-4"}>
-                            <div className={"flex flex-col gap-4"}>
-                                <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
-                                changelog
-                            </div>
-                            <div className={"w-1/2 justify-end"}>
-                                foo
-                            </div>
-                        </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="item-1" className={"w-full"}>
-                        <AccordionTrigger className="flex gap-4 items-center w-full"> {/*TODO -> make this piece of shit always w-full good fucking luck*/}
-                            <div className={"flex items-center"}> {/*TODO -> accordionTrigger should just be doing this*/}
-                                <div className={""}>
-                                    <div className={"flex items-center gap-2"}>
-                                        <p className="text-lg">
-                                            fabric-pvputils
-                                        </p> {/*TODO idk why tf next has header tags all the same size*/}
-                                        <p>
-                                            v{data[0].version} - {data[0].summary}
-                                        </p>
-                                    </div>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-2">
+                    <AccordionTrigger className={"flex gap-4 items-center w-full"}>
+                        <div> {/*TODO -> accordionTrigger should just be doing this*/}
+                            <p className="text-lg">
+                                pack-updater
+                            </p>
+                            <p>
+                                accepts (1.7.10).zip, returns (1.21.4).zip
+                            </p>
+                        </div>
+                    </AccordionTrigger>
+                    <AccordionContent className={"grid grid-cols-2 w-max auto-cols-auto gap-4"}>
+                        <div className={"flex flex-col gap-4"}>
+                            <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
+                            changelog
+                        </div>
+                        <div className={"flex justify-end"}>
+                            foo
+                        </div>
+                    </AccordionContent>
+                </AccordionItem>
+                <AccordionItem value="item-1" className={"w-full"}>
+                    <AccordionTrigger className="flex gap-4 items-center w-full"> {/*TODO -> make this piece of shit always w-full good fucking luck*/}
+                        <div className={"flex items-center"}> {/*TODO -> accordionTrigger should just be doing this*/}
+                            <div className={""}>
+                                <div className={"flex items-center gap-2"}>
+                                    <p className="text-lg">
+                                        fabric-pvputils
+                                    </p> {/*TODO idk why tf next has header tags all the same size*/}
                                     <p>
-                                        <UpdateData data={data[0]}></UpdateData>
+                                        v{data[0].version} - {data[0].summary}
                                     </p>
                                 </div>
-                                <a
-                                    className="nextButton"
-                                    href="https://modrinth.com"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                >
-                                    {/*<Image*/}
-                                    {/*  className="dark:invert"*/}
-                                    {/*  src=""*/}
-                                    {/*  alt="Modrinth logomark"*/}
-                                    {/*  width={20}*/}
-                                    {/*  height={20}*/}
-                                    {/*/>TODO modrinth logo*/}
-                                    modrinth
-                                </a>
+                                <p>
+                                    <UpdateData data={data[0]}></UpdateData>
+                                </p>
                             </div>
-                        </AccordionTrigger> {/*TODO -> video embed*/}
-                        <AccordionContent className={"flex flex-col gap-4"}>
                             <a
-                                href="https://github.com/pvputils/fabricpvputils-oss"
+                                className="nextButton"
+                                href="https://modrinth.com"
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
-                                <Badge variant="secondary">github</Badge>
+                                {/*<Image*/}
+                                {/*  className="dark:invert"*/}
+                                {/*  src=""*/}
+                                {/*  alt="Modrinth logomark"*/}
+                                {/*  width={20}*/}
+                                {/*  height={20}*/}
+                                {/*/>TODO modrinth logo*/}
+                                modrinth
                             </a>
+                        </div>
+                    </AccordionTrigger> {/*TODO -> video embed*/}
+                    <AccordionContent className={"flex flex-col gap-4"}>
+                        <a
+                            href="https://github.com/pvputils/fabricpvputils-oss"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Badge variant="secondary">github</Badge>
+                        </a>
                         {data.map((item, index) => (
-                                <div key={item.version} className={"flex flex-col gap-4"}>
-                                    <div className="flex gap-4">
-                                        <p>
-                                            {new Date(item.created_at).toLocaleDateString()} {index > 0 && (<>v{item.version} - {item.summary}</>)}
-                                        </p>
-                                        {index > 0 && (
-                                            <>
-                                                <UpdateData data={item}/>
-                                            </>
-                                        )}
-                                    </div>
-                                    <ol className="">{/*TODO -> examples for each in accordions*/}
-                                        {item.generic_patchnotes.map((item) => (
-                                            <li key={item}>{item}</li>
-                                        ))}
-                                    </ol>
-                                    <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
-                                        <div className={"w-2/4 flex flex-col gap-2"}>
-                                            <p>1.9 combat</p>
-                                            <ol start={item.generic_patchnotes.length + 1}>
-                                                {item["1.9_patchnotes"].map((item) => (
-                                                    <li key={item}>{item}</li>
-                                                ))}
-                                            </ol>
-                                        </div>
-                                        <div className={"w-2/4 flex flex-col gap-2"}>
-                                            <p>1.8 combat</p>
-                                            <ol start={item.generic_patchnotes.length + 1}>
-                                                {item["1.8_patchnotes"].map((item) => (
-                                                    <li key={item}>{item}</li>
-                                                ))}
-                                            </ol>
-                                        </div>
-                                    </div>
-                                    {item.nullable_recommended_mods_info && (
-                                        <ol>other recommended mods
-                                            {item.nullable_recommended_mods_info.map((item) => (
-                                                <li key={item.name}>{item.name}</li>
-                                            ))}
-                                        </ol>)}
+                            <div key={item.version} className={"flex flex-col gap-4"}>
+                                <div className="flex gap-4">
+                                    <p>
+                                        {new Date(item.created_at).toLocaleDateString()} {index > 0 && (<>v{item.version} - {item.summary}</>)}
+                                    </p>
+                                    {index > 0 && (
+                                        <>
+                                            <UpdateData data={item}/>
+                                        </>
+                                    )}
                                 </div>
+                                <ol className="">{/*TODO -> examples for each in accordions*/}
+                                    {item.generic_patchnotes.map((item) => (
+                                        <li key={item}>{item}</li>
+                                    ))}
+                                </ol>
+                                <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
+                                    <div className={"w-2/4 flex flex-col gap-2"}>
+                                        <p>1.9 combat</p>
+                                        <ol start={item.generic_patchnotes.length + 1}>
+                                            {item["1.9_patchnotes"].map((item) => (
+                                                <li key={item}>{item}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                    <div className={"w-2/4 flex flex-col gap-2"}>
+                                        <p>1.8 combat</p>
+                                        <ol start={item.generic_patchnotes.length + 1}>
+                                            {item["1.8_patchnotes"].map((item) => (
+                                                <li key={item}>{item}</li>
+                                            ))}
+                                        </ol>
+                                    </div>
+                                </div>
+                                {item.nullable_recommended_mods_info && (
+                                    <ol>other recommended mods
+                                        {item.nullable_recommended_mods_info.map((item) => (
+                                            <li key={item.name}>{item.name}</li>
+                                        ))}
+                                    </ol>)}
+                            </div>
                         ))}
-                        </AccordionContent>
-                    </AccordionItem>
-                    {/*<AccordionItem value="item-3">*/}
-                    {/*    <AccordionTrigger>*/}
-                    {/*        <s>fabric-pvputils+</s>*/}
-                    {/*    </AccordionTrigger>*/}
-                    {/*    <AccordionContent>*/}
-                    {/*        todo*/}
-                    {/*    </AccordionContent>*/}
-                    {/*</AccordionItem>TODO */}
-                </Accordion>
-            </main>
-            {/*<footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">*/}
-            {/*</footer>*/}
-        </div>
+                    </AccordionContent>
+                </AccordionItem>
+                {/*<AccordionItem value="item-3">*/}
+                {/*    <AccordionTrigger>*/}
+                {/*        <s>fabric-pvputils+</s>*/}
+                {/*    </AccordionTrigger>*/}
+                {/*    <AccordionContent>*/}
+                {/*        todo*/}
+                {/*    </AccordionContent>*/}
+                {/*</AccordionItem>TODO */}
+            </Accordion>
+        </main>
     );
 }
 

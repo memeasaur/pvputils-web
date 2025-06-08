@@ -9,8 +9,8 @@ export default function PackUpdater() {
     const workersCounter = useRef(0)
     const tasks = useRef<PackUpdateWorkerRequest[]>([])
     return ( // TODO -> this shit should NOT be a form, at least not one that isn't able to message web workers
-        <form className={"flex flex-col gap-4"}>
-            <div className={"flex flex-col gap-2"}>
+        <form className={"flex flex-col gap-2"}>
+            <div className={"flex flex-col gap-1"}>
                 <label className={"flex gap-2"}>
                     <input name={"isPackNameWatermarkEnabled"} defaultChecked type={"checkbox"} />pack name watermark <i>customizable</i>
                 </label>
@@ -24,7 +24,7 @@ export default function PackUpdater() {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-2"}>
+            <div className={"flex flex-col gap-1"}>
                 <label className={"flex gap-2"}>
                     <input name={"isPackDescriptionWatermarkEnabled"} defaultChecked type={"checkbox"}/>pack description watermark <i>customizable</i>
                 </label>
@@ -42,18 +42,18 @@ export default function PackUpdater() {
                 <input name={"isNetheriteWeapons"} defaultChecked type={"checkbox"} onChange={e =>
                     handleCheckboxHiddenVanillaDiv("generatedNetheriteConfig", e)}></input>generate netherite by recoloring pack&#39;s diamond
             </label>
-            <div id={"generatedNetheriteConfig"} className={"flex gap-2"}>
+            <div id={"generatedNetheriteConfig"} className={"flex gap-1"}>
                 <input type={"checkbox"} className={"invisible"}/>
-                <div className={"flex flex-col gap-2"}>
-                    <div className={"flex gap-2"}>
-                        <label className={"flex gap-2"}>
+                <div className={"flex flex-col gap-1"}>
+                    <div className={"flex gap-1"}>
+                        <label className={"flex gap-1"}>
                             <input name={"blendMode"} defaultChecked type={"radio"} value={"multiply"}/>multiply (darker)
                         </label>
-                        <label className={"flex gap-2"}>
+                        <label className={"flex gap-1"}>
                             <input name={"blendMode"} type={"radio"} value={"overlay"}/>overlay (lighter)
                         </label>
                     </div>
-                    <label className={"flex gap-2"}>
+                    <label className={"flex gap-1"}>
                         <input defaultChecked name={"isNetheriteTools"} type={"checkbox"}/>tools included
                     </label>
                 </div>
@@ -79,7 +79,7 @@ export default function PackUpdater() {
                     handleCheckboxHiddenVanillaDiv("hiddenBasePackUploads", e)}></input>
                 use modern base pack <span>(<a href={"https://faithfulpack.net/"} target={"_blank"} style={{ color: "blue", textDecoration: 'underline' }}>faithful</a> recommended)</span>
             </label>
-            <div id={"hiddenBasePackUploads"} hidden={true} className={"flex gap-4"} title={"based on grass_top.png"}>
+            <div id={"hiddenBasePackUploads"} hidden={true} className={"flex gap-2"} title={"based on grass_top.png"}>
                 <input type={"checkbox"} className={"invisible"}/>
                 <div className={"flex flex-col gap-2"}>
                     <label className={"flex gap-2 justify-between"}>
