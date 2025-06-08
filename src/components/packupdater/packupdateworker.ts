@@ -437,9 +437,9 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                         if (context) {
                             context.drawImage(sprite, 0, 0);
                             const resolutionFactor = canvas.width / 256
-                            context.drawImage(canvas, 97 * resolutionFactor, 17 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor, 87 * resolutionFactor, 25 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor)
-                            // context.fillRect(0, 0, canvas.width, canvas.height) TODO fill
-                            context.drawImage(canvas, 76 * resolutionFactor, 61 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor, 87 * resolutionFactor, 25 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor)
+                            context.clearRect(87 * resolutionFactor, 25 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor);
+                            context.drawImage(sprite, 87 * resolutionFactor, 25 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor, 97 * resolutionFactor, 17 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor)
+                            context.drawImage(canvas, 97 * resolutionFactor, 17 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor, 76 * resolutionFactor, 61 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor)
                             updatedPack.file(INVENTORY_PATH, await canvas.convertToBlob({type: "image/png"}))
                         }
                     }

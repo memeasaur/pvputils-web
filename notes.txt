@@ -4,9 +4,8 @@
 
 >make counter for total packs updated -> one for each download
     >formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
->fix inventory
 >fix leaves
->github link somwhere? footer?
+>github link somewhere? footer?
 >move download to same div as upload, just have the console and dl links below the config
 
 // TODO -> adjustable brightness and color wither hearts
