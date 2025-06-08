@@ -119,6 +119,8 @@ const diamondToolsMap = Object.freeze({
 const NEW_HUD_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/hud/"
 const NEW_WIDGET_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/widget/"
 
+const INVENTORY_PATH = "assets/minecraft/textures/gui/inventory.png"
+
 self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
     const updatedPack = await new JSZip().loadAsync(data.pack);
@@ -152,7 +154,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     updatedPack.file(key, await value.async("arraybuffer"))
             }))
     }
-    await Promise.all(Object.entries(updatedPack.files) // TODO -> apparently object.entries is safely capturing a snapshot of the files, so mutating it is fine
+    await Promise.all(Object.entries(updatedPack.files) // apparently object.entries is safely capturing a snapshot of the files, so mutating it is fine
         .map(async ([oldFilename, file]) => {
             // TODO -> progress bar
             // TODO -> progress console
@@ -431,6 +433,23 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     }
                     break
                 }
+                case INVENTORY_PATH: {
+                    const blob = await file.async("blob")
+                    if (blob) {
+                        const sprite = await createImageBitmap(blob)
+                        const canvas = new OffscreenCanvas(sprite.width, sprite.height);
+                        const context = canvas.getContext("2d");
+                        if (context) {
+                            context.drawImage(sprite, 0, 0);
+                            const resolutionFactor = canvas.width / 256
+                            context.drawImage(canvas, 97 * resolutionFactor, 17 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor, 87 * resolutionFactor, 25 * resolutionFactor, 74 * resolutionFactor, 36  * resolutionFactor)
+                            // context.fillRect(0, 0, canvas.width, canvas.height) TODO fill
+                            context.drawImage(canvas, 76 * resolutionFactor, 61 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor, 87 * resolutionFactor, 25 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor)
+                            updatedPack.file(INVENTORY_PATH, await canvas.convertToBlob({type: "image/png"}))
+                        }
+                    }
+                    break
+                }
                 default: {
                     const newFilename = (replacements[oldFilename] || oldFilename)
                         .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
@@ -462,7 +481,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     })()
                                     : await file.async("arraybuffer")
 
-                        if (content !== null) {
+                        if (content !== null)
                             switch (newFilename) {
                                 case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
@@ -472,7 +491,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     updatedPack.file("assets/minecraft/textures/misc/enchanted_glint_armor.png", content)
                                     break
                                 }
-                                default: {
+                                default: { // TODO -> this is only working because /items/ changes to /item/
                                     async function handleNetherite() {
                                         const blob = await file.async("blob")
                                         if (blob) {
@@ -502,7 +521,6 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     }
                                 }
                             }
-                        }
 
                         if (!formData.get("isBackwardCompatible"))
                             updatedPack.remove(oldFilename)
