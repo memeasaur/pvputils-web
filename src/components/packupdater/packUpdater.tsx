@@ -38,7 +38,7 @@ export default function PackUpdater() {
                 </div>
 
                 <label className={"flex gap-2"}>
-                    <input name={"isNetheriteGenerated"} defaultChecked type={"checkbox"} onChange={e =>
+                    <input name={"isNetheriteWeapons"} defaultChecked type={"checkbox"} onChange={e =>
                         handleCheckboxHiddenVanillaDiv("generatedNetheriteConfig", e)}></input>generate netherite by recoloring pack&#39;s diamond
                 </label>
                 <div id={"generatedNetheriteConfig"} className={"flex gap-4"}>
@@ -49,6 +49,9 @@ export default function PackUpdater() {
                         </label>
                         <label className={"flex gap-2"}>
                             <input name={"blendMode"} type={"radio"}/>overlay (lighter)
+                        </label>
+                        <label className={"flex gap-2"}>
+                            <input name={"isNetheriteTools"} type={"checkbox"}/>tools included
                         </label>
                     </div>
                 </div>

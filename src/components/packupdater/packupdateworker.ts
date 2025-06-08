@@ -99,6 +99,23 @@ const replacements = Object.freeze({
 
     ["assets/minecraft/textures/misc/enchanted_item_glint.png"]: NEW_GLINT_PATH,
 })
+const diamondWeaponsMap = Object.freeze({
+    [NEW_ITEMS_PATH + "diamond_boots.png"]: NEW_ITEMS_PATH + "netherite_boots.png",
+    [NEW_ITEMS_PATH + "diamond_sword.png"]: NEW_ITEMS_PATH + "netherite_sword.png",
+    [NEW_ITEMS_PATH + "diamond_helmet.png"]: NEW_ITEMS_PATH + "netherite_helmet.png",
+    [NEW_ITEMS_PATH + "diamond_leggings.png"]: NEW_ITEMS_PATH + "netherite_leggings.png",
+    [NEW_ITEMS_PATH + "diamond_chestplate.png"]: NEW_ITEMS_PATH + "netherite_chestplate.png",
+
+    [NEW_ARMOR_PATH + "diamond.png"]: NEW_ARMOR_PATH + "netherite.png",
+
+    [NEW_LEGGINGS_PATH + "diamond.png"]: NEW_LEGGINGS_PATH + "netherite.png",
+})
+const diamondToolsMap = Object.freeze({
+    [NEW_ITEMS_PATH + "diamond_axe.png"]: NEW_ITEMS_PATH + "netherite_axe.png",
+    [NEW_ITEMS_PATH + "diamond_hoe.png"]: NEW_ITEMS_PATH + "netherite_hoe.png",
+    [NEW_ITEMS_PATH + "diamond_shovel.png"]: NEW_ITEMS_PATH + "netherite_shovel.png",
+    [NEW_ITEMS_PATH + "diamond_pickaxe.png"]: NEW_ITEMS_PATH + "netherite_pickaxe.png",
+})
 const NEW_HUD_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/hud/"
 const NEW_WIDGET_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/widget/"
 
@@ -106,6 +123,9 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
     const updatedPack = await new JSZip().loadAsync(data.pack);
     const formData = data.formData
+    const formNetheriteEffect = formData.get("blendMode") === "multiply"
+        ? "multiply"
+        : "overlay";
     if (formData.get("isModernBasePackEnabled")) {
         let basePack: JSZip | null = null
         const packDefault = formData.get("defaultPack")
@@ -124,9 +144,13 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
         }
         if (packDefault)
             basePack = basePack || await new JSZip().loadAsync(packDefault)
-        if (basePack) {
-            for (const [filename, file] of basePack.files)
-        }
+        if (basePack)
+            await Promise.all(Object.entries(basePack.files).map(async ([key, value]) => {
+                if (value.dir)
+                    updatedPack.folder(key)
+                else
+                    updatedPack.file(key, await value.async("arraybuffer"))
+            }))
     }
     await Promise.all(Object.entries(updatedPack.files) // TODO -> apparently object.entries is safely capturing a snapshot of the files, so mutating it is fine
         .map(async ([oldFilename, file]) => {
@@ -142,25 +166,30 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     const context = canvas.getContext("2d");
                     if (context) { // TODO -> do this in one phase (?)
                         const futureSprites = getSpriteTargetBlobPromises(await createImageBitmap(spriteSheet, 16 * resolutionFactor, 0, 162 * resolutionFactor, 54 * resolutionFactor), spriteSize, context, canvas)
+
                         function getHeartNewPath(newName: string) {
                             return "assets/minecraft/textures/gui/sprites/hud/heart/" + newName + ".png"
                         }
+
                         function handleHeart(y: number, x: number, newName: string) {
                             return handleSpriteIteration(futureSprites, y, x, updatedPack, getHeartNewPath(newName));
                         }
+
                         function handleHud(y: number, x: number, newName: string) {
                             return handleSpriteIteration(futureSprites, y, x, updatedPack, NEW_HUD_SPRITES_PATH + newName + ".png")
                         }
+
                         const blankBlinkingHeartBlobIfEnabled = formData.get("isBlinkingHeartSpriteRemoved") !== null
                             ? (async () => {
                                 const canvas = new OffscreenCanvas(spriteSize, spriteSize);
                                 const context1 = canvas.getContext('2d');
                                 if (context1) {
                                     context1.clearRect(0, 0, 1, 1);
-                                    return canvas.convertToBlob({ type: "image/png" })
+                                    return canvas.convertToBlob({type: "image/png"})
                                 }
                             })()
                             : null
+
                         async function handleBlinkingHeart(newFilename: string, y: number, x: number) {
                             const blob = await blankBlinkingHeartBlobIfEnabled
                             if (blob)
@@ -168,29 +197,32 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             else
                                 return handleHeart(y, x, newFilename)
                         }
+
                         async function handleAbsentBlinkingHeart(newFilename: string) {
                             const blob = await blankBlinkingHeartBlobIfEnabled
                             if (blob)
                                 updatedPack.file(getHeartNewPath(newFilename), blob)
                         }
+
                         const isWitherHeartRecolored = formData.get("isWitherHeartSpriteRecolored") !== null
+
                         async function handleWitherHeart(y: number, x: number, newName: string) {
                             if (isWitherHeartRecolored) {
                                 const blob = await futureSprites[y][x]
                                 if (blob) {
                                     const sprite = await createImageBitmap(blob)
-                                    const canvas = new OffscreenCanvas(spriteSize, spriteSize);
-                                    const context = canvas.getContext('2d');
+                                    const canvas = new OffscreenCanvas(spriteSize, spriteSize)
+                                    const context = canvas.getContext('2d')
                                     if (context) {
-                                        context.filter = 'brightness(200%)';
+                                        context.filter = 'brightness(200%)'
                                         context.drawImage(sprite, 0, 0);
-                                        return updatedPack.file(getHeartNewPath(newName), await canvas.convertToBlob({ type: 'image/png' }));
+                                        return updatedPack.file(getHeartNewPath(newName), await canvas.convertToBlob({type: 'image/png'}));
                                     }
                                 }
-                            }
-                            else
+                            } else
                                 return handleHeart(y, x, newName)
                         }
+
                         await Promise.all([
                             handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
                             handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
@@ -208,7 +240,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             // await handleHeart(0, 3, "container") TODO (?) unused?
                             handleHeart(0, 4, "full"),
                             handleHeart(0, 5, "half"),
-                            handleBlinkingHeart("full_blinking",0, 6),
+                            handleBlinkingHeart("full_blinking", 0, 6),
                             handleBlinkingHeart("half_blinking", 0, 7),
                             handleHeart(0, 8, "poisoned_full"),
                             handleHeart(0, 9, "poisoned_half"),
@@ -306,9 +338,11 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     const context = canvas.getContext("2d")
                     if (context) {
                         const sprites = getSpriteTargetBlobPromises(spriteSheet, spriteSize, context, canvas)
+
                         function handle(y: number, x: number, newName: string) {
                             return handleSpriteIteration(sprites, y, x, updatedPack, "assets/minecraft/textures/particle/" + newName + ".png")
                         }
+
                         await Promise.all([
                             handle(0, 0, "big_smoke_0"),
                             handle(0, 1, "big_smoke_1"),
@@ -424,9 +458,9 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                             context.fillStyle = "rgba(167, 85, 255, 1.00)";
                                             context.fillRect(0, 0, canvas.width, canvas.height);
                                         }
-                                        return await canvas.convertToBlob({ type: "image/png" })
+                                        return await canvas.convertToBlob({type: "image/png"})
                                     })()
-                                    : await file.async("uint8array")
+                                    : await file.async("arraybuffer")
 
                         if (content !== null) {
                             switch (newFilename) {
@@ -437,6 +471,35 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 case NEW_GLINT_PATH: {
                                     updatedPack.file("assets/minecraft/textures/misc/enchanted_glint_armor.png", content)
                                     break
+                                }
+                                default: {
+                                    async function handleNetherite() {
+                                        const blob = await file.async("blob")
+                                        if (blob) {
+                                            const sprite = await createImageBitmap(blob)
+                                            const canvas = new OffscreenCanvas(sprite.width, sprite.height);
+                                            const context = canvas.getContext("2d");
+                                            if (context) {
+                                                context.filter = "grayscale(100%)"
+                                                context.drawImage(sprite, 0, 0)
+                                                context.filter = "none"
+
+                                                context.globalCompositeOperation = formNetheriteEffect
+                                                context.fillStyle = "rgba(74, 41, 64, 1.00)";
+                                                context.fillRect(0, 0, canvas.width, canvas.height);
+
+                                                context.globalCompositeOperation = "destination-in"; // this is bringing each pixel's opacity back to source level, reliant on the fill bringing it to 100%
+                                                context.drawImage(sprite, 0, 0);
+                                                updatedPack.file(diamondWeaponsMap[newFilename], await canvas.convertToBlob({type: "image/png"}))
+                                            }
+                                        }
+                                    }
+                                    if (formData.get("isNetheriteWeapons")) {
+                                        if (diamondWeaponsMap[newFilename])
+                                            await handleNetherite()
+                                        else if (diamondToolsMap[newFilename] && formData.get("isNetheriteTools"))
+                                            await handleNetherite()
+                                    }
                                 }
                             }
                         }
@@ -470,11 +533,12 @@ async function handleSpriteTarget(width: number, resolutionFactor: number, heigh
     const context = canvas.getContext("2d");
     if (context) {
         context.drawImage(spriteSheet, x * resolutionFactor, y * resolutionFactor, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
-        const hotbar = await canvas.convertToBlob({ type: "image/png" })
+        const hotbar = await canvas.convertToBlob({type: "image/png"})
         if (hotbar)
             updatedPack.file(filename, hotbar)
     }
 }
+
 function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: number, context: OffscreenCanvasRenderingContext2D, canvas: OffscreenCanvas) {
     // TODO -> stream this (?)
     const sprites: (Promise<Blob | null>)[][] = [];
@@ -484,14 +548,16 @@ function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: numbe
             context.clearRect(0, 0, spriteSize, spriteSize);
             context.drawImage(spriteSheet, col * spriteSize, row * spriteSize, spriteSize, spriteSize, 0, 0, spriteSize, spriteSize);
 
-            sprites[row][col] = canvas.convertToBlob({ type: "image/png" })
+            sprites[row][col] = canvas.convertToBlob({type: "image/png"})
         }
     }
     return sprites
 }
+
 async function handleSpriteIteration(futureSprites: (Promise<Blob | null>)[][], y: number, x: number, updatedPack: JSZip, newFilename: string) {
     const sprite = await futureSprites[y][x]
     if (sprite)
         updatedPack.file(newFilename, sprite)
 }
+
 export {}

@@ -5,14 +5,13 @@
 >make counter for total packs updated -> one for each download
     >formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 
->impl base pack
->generate netherite textures
 >(?) fix main inventory programmatically somehow
     >sprite starts at 87,25, 74 wide 36 tall
     >template square is 87,25, 18 wide 18 tall
     >destination sprite starts at 97, 17
     >destination square starts at 76, 61
 
+// TODO -> adjustable brightness and color wither hearts
 >fix blur causing fucky (?)
 >TODO -> pick netherite base color
 >TODO -> worker console messaging
