@@ -45,10 +45,10 @@ export default function PackUpdater() {
                     ...
                     <div className={"flex gap-2"}>
                         <label className={"flex gap-2"}>
-                            <input name={"blendMode"} defaultChecked type={"radio"}/>multiply (darker)
+                            <input name={"blendMode"} defaultChecked type={"radio"} value={"multiply"}/>multiply (darker)
                         </label>
                         <label className={"flex gap-2"}>
-                            <input name={"blendMode"} type={"radio"}/>overlay (lighter)
+                            <input name={"blendMode"} type={"radio"} value={"overlay"}/>overlay (lighter)
                         </label>
                         <label className={"flex gap-2"}>
                             <input defaultChecked name={"isNetheriteTools"} type={"checkbox"}/>tools included
