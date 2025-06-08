@@ -446,11 +446,14 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     break
                 }
                 case "pack.mcmeta": {
-                    const json = JSON.parse(await file.async("string"));
-                    json.pack_format = 43;
+                    let mcmeta = (await file.async("string"))
+                        .replace('"pack_format": 1', '"pack_format": 43')
                     if (formData.packDescriptionWatermark)
-                        json.description = (json.description ? json.description : "") + " - " + formData.packDescriptionWatermark
-                    updatedPack.file("pack.mcmeta", JSON.stringify(json))
+                        mcmeta = mcmeta.replace(
+                            /("description"\s*:\s*")([^"]*)(")/,
+                            (_, start, desc, end) => `${start}${desc} - ${formData.packDescriptionWatermark}${end}`
+                        ); // TODO -> no fucking CLUE what this is actually up to
+                    updatedPack.file("pack.mcmeta", mcmeta)
                     break
                 }
                 default: {
