@@ -536,7 +536,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
             ?
             (packName.endsWith(".zip")
                 ? packName.slice(0, -4)
-                : packName) + formData.packNameWatermark + ".zip"
+                : packName) + " " + formData.packNameWatermark + ".zip"
             : packName)
     } as PackUpdateWorkerResponse);
 }
