@@ -17,12 +17,19 @@ export default async function Home() {
 
     return (
         <div
-            className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+            className="grid items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[var(--font-geist-sans-serif)]">
             <main className="grid grid-rows-[20%_1fr] gap-[16px] items-center sm:items-start w-full">
                 <Accordion type="single" collapsible defaultValue={"item-1"} className={"row-start-2 w-full"}>
                     <AccordionItem value={"item-3"}>
                         <AccordionTrigger>
-
+                            <div> {/*TODO -> accordionTrigger should just be doing this*/}
+                                <p className="text-lg">
+                                    pack-archive
+                                </p>
+                                <p>
+                                    accepts (1.7.10).zip returns (1.21.4).zip
+                                </p>
+                            </div>
                         </AccordionTrigger>
                         <AccordionContent>
 
@@ -34,19 +41,19 @@ export default async function Home() {
                                 <p className="text-lg">
                                     pack-updater
                                 </p>
-                                <p className={"font-[family-name:var(--font-geist-mono)]"}>
-                                    accepts (1.7.10).zip returns (1.21.4).zip
+                                <p>
+                                    accepts (1.7.10).zip, returns (1.21.4).zip
                                 </p>
                             </div>
                         </AccordionTrigger>
-                        <AccordionContent>
-                            <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
-                            {/*<p className={"font-[family-name:var(--font-geist-mono)]"}>*/}
-                            {/*    history*/}
-                            {/*</p>TODO remove*/}
-                            {/*<p className={"font-[family-name:var(--font-geist-mono)]"}>*/}
-                            {/*    changelog*/}
-                            {/*</p>TODO remove*/}
+                        <AccordionContent className={"flex gap-4"}>
+                            <div className={"flex flex-col gap-4"}>
+                                <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
+                                changelog
+                            </div>
+                            <div className={"w-1/2 justify-end"}>
+                                foo
+                            </div>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-1" className={"w-full"}>
@@ -61,7 +68,7 @@ export default async function Home() {
                                             v{data[0].version} - {data[0].summary}
                                         </p>
                                     </div>
-                                    <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                    <p>
                                         <UpdateData data={data[0]}></UpdateData>
                                     </p>
                                 </div>
@@ -93,7 +100,7 @@ export default async function Home() {
                         {data.map((item, index) => (
                                 <div key={item.version} className={"flex flex-col gap-4"}>
                                     <div className="flex gap-4">
-                                        <p className={"font-[family-name:var(--font-geist-mono)]"}>
+                                        <p>
                                             {new Date(item.created_at).toLocaleDateString()} {index > 0 && (<>v{item.version} - {item.summary}</>)}
                                         </p>
                                         {index > 0 && (
@@ -102,7 +109,7 @@ export default async function Home() {
                                             </>
                                         )}
                                     </div>
-                                    <ol className="font-[family-name:var(--font-geist-mono)]">{/*TODO -> examples for each in accordions*/}
+                                    <ol className="">{/*TODO -> examples for each in accordions*/}
                                         {item.generic_patchnotes.map((item) => (
                                             <li key={item}>{item}</li>
                                         ))}
@@ -110,8 +117,7 @@ export default async function Home() {
                                     <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
                                         <div className={"w-2/4 flex flex-col gap-2"}>
                                             <p>1.9 combat</p>
-                                            <ol start={item.generic_patchnotes.length + 1}
-                                                className={"font-[family-name:var(--font-geist-mono)]"}>
+                                            <ol start={item.generic_patchnotes.length + 1}>
                                                 {item["1.9_patchnotes"].map((item) => (
                                                     <li key={item}>{item}</li>
                                                 ))}
@@ -119,8 +125,7 @@ export default async function Home() {
                                         </div>
                                         <div className={"w-2/4 flex flex-col gap-2"}>
                                             <p>1.8 combat</p>
-                                            <ol start={item.generic_patchnotes.length + 1}
-                                                className={"font-[family-name:var(--font-geist-mono)]"}>
+                                            <ol start={item.generic_patchnotes.length + 1}>
                                                 {item["1.8_patchnotes"].map((item) => (
                                                     <li key={item}>{item}</li>
                                                 ))}
