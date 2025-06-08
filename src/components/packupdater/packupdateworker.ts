@@ -125,24 +125,19 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
     const updatedPack = await new JSZip().loadAsync(data.pack);
     const formData = data.formData
-    const formNetheriteEffect = formData.get("blendMode") === "multiply"
-        ? "multiply"
-        : "overlay";
-    if (formData.get("isModernBasePackEnabled")) {
+    const formNetheriteEffect = formData.blendMode;
+    if (formData.isModernBasePackEnabled) {
         let basePack: JSZip | null = null
-        const packDefault = formData.get("defaultPack")
+        const packDefault = formData.defaultPack
         const blob = await updatedPack.file(OLD_BLOCKS_PATH + "grass_top.png")?.async("blob")
         if (blob) {
             const resolution = (await createImageBitmap(blob)).height
-            const pack64 = formData.get("64xPack")
-            const pack32 = formData.get("32xPack")
-            const pack16 = formData.get("16xPack")
-            if (resolution >= 64 && pack64)
-                basePack = await new JSZip().loadAsync(pack64);
-            else if (resolution >= 32 && pack32)
-                basePack = await new JSZip().loadAsync(pack32)
-            else if (resolution >= 16 && pack16)
-                basePack = await new JSZip().loadAsync(pack16);
+            if (resolution >= 64 && formData["64xPack"])
+                basePack = await new JSZip().loadAsync(formData["64xPack"]);
+            else if (resolution >= 32 && formData["32xPack"])
+                basePack = await new JSZip().loadAsync(formData["32xPack"])
+            else if (resolution >= 16 && formData["16xPack"])
+                basePack = await new JSZip().loadAsync(formData["16xPack"]);
         }
         if (packDefault)
             basePack = basePack || await new JSZip().loadAsync(packDefault)
@@ -181,7 +176,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             return handleSpriteIteration(futureSprites, y, x, updatedPack, NEW_HUD_SPRITES_PATH + newName + ".png")
                         }
 
-                        const blankBlinkingHeartBlobIfEnabled = formData.get("isBlinkingHeartSpriteRemoved") !== null
+                        const blankBlinkingHeartBlobIfEnabled = formData.isBlinkingHeartSpriteRemoved !== null
                             ? (async () => {
                                 const canvas = new OffscreenCanvas(spriteSize, spriteSize);
                                 const context1 = canvas.getContext('2d');
@@ -206,7 +201,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 updatedPack.file(getHeartNewPath(newFilename), blob)
                         }
 
-                        const isWitherHeartRecolored = formData.get("isWitherHeartSpriteRecolored") !== null
+                        const isWitherHeartRecolored = formData.isWitherHeartSpriteRecolored !== null
 
                         async function handleWitherHeart(y: number, x: number, newName: string) {
                             if (isWitherHeartRecolored) {
@@ -428,7 +423,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             handle(15, 10, "sga_z")
                         ])
 
-                        if (!formData.get("isBackwardCompatible"))
+                        if (!formData.isBackwardCompatible)
                             updatedPack.remove(oldFilename)
                     }
                     break
@@ -462,8 +457,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 ? await (async () => {
                                     const json = JSON.parse(await file.async("string"));
                                     json.pack_format = 43;
-                                    if (formData.get("isPackDescriptionWatermarkEnabled"))
-                                        json.description = json.description + " - " + formData.get("packDescriptionWatermark")
+                                    if (formData.packDescriptionWatermark)
+                                        json.description = json.description + " - " + formData.packDescriptionWatermark
                                     return JSON.stringify(json)
                                 })()
                                 : newFilename === NEW_GLINT_PATH
@@ -513,16 +508,16 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                             }
                                         }
                                     }
-                                    if (formData.get("isNetheriteWeapons")) {
+                                    if (formData.isNetheriteWeapons) {
                                         if (diamondWeaponsMap[newFilename])
                                             await handleNetherite()
-                                        else if (diamondToolsMap[newFilename] && formData.get("isNetheriteTools"))
+                                        else if (diamondToolsMap[newFilename] && formData.isNetheriteTools)
                                             await handleNetherite()
                                     }
                                 }
                             }
 
-                        if (!formData.get("isBackwardCompatible"))
+                        if (!formData.isBackwardCompatible)
                             updatedPack.remove(oldFilename)
 
                         if (content === null) // TODO PRETTY SURE THIS IS SAFELY MUTATING UPDATED PACK BECAUSE JAVASCRIPT SINGLE THREADED EVENT LOOP!
@@ -537,11 +532,11 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const packName = data.pack.name;
     self.postMessage({
         updatedPack: await updatedPack.generateAsync({type: "blob"}),
-        updatedPackName: (formData.get("isPackNameWatermarkEnabled")
+        updatedPackName: (formData.packNameWatermark
             ?
             (packName.endsWith(".zip")
                 ? packName.slice(0, -4)
-                : packName) + formData.get("packNameWatermark") + ".zip"
+                : packName) + formData.packNameWatermark + ".zip"
             : packName)
     } as PackUpdateWorkerResponse);
 }
