@@ -4,8 +4,6 @@
 
 >make counter for total packs updated -> one for each download
     >formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
->handle glint better (?)
->.mcmeta watermark isn't working
 
 // TODO -> adjustable brightness and color wither hearts
 >fix blur causing fucky (?)
