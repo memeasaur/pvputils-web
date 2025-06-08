@@ -6,6 +6,8 @@
     >formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 >fix inventory
 >fix leaves
+>github link somwhere? footer?
+>move download to same div as upload, just have the console and dl links below the config
 
 // TODO -> adjustable brightness and color wither hearts
 >fix blur causing fucky (?)
@@ -16,7 +18,7 @@
 >TODO -> remaining widgets.png stuff
 >generate offhand sprites (?)
 >container/stats_icons (?)
->(?) generate lingering potion (lol)
 
+>(?) generate lingering potion (lol)
 >(?) show the user the diamond sword and have them edit it to be netherite
 >(?) provide template netherite textures
