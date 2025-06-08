@@ -3,7 +3,7 @@ import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
-import PackUpdater from "@/components/packupdater/packUpdater";
+import PackUpdater, {PackUpdaterCounter} from "@/components/packupdater/packUpdater";
 
 export default async function Home() {
     const url = 'https://xapkbnegosbyhmondqti.supabase.co'
@@ -26,34 +26,20 @@ export default async function Home() {
         throw new Error(error1.message)
 
     return (
-        <main className="grid grid-rows-[15vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">
+        <main
+            className="grid grid-rows-[20vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">{/*TODO -> actually center this*/}
             <Accordion type="single" collapsible className={"w-full row-start-2"}>{/*TODO defaultValue={"item-1"}*/}
-                <AccordionItem value={"item-3"}>
-                    <AccordionTrigger>
-                        <div> {/*TODO -> accordionTrigger should just be doing this*/}
-                            <p className="text-lg">
-                                pack-updater pack archive
-                            </p>
-                            <p>
-                                accepts (1.7.10).zip returns (1.21.4).zip
-                            </p>
-                        </div>
-                    </AccordionTrigger>
-                    <AccordionContent>
-
-                    </AccordionContent>
-                </AccordionItem>
                 <AccordionItem value="item-2">
-                    <AccordionTrigger className={"flex gap-4 items-center w-full"}>
-                        <div> {/*TODO -> accordionTrigger should just be doing this*/}
-                            <p className="text-lg">
-                                pack-updater
-                            </p>
-                            <p>
-                                accepts (1.7.10).zip, returns (1.21.4).zip
-                            </p>
-                        </div>
-                    </AccordionTrigger>
+                    <ChangelogAccordionTrigger
+                        title={"pack-updater"}
+                        version={packUpdaterData[0].version}
+                        summary={packUpdaterData[0].summary}
+                        updateData={
+                            <>
+                                accepts (1.7.10).zip, returns (1.21.4).zip - <PackUpdaterCounter/> converted
+                            </>}
+                        modrinthButton={null}
+                    />
                     <AccordionContent className={"grid grid-cols-2 w-max auto-cols-auto gap-4"}>
                         <div className={"flex flex-col gap-4"}>
                             <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
@@ -74,6 +60,21 @@ export default async function Home() {
                         version={pvpUtilsData[0].version}
                         summary={pvpUtilsData[0].summary}
                         updateData={<PvpUtilsUpdateData data={pvpUtilsData[0]}/>}
+                        modrinthButton={<a
+                            className="nextButton"
+                            href="https://modrinth.com"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {/*<Image*/}
+                            {/*  className="dark:invert"*/}
+                            {/*  src=""*/}
+                            {/*  alt="Modrinth logomark"*/}
+                            {/*  width={20}*/}
+                            {/*  height={20}*/}
+                            {/*/>TODO modrinth logo*/}
+                            modrinth
+                        </a>}
                     />
                     <AccordionContent className={"flex flex-col gap-4"}>
                         <a
@@ -138,6 +139,7 @@ function ChangelogAccordionTrigger(props: {
     version: number,
     summary: string,
     updateData: React.ReactNode
+    modrinthButton: React.ReactNode
 }) {
     return (
         <AccordionTrigger
@@ -156,21 +158,7 @@ function ChangelogAccordionTrigger(props: {
                         {props.updateData}
                     </p>
                 </div>
-                <a
-                    className="nextButton"
-                    href="https://modrinth.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    {/*<Image*/}
-                    {/*  className="dark:invert"*/}
-                    {/*  src=""*/}
-                    {/*  alt="Modrinth logomark"*/}
-                    {/*  width={20}*/}
-                    {/*  height={20}*/}
-                    {/*/>TODO modrinth logo*/}
-                    modrinth
-                </a>
+                {props.modrinthButton}
             </div>
         </AccordionTrigger> // {/*TODO -> video embed*/}
     )
