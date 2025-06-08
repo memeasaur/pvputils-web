@@ -437,12 +437,20 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                         if (context) {
                             context.drawImage(sprite, 0, 0);
                             const resolutionFactor = canvas.width / 256
-                            context.drawImage(canvas, 97 * resolutionFactor, 17 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor, 87 * resolutionFactor, 25 * resolutionFactor, 74 * resolutionFactor, 36  * resolutionFactor)
+                            context.drawImage(canvas, 97 * resolutionFactor, 17 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor, 87 * resolutionFactor, 25 * resolutionFactor, 74 * resolutionFactor, 36 * resolutionFactor)
                             // context.fillRect(0, 0, canvas.width, canvas.height) TODO fill
                             context.drawImage(canvas, 76 * resolutionFactor, 61 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor, 87 * resolutionFactor, 25 * resolutionFactor, 18 * resolutionFactor, 18 * resolutionFactor)
                             updatedPack.file(INVENTORY_PATH, await canvas.convertToBlob({type: "image/png"}))
                         }
                     }
+                    break
+                }
+                case "pack.mcmeta": {
+                    const json = JSON.parse(await file.async("string"));
+                    json.pack_format = 43;
+                    if (formData.packDescriptionWatermark)
+                        json.description = (json.description ? json.description : "") + " - " + formData.packDescriptionWatermark
+                    updatedPack.file("pack.mcmeta", JSON.stringify(json))
                     break
                 }
                 default: {
@@ -453,28 +461,23 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     if (oldFilename !== newFilename) {
                         const content = file.dir
                             ? null
-                            : newFilename === "pack.mcmeta"
+                            : newFilename === NEW_GLINT_PATH
                                 ? await (async () => {
-                                    const json = JSON.parse(await file.async("string"));
-                                    json.pack_format = 43;
-                                    if (formData.packDescriptionWatermark)
-                                        json.description = json.description + " - " + formData.packDescriptionWatermark
-                                    return JSON.stringify(json)
+                                    const image = await createImageBitmap(await file.async("blob"));
+                                    const canvas = new OffscreenCanvas(image.width, image.height);
+                                    const context = canvas.getContext("2d");
+                                    if (context) {
+                                        context.translate(canvas.width, 0)
+                                        context.rotate(Math.PI / 2)
+
+                                        context.drawImage(image, 0, 0);
+                                        context.globalCompositeOperation = "multiply";
+                                        context.fillStyle = "rgba(167, 85, 255, 1.00)";
+                                        context.fillRect(0, 0, canvas.width, canvas.height);
+                                    }
+                                    return await canvas.convertToBlob({type: "image/png"})
                                 })()
-                                : newFilename === NEW_GLINT_PATH
-                                    ? await (async () => {
-                                        const image = await createImageBitmap(await file.async("blob"));
-                                        const canvas = new OffscreenCanvas(image.width, image.height);
-                                        const context = canvas.getContext("2d");
-                                        if (context) {
-                                            context.drawImage(image, 0, 0);
-                                            context.globalCompositeOperation = "multiply";
-                                            context.fillStyle = "rgba(167, 85, 255, 1.00)";
-                                            context.fillRect(0, 0, canvas.width, canvas.height);
-                                        }
-                                        return await canvas.convertToBlob({type: "image/png"})
-                                    })()
-                                    : await file.async("arraybuffer")
+                                : await file.async("arraybuffer")
 
                         if (content !== null)
                             switch (newFilename) {
@@ -508,6 +511,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                             }
                                         }
                                     }
+
                                     if (formData.isNetheriteWeapons) {
                                         if (diamondWeaponsMap[newFilename])
                                             await handleNetherite()
