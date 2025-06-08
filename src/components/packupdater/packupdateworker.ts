@@ -119,7 +119,7 @@ const diamondToolsMap = Object.freeze({
 const NEW_HUD_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/hud/"
 const NEW_WIDGET_SPRITES_PATH = "assets/minecraft/textures/gui/sprites/widget/"
 
-const INVENTORY_PATH = "assets/minecraft/textures/gui/inventory.png"
+const INVENTORY_PATH = "assets/minecraft/textures/gui/container/inventory.png"
 
 self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
