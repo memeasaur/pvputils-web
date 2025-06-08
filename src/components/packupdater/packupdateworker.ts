@@ -452,7 +452,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                         mcmeta = mcmeta.replace(
                             /("description"\s*:\s*")([^"]*)(")/,
                             (_, start, desc, end) => `${start}${desc} - ${formData.packDescriptionWatermark}${end}`
-                        ); // TODO -> no fucking CLUE what this is actually up to
+                        ); // TODO -> json didn't work, no fucking CLUE what this is actually up to
                     updatedPack.file("pack.mcmeta", mcmeta)
                     break
                 }
