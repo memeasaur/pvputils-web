@@ -3,7 +3,7 @@ import {Badge} from "@/components/ui/badge";
 import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
-import PackUpdater, {PackUpdaterCounter} from "@/components/packupdater/packUpdater";
+import PackUpdater from "@/components/packupdater/packUpdater";
 
 export default async function Home() {
     const url = 'https://xapkbnegosbyhmondqti.supabase.co'
@@ -36,7 +36,7 @@ export default async function Home() {
                         summary={packUpdaterData[0].summary}
                         updateData={
                             <>
-                                accepts (1.7.10).zip, returns (1.21.4).zip - <PackUpdaterCounter/> converted
+                                accepts (1.7.10).zip, returns (1.21.4).zip
                             </>}
                         modrinthButton={null}
                     />

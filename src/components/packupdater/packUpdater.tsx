@@ -210,13 +210,6 @@ export default function PackUpdater() {
         </form>
     )
 }
-export function PackUpdaterCounter() {
-    return (
-        <>
-            0
-        </>
-    )
-}
 function handleCheckboxHiddenVanillaDiv(divId: string, e: ChangeEvent<HTMLInputElement>) {
     const div = document.getElementById(divId);
     if (div)
