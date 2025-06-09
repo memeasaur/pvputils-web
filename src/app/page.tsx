@@ -39,18 +39,13 @@ export default async function Home() {
                             </>}
                         modrinthButton={null}
                     />
-                    <AccordionContent className={"grid grid-cols-2 w-max auto-cols-auto gap-4"}>
-                        <div className={"flex flex-col gap-4"}>
-                            <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
-                            <OverviewAccordionContent
-                                created_at={packUpdaterData[0].created_at}
-                                generic_patchnotes={packUpdaterData[0].generic_patchnotes}
-                                extra_patchnotes={null}
-                            />
-                        </div>
-                        <div className={"flex justify-end"}>
-                            foo
-                        </div>
+                    <AccordionContent className={"flex flex-col gap-4"}>
+                        <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
+                        <OverviewAccordionContent
+                            created_at={packUpdaterData[0].created_at}
+                            generic_patchnotes={packUpdaterData[0].generic_patchnotes}
+                            extra_patchnotes={null}
+                        />
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value="item-1" className={"w-full"}>
