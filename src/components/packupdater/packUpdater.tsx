@@ -1,9 +1,26 @@
 'use client';
-import React, {ChangeEvent, useRef, useState} from "react";
+import React, {ChangeEvent, useEffect, useRef, useState} from "react";
 import {PackUpdateWorkerFormData, PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
+import {createClient} from "@supabase/supabase-js";
+import {Database} from "@/lib/supabase";
+import {SUPABASE_URL, SUPABASE_KEY} from "@/app/constants";
 
-const VERSION = 0.9
+const VERSION = 0.9 // TODO -> dynamically get this from supabase
 export default function PackUpdater() {
+    const [history, setHistory] = useState<Database["public"]["Tables"]["packupdater_cache"]["Row"][]>([]);
+    useEffect(() => {
+        (async () => {
+            const {
+                data: packUpdaterHistoryData,
+                error: error2
+            } = await createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
+                .from('packupdater_cache')
+                .select('*')
+            if (error2)
+                throw new Error(error2.message)
+            setHistory(packUpdaterHistoryData)
+        })()
+    })
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
     const [packUpdaterMessages, setPackUpdaterMessages] = useState<string[]>([]);
     const workersCounter = useRef(0)

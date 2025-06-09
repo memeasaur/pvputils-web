@@ -54,6 +54,27 @@ export type Database = {
                 }
                 Relationships: []
             }
+            packupdater_cache: {
+                Row: {
+                    created_at: string
+                    id: number
+                    name: string
+                    pack_names: string[]
+                }
+                Insert: {
+                    created_at?: string
+                    id?: number
+                    name: string
+                    pack_names: string[]
+                }
+                Update: {
+                    created_at?: string
+                    id?: number
+                    name?: string
+                    pack_names?: string[]
+                }
+                Relationships: []
+            }
             packupdater_updates: {
                 Row: {
                     created_at: string

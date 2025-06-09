@@ -4,14 +4,13 @@ import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
 import PackUpdater from "@/components/packupdater/packUpdater";
+import {SUPABASE_URL, SUPABASE_KEY} from "@/app/constants";
 
 export default async function Home() {
-    const url = 'https://xapkbnegosbyhmondqti.supabase.co'
-    const key = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA'
     const {
         data: pvpUtilsData,
         error
-    } = await createClient<Database>(url, key)
+    } = await createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
         .from('fabricpvputils_updates')
         .select('*')
     if (error)
@@ -19,7 +18,7 @@ export default async function Home() {
     const {
         data: packUpdaterData,
         error: error1
-    } = await createClient<Database>(url, key)
+    } = await createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
         .from('packupdater_updates')
         .select('*')
     if (error1)
