@@ -2,10 +2,8 @@
 >make accordion y not change when clicking
 >every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
 
->make counter for total packs updated -> one for each download
-    >formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
+>formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 >github link somewhere? footer?
->move download to same div as upload, just have the console and dl links below the config
 
 // TODO -> adjustable brightness and color wither hearts
 >fix blur causing fucky (?)
