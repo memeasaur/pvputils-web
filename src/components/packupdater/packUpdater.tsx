@@ -1,25 +1,23 @@
 'use client';
-import React, {ChangeEvent, useEffect, useRef, useState} from "react";
+import React, {ChangeEvent, useRef, useState} from "react";
 import {PackUpdateWorkerFormData, PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
-import {Database} from "@/lib/supabase";
-import {SUPABASE} from "@/app/constants";
 
 const VERSION = 0.9 // TODO -> dynamically get this from supabase
 export default function PackUpdater() {
-    const [history, setHistory] = useState<Database["public"]["Tables"]["packupdater_cache"]["Row"][]>([]);
-    useEffect(() => {
-        (async () => {
-            const {
-                data: packUpdaterHistoryData,
-                error: error2
-            } = await SUPABASE
-                .from('packupdater_cache')
-                .select('*')
-            if (error2)
-                throw new Error(error2.message)
-            setHistory(packUpdaterHistoryData)
-        })()
-    })
+    // const [history, setHistory] = useState<Database["public"]["Tables"]["packupdater_cache"]["Row"][]>([]);
+    // useEffect(() => {
+    //     (async () => {
+    //         const {
+    //             data: packUpdaterHistoryData,
+    //             error: error2
+    //         } = await SUPABASE
+    //             .from('packupdater_cache')
+    //             .select('*')
+    //         if (error2)
+    //             throw new Error(error2.message)
+    //         setHistory(packUpdaterHistoryData)
+    //     })()
+    // }) TODO anonymous auth
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
     const [clickedUpdatedPacksUrls, setClickedUpdatedPacksUrls] = useState<Set<string>>(new Set());
     const [packUpdaterMessages, setPackUpdaterMessages] = useState<string[]>([]);
@@ -233,8 +231,8 @@ export default function PackUpdater() {
                                        style={{color: 'blue', textDecoration: 'underline'}} onClick={e => {
                                            const href = e.currentTarget.href
                                            if (!clickedUpdatedPacksUrls.has(href)) {
-                                               SUPABASE.from("packupdater_cache")
-                                                   .insert([{ name: , pack_names: [pack.updatedPackName]}]);
+                                               // SUPABASE.from("packupdater_cache")
+                                               //     .insert([{ name: , pack_names: [pack.updatedPackName]}]); TODO gut all this
                                                setClickedUpdatedPacksUrls(set => set.add(href));
                                            }
                                     }}>
@@ -247,11 +245,11 @@ export default function PackUpdater() {
                     </div>
                 </div>
             </form>
-            <ol>
-                {history.map(data => (
-                    <li key={data.id}>{data.name} converted {data.pack_names}</li>
-                ))}
-            </ol>
+            {/*<ol>*/}
+            {/*    {history.map(data => (*/}
+            {/*        <li key={data.id}>{data.name} converted {data.pack_names}</li>*/}
+            {/*    ))}*/}
+            {/*</ol>TODO */}
         </div>
     )
 }
