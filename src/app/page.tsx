@@ -1,16 +1,15 @@
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Badge} from "@/components/ui/badge";
-import {createClient} from '@supabase/supabase-js'
 import {Database} from "@/lib/supabase";
 import React from "react";
 import PackUpdater from "@/components/packupdater/packUpdater";
-import {SUPABASE_URL, SUPABASE_KEY} from "@/app/constants";
+import {SUPABASE} from "@/app/constants";
 
 export default async function Home() {
     const {
         data: pvpUtilsData,
         error
-    } = await createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
+    } = await SUPABASE
         .from('fabricpvputils_updates')
         .select('*')
     if (error)
@@ -18,7 +17,7 @@ export default async function Home() {
     const {
         data: packUpdaterData,
         error: error1
-    } = await createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
+    } = await SUPABASE
         .from('packupdater_updates')
         .select('*')
     if (error1)

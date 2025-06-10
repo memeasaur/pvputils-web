@@ -1,9 +1,8 @@
 'use client';
 import React, {ChangeEvent, useEffect, useRef, useState} from "react";
 import {PackUpdateWorkerFormData, PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
-import {createClient} from "@supabase/supabase-js";
 import {Database} from "@/lib/supabase";
-import {SUPABASE_URL, SUPABASE_KEY} from "@/app/constants";
+import {SUPABASE} from "@/app/constants";
 
 const VERSION = 0.9 // TODO -> dynamically get this from supabase
 export default function PackUpdater() {
@@ -13,7 +12,7 @@ export default function PackUpdater() {
             const {
                 data: packUpdaterHistoryData,
                 error: error2
-            } = await createClient<Database>(SUPABASE_URL, SUPABASE_KEY)
+            } = await SUPABASE
                 .from('packupdater_cache')
                 .select('*')
             if (error2)
@@ -22,6 +21,7 @@ export default function PackUpdater() {
         })()
     })
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
+    const [clickedUpdatedPacksUrls, setClickedUpdatedPacksUrls] = useState<Set<string>>(new Set());
     const [packUpdaterMessages, setPackUpdaterMessages] = useState<string[]>([]);
     const workersCounter = useRef(0)
     const tasks = useRef<PackUpdateWorkerRequest[]>([])
@@ -230,7 +230,14 @@ export default function PackUpdater() {
                             {updatedPacks.map((pack) => (
                                 <li key={pack.updatedPackName}>
                                     <a href={URL.createObjectURL(pack.updatedPack)} download={pack.updatedPackName}
-                                       style={{color: 'blue', textDecoration: 'underline'}}>
+                                       style={{color: 'blue', textDecoration: 'underline'}} onClick={e => {
+                                           const href = e.currentTarget.href
+                                           if (!clickedUpdatedPacksUrls.has(href)) {
+                                               SUPABASE.from("packupdater_cache")
+                                                   .insert([{ name: , pack_names: [pack.updatedPackName]}]);
+                                               setClickedUpdatedPacksUrls(set => set.add(href));
+                                           }
+                                    }}>
                                         {pack.updatedPackName}
                                     </a>
                                 </li>
