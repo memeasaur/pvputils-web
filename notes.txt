@@ -1,10 +1,7 @@
 >low fire texture background sprite image (?)
->make accordion y not change when clicking
->every update should just re-do the entire overview if it's different, and the below changelog should just be all of the summaries
+>it auto-centering based on route would be sick
 
->formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
->github link somewhere? footer?
-
+>anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 // TODO -> adjustable brightness and color wither hearts
 >fix blur causing fucky (?)
 >TODO -> pick netherite base color
@@ -14,7 +11,6 @@
 >TODO -> remaining widgets.png stuff
 >generate offhand sprites (?)
 >container/stats_icons (?)
+>toggle for user's auditing the texture restructuring process
 
 >(?) generate lingering potion (lol)
->(?) show the user the diamond sword and have them edit it to be netherite
->(?) provide template netherite textures
