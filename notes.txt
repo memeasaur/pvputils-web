@@ -1,5 +1,5 @@
 >low fire texture background sprite image (?)
->it auto-centering based on route would be sick
+>it auto-centering based on route would be goog
 
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 // TODO -> adjustable brightness and color wither hearts

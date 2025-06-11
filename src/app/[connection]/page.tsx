@@ -24,6 +24,10 @@ export default async function Page({ params }: { params: {connection: string} })
     if (error1)
         throw new Error(error1.message)
 
+    for (const data of pvpUtilsData) {
+        dat
+    }
+
     const connection = params.connection
     return (
         <main
