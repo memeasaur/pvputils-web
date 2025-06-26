@@ -4,7 +4,9 @@ import {Database} from "@/lib/supabase";
 import React from "react";
 import PackUpdater from "@/components/packupdater/packUpdater";
 import {createClient} from "@supabase/supabase-js";
+import {FabricPvpUtilsDescription, OverviewAccordionContent} from "@/lib/server";
 
+export const revalidate = 604800 // supabase inactivity timeout
 export default async function Page({ params }: { params: {connection: string} }) {
     const supabaseClient = createClient<Database>('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
     const {
@@ -23,10 +25,6 @@ export default async function Page({ params }: { params: {connection: string} })
         .select('*')
     if (error1)
         throw new Error(error1.message)
-
-    for (const data of pvpUtilsData) {
-        dat
-    }
 
     const connection = params.connection
     return (
@@ -83,38 +81,7 @@ export default async function Page({ params }: { params: {connection: string} })
                         >
                             <Badge variant="secondary">github</Badge>
                         </a>
-                        <OverviewAccordionContent
-                            created_at={pvpUtilsData[0].created_at}
-                            generic_patchnotes={pvpUtilsData[0].generic_patchnotes}
-                            extra_patchnotes={(
-                                <>
-                                    <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
-                                        <div className={"w-2/4 flex flex-col gap-2"}>
-                                            <p>1.9 combat</p>
-                                            <ol start={pvpUtilsData[0].generic_patchnotes.length + 1}>
-                                                {pvpUtilsData[0]["1.9_patchnotes"].map((item) => (
-                                                    <li key={item}>{item}</li>
-                                                ))}
-                                            </ol>
-                                        </div>
-                                        <div className={"w-2/4 flex flex-col gap-2"}>
-                                            <p>1.8 combat</p>
-                                            <ol start={pvpUtilsData[0].generic_patchnotes.length + 1}>
-                                                {pvpUtilsData[0]["1.8_patchnotes"].map((item) => (
-                                                    <li key={item}>{item}</li>
-                                                ))}
-                                            </ol>
-                                        </div>
-                                    </div>
-                                    {pvpUtilsData[0].nullable_recommended_mods_info && (
-                                        <ol>other recommended mods
-                                            {pvpUtilsData[0].nullable_recommended_mods_info.map((item) => (
-                                                <li key={item.name}>{item.name}</li>
-                                            ))}
-                                        </ol>)}
-                                </>
-                            )}
-                        />
+                        <FabricPvpUtilsDescription data={pvpUtilsData[0]}/>
                         {pvpUtilsData.map((item, index) => index > 0 && (
                             <PvpUtilsUpdateData key={index} data={item}/>
                         ))}
@@ -170,27 +137,8 @@ function ChangelogAccordionTrigger(props: {
         </AccordionTrigger> // {/*TODO -> video embed*/}
     )
 }
-
-function OverviewAccordionContent(props: {
-    created_at: string,
-    generic_patchnotes: string[],
-    extra_patchnotes: React.ReactNode
-}) {
-    return (
-        <div className={"flex flex-col gap-4"}>
-            <p>
-                {new Date(props.created_at).toLocaleDateString()}
-            </p>
-            <ol className="">{/*TODO -> examples for each in accordions*/}
-                {props.generic_patchnotes.map((item) => (
-                    <li key={item}>{item}</li>
-                ))}
-            </ol>
-            {props.extra_patchnotes}
-        </div>)
-}
-
-function PvpUtilsUpdateData({data}: { data: Database["public"]["Tables"]["fabricpvputils_updates"]["Row"] }) {
+export type PvpUtilsUpdateData = Database["public"]["Tables"]["fabricpvputils_updates"]["Row"]
+function PvpUtilsUpdateData({data}: { data: PvpUtilsUpdateData }) {
     console.log("client shouldn't see this")
     return (
         <>

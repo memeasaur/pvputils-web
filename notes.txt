@@ -12,5 +12,3 @@
 >generate offhand sprites (?)
 >container/stats_icons (?)
 >toggle for user's auditing the texture restructuring process
-
->(?) generate lingering potion (lol)
