@@ -25,6 +25,13 @@ export default async function Page({ params }: { params: {connection: string} })
         .select('*')
     if (error1)
         throw new Error(error1.message)
+    fetch('http://localhost:3000/api/modrinth', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(pvpUtilsData[0]),
+    });
 
     const connection = params.connection
     return (
