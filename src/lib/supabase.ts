@@ -1,54 +1,28 @@
-// me start
-export type ModInfo = {
-    name: string,
-    link: string,
-}
-// export type Json =
-//     | string
-//     | number
-//     | boolean
-//     | null
-//     | { [key: string]: Json | undefined }
-//     | Json[]
-// me end
-
 export type Database = {
     public: {
         Tables: {
             fabricpvputils_updates: {
                 Row: {
-                    "1.8_patchnotes": string[]
-                    "1.9_patchnotes": string[]
-                    created_at: string
-                    generic_patchnotes: string[]
                     is_critical: boolean
+                    markdown: string
                     minecraft_versions: string
-                    nullable_dependencies: ModInfo[] | null
-                    nullable_recommended_mods_info: ModInfo[] | null
+                    nullable_dependencies: string[] | null
                     summary: string
                     version: number
                 }
                 Insert: {
-                    "1.8_patchnotes": string[]
-                    "1.9_patchnotes": string[]
-                    created_at?: string
-                    generic_patchnotes: string[]
                     is_critical: boolean
+                    markdown: string
                     minecraft_versions?: string
-                    nullable_dependencies?: ModInfo[] | null
-                    nullable_recommended_mods_info?: ModInfo[] | null
+                    nullable_dependencies?: string[] | null
                     summary: string
                     version: number
                 }
                 Update: {
-                    "1.8_patchnotes"?: string[]
-                    "1.9_patchnotes"?: string[]
-                    created_at?: string
-                    generic_patchnotes?: string[]
                     is_critical?: boolean
+                    markdown?: string
                     minecraft_versions?: string
-                    nullable_dependencies?: ModInfo[] | null
-                    nullable_recommended_mods_info?: ModInfo[] | null
+                    nullable_dependencies?: string[] | null
                     summary?: string
                     version?: number
                 }

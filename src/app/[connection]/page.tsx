@@ -4,7 +4,8 @@ import {Database} from "@/lib/supabase";
 import React from "react";
 import PackUpdater from "@/components/packupdater/packUpdater";
 import {createClient} from "@supabase/supabase-js";
-import {FabricPvpUtilsDescription, OverviewAccordionContent} from "@/lib/server";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const revalidate = 604800 // supabase inactivity timeout
 export default async function Page({ params }: { params: {connection: string} }) {
@@ -25,15 +26,17 @@ export default async function Page({ params }: { params: {connection: string} })
         .select('*')
     if (error1)
         throw new Error(error1.message)
-    fetch('http://localhost:3000/api/modrinth', {
-        method: 'POST',
+    const pvpUtilsData0 = pvpUtilsData[0]
+    fetch('https://api.modrinth.com/v2/project/fabric-pvp-utils', {
+        method: 'PATCH',
         headers: {
+            'Authorization': `Bearer ${process.env.MODRINTH_API_TOKEN}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(pvpUtilsData[0]),
-    });
+        body: JSON.stringify({ body: pvpUtilsData0.markdown}),
+    })
 
-    const connection = params.connection
+    const connection = (await params).connection // ?
     return (
         <main
             className="grid grid-rows-[20vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">{/*TODO -> actually center this*/}
@@ -61,9 +64,20 @@ export default async function Page({ params }: { params: {connection: string} })
                 <AccordionItem value="item-1" className={"w-full"}>
                     <ChangelogAccordionTrigger
                         title={"fabric-pvputils"}
-                        version={pvpUtilsData[0].version}
-                        summary={pvpUtilsData[0].summary}
-                        updateData={<PvpUtilsUpdateData data={pvpUtilsData[0]}/>}
+                        version={pvpUtilsData0.version}
+                        summary={pvpUtilsData0.summary}
+                        updateData={<>
+                            ({pvpUtilsData0.minecraft_versions}) {pvpUtilsData0.nullable_dependencies && (
+                            <>
+                                depends: {pvpUtilsData0.nullable_dependencies.map((item, index) => (
+                                <React.Fragment key={index}>
+                                    {index > 0 && ', '}
+                                    {item}
+                                </React.Fragment>
+                            ))}
+                            </>
+                        )}
+                        </>}
                         modrinthButton={<a
                             className="nextButton"
                             href="https://modrinth.com"
@@ -88,10 +102,9 @@ export default async function Page({ params }: { params: {connection: string} })
                         >
                             <Badge variant="secondary">github</Badge>
                         </a>
-                        <FabricPvpUtilsDescription data={pvpUtilsData[0]}/>
-                        {pvpUtilsData.map((item, index) => index > 0 && (
-                            <PvpUtilsUpdateData key={index} data={item}/>
-                        ))}
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                            {pvpUtilsData0.markdown}
+                        </ReactMarkdown>
                     </AccordionContent>
                 </AccordionItem>
                 {/*<AccordionItem value="item-3">*/}
@@ -144,21 +157,58 @@ function ChangelogAccordionTrigger(props: {
         </AccordionTrigger> // {/*TODO -> video embed*/}
     )
 }
-export type PvpUtilsUpdateData = Database["public"]["Tables"]["fabricpvputils_updates"]["Row"]
-function PvpUtilsUpdateData({data}: { data: PvpUtilsUpdateData }) {
-    console.log("client shouldn't see this")
+// type PvpUtilsUpdateData = Database["public"]["Tables"]["fabricpvputils_updates"]["Row"]
+function OverviewAccordionContent(props: {
+    created_at: string,
+    generic_patchnotes: string[],
+    extra_patchnotes: React.ReactNode
+}) {
     return (
-        <>
-            ({data.minecraft_versions}) {data.nullable_dependencies && (
-            <>
-                depends: {data.nullable_dependencies.map((item, index) => (
-                <React.Fragment key={index}>
-                    {index > 0 && ', '}
-                    {item.name}
-                </React.Fragment>
-            ))}
-            </>
-        )}
-        </>
-    )
+        <div className={"flex flex-col gap-4"}>
+            <p>
+                {new Date(props.created_at).toLocaleDateString()}
+            </p>
+            <ol className="">{/*TODO -> examples for each in accordions*/}
+                {props.generic_patchnotes.map((item) => (
+                    <li key={item}>{item}</li>
+                ))}
+            </ol>
+            {props.extra_patchnotes}
+        </div>)
 }
+// function FabricPvpUtilsDescription({data}: {data: PvpUtilsUpdateData}) {
+//     return (
+//         <OverviewAccordionContent
+//             created_at={data.created_at}
+//             generic_patchnotes={data.generic_patchnotes}
+//             extra_patchnotes={(
+//                 <>
+//                     <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
+//                         <div className={"w-2/4 flex flex-col gap-2"}>
+//                             <p>1.9 combat</p>
+//                             <ol start={data.generic_patchnotes.length + 1}>
+//                                 {data["1.9_patchnotes"].map((item) => (
+//                                     <li key={item}>{item}</li>
+//                                 ))}
+//                             </ol>
+//                         </div>
+//                         <div className={"w-2/4 flex flex-col gap-2"}>
+//                             <p>1.8 combat</p>
+//                             <ol start={data.generic_patchnotes.length + 1}>
+//                                 {data["1.8_patchnotes"].map((item) => (
+//                                     <li key={item}>{item}</li>
+//                                 ))}
+//                             </ol>
+//                         </div>
+//                     </div>
+//                     {data.nullable_recommended_mods_info && (
+//                         <ol>other recommended mods
+//                             {data.nullable_recommended_mods_info.map((item) => (
+//                                 <li key={item.name}>{item.name}</li>
+//                             ))}
+//                         </ol>)}
+//                 </>
+//             )}
+//         />
+//     )
+// }
