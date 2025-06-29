@@ -1,6 +1,7 @@
 'use client';
 import React, {ChangeEvent, useRef, useState} from "react";
 import {PackUpdateWorkerFormData, PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
+import JSZip from "jszip";
 
 const VERSION = 0.9 // TODO -> dynamically get this from supabase
 export default function PackUpdater() {
@@ -220,7 +221,19 @@ export default function PackUpdater() {
                     </div>
                     <div className={"flex flex-col gap-4 grow"}>
                         {updatedPacks.length > 0 && (
-                            <button className={"nextButton"}>
+                            <button type={"button"} className={"nextButton"} onMouseDown={_ => {
+                                const zip = new JSZip()
+                                updatedPacks.forEach(pack => zip.file(pack.updatedPackName, pack.updatedPack))
+                                zip.generateAsync({ type: "blob" })
+                                    .then(blob => {
+                                        const blobUrl = URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                                        a.href = blobUrl;
+                                        a.download = "updated-packs.zip";
+                                        a.click();
+                                        URL.revokeObjectURL(blobUrl);
+                                    })
+                            }}>
                                 download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}
                             </button>
                         )}
