@@ -221,7 +221,7 @@ export default function PackUpdater() {
                     </div>
                     <div className={"flex flex-col gap-4 grow"}>
                         {updatedPacks.length > 0 && (
-                            <button type={"button"} className={"nextButton"} onMouseDown={_ => {
+                            <button type={"button"} className={"nextButton"} onMouseDown={() => {
                                 const zip = new JSZip()
                                 updatedPacks.forEach(pack => zip.file(pack.updatedPackName, pack.updatedPack))
                                 zip.generateAsync({ type: "blob" })
