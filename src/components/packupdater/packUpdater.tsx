@@ -228,7 +228,7 @@ export default function PackUpdater() {
                                     .then(blob => {
                                         const blobUrl = URL.createObjectURL(blob);
                                         const a = document.createElement('a');
-                                        a.href = blobUrl;
+                                        a.href = blobUrl; // TODO -> handle this cleaner
                                         a.download = "updated-packs.zip";
                                         a.click();
                                         URL.revokeObjectURL(blobUrl);
