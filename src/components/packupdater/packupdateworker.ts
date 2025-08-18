@@ -483,7 +483,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                 }
                 case "pack.mcmeta": {
                     let mcmeta = (await file.async("string"))
-                        .replace('"pack_format": 1', '"pack_format": 43')
+                        .replace('"pack_format": 1', '"pack_format": 46')
                     if (formData.packDescriptionWatermark)
                         mcmeta = mcmeta.replace(
                             /("description"\s*:\s*")([^"]*)(")/,
