@@ -15,6 +15,7 @@
      }
    }
  }
+>1.7 low fire doesn't load properly
 
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 // TODO -> adjustable brightness and color wither hearts
