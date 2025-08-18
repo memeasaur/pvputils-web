@@ -5,16 +5,6 @@
 >coolpvp's hotbar is fucked
 >pack version isn't correct
 >.mcmetas aren't handled properly for random textures that aren't normally animated?
->{
-   "pack": {
-     "pack_format": 43,
-     "description": "The go-to 32x resource pack.\n§June 2025 Release",
-     "supported_formats": {
-       "min_inclusive": 43,
-       "max_inclusive": 43
-     }
-   }
- }
 >1.7 low fire doesn't load properly
 
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
