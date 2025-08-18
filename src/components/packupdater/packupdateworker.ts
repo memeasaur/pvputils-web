@@ -29,6 +29,24 @@ const replacements = Object.freeze({
     [OLD_ITEMS_PATH + "melon_speckled.png"]: NEW_ITEMS_PATH + "glistering_melon_slice.png",
     [OLD_ITEMS_PATH + "melon.png"]: NEW_ITEMS_PATH + "melon_slice.png",
 
+    [OLD_BLOCKS_PATH + "tallgrass.png"]: NEW_BLOCKS_PATH + "short_grass.png",
+    [OLD_BLOCKS_PATH + "double_plant_grass_bottom.png"]: NEW_BLOCKS_PATH + "tall_grass_bottom.png",
+    [OLD_BLOCKS_PATH + "double_plant_grass_top.png"]: NEW_BLOCKS_PATH + "tall_grass_top.png",
+    [OLD_BLOCKS_PATH + "reeds.png"]: NEW_BLOCKS_PATH + "sugar_cane.png",
+    [OLD_BLOCKS_PATH + "deadbush.png"]: NEW_BLOCKS_PATH + "dead_bush.png",
+    [OLD_BLOCKS_PATH + "torch_on.png"]: NEW_BLOCKS_PATH + "torch.png",
+    [OLD_BLOCKS_PATH + "flower_dandelion.png"]: NEW_BLOCKS_PATH + "dandelion.png",
+
+    [OLD_BLOCKS_PATH + "wheat_stage0.png"]: NEW_BLOCKS_PATH + "wheat_stage_0.png",
+    [OLD_BLOCKS_PATH + "wheat_stage1.png"]: NEW_BLOCKS_PATH + "wheat_stage_1.png",
+    [OLD_BLOCKS_PATH + "wheat_stage2.png"]: NEW_BLOCKS_PATH + "wheat_stage_2.png",
+    [OLD_BLOCKS_PATH + "wheat_stage3.png"]: NEW_BLOCKS_PATH + "wheat_stage_3.png",
+    [OLD_BLOCKS_PATH + "wheat_stage4.png"]: NEW_BLOCKS_PATH + "wheat_stage_4.png",
+    [OLD_BLOCKS_PATH + "wheat_stage5.png"]: NEW_BLOCKS_PATH + "wheat_stage_5.png",
+    [OLD_BLOCKS_PATH + "wheat_stage6.png"]: NEW_BLOCKS_PATH + "wheat_stage_6.png",
+    [OLD_BLOCKS_PATH + "wheat_stage7.png"]: NEW_BLOCKS_PATH + "wheat_stage_7.png",
+    // TODO carrots etc.
+
     [OLD_BLOCKS_PATH + "fire_layer_0.png"]: NEW_BLOCKS_PATH + "fire_0.png",
     [OLD_BLOCKS_PATH + "fire_layer_1.png"]: NEW_BLOCKS_PATH + "fire_1.png",
     [OLD_BLOCKS_PATH + "fire_layer_0.png.mcmeta"]: NEW_BLOCKS_PATH + "fire_0.png.mcmeta",
