@@ -519,7 +519,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 : await file.async("blob")
 
                         if (content !== null) {
-                            content = await handleTransparentPixels(content);
+                            if (content.type.startsWith("image/"))
+                                content = await handleTransparentPixels(content);
                             switch (newFilename) {
                                 case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
@@ -618,24 +619,23 @@ async function handleSpriteIteration(futureSprites: (Promise<Blob | null>)[][], 
         updatedPack.file(newFilename, await handleTransparentPixels(sprite))
 }
 async function handleTransparentPixels(content: Blob) {
-    return content
-    // const image = await createImageBitmap(content);
-    // const canvas = new OffscreenCanvas(image.width, image.height);
-    // const context = canvas.getContext("2d");
-    // if (context === null)
-    //     return content // TODO
-    // else {
-    //     context.drawImage(image, 0, 0);
-    //     const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-    //     const data = imageData.data;
-    //
-    //     for (let i = 3; i < data.length; i += 4)
-    //         data[i] = data[i] < 128 // TODO configurable
-    //             ? 0
-    //             : 255;
-    //     context.putImageData(imageData, 0, 0);
-    //     return canvas.convertToBlob({type: "image/png"});
-    // }
+    const image = await createImageBitmap(content);
+    const canvas = new OffscreenCanvas(image.width, image.height);
+    const context = canvas.getContext("2d");
+    if (context === null)
+        return content // TODO
+    else {
+        context.drawImage(image, 0, 0);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        for (let i = 3; i < data.length; i += 4)
+            data[i] = data[i] < 128 // TODO configurable
+                ? 0
+                : 255;
+        context.putImageData(imageData, 0, 0);
+        return canvas.convertToBlob({type: "image/png"});
+    }
 }
 
 export {}
