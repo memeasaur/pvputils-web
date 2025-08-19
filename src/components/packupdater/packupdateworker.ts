@@ -498,7 +498,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                         .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH)
 
                     if (oldFilename !== newFilename) {
-                        const content = file.dir
+                        let content = file.dir // TODO i'd like this to be const?
                             ? null
                             : newFilename === NEW_GLINT_PATH
                                 ? await (async () => {
@@ -516,9 +516,10 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     }
                                     return await canvas.convertToBlob({type: "image/png"})
                                 })()
-                                : await file.async("arraybuffer")
+                                : await file.async("blob")
 
-                        if (content !== null)
+                        if (content !== null) {
+                            content = await handleTransparentPixels(content);
                             switch (newFilename) {
                                 case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
@@ -559,6 +560,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     }
                                 }
                             }
+                        }
 
                         if (!formData.isBackwardCompatible)
                             updatedPack.remove(oldFilename)
@@ -613,7 +615,26 @@ function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: numbe
 async function handleSpriteIteration(futureSprites: (Promise<Blob | null>)[][], y: number, x: number, updatedPack: JSZip, newFilename: string) {
     const sprite = await futureSprites[y][x]
     if (sprite)
-        updatedPack.file(newFilename, sprite)
+        updatedPack.file(newFilename, await handleTransparentPixels(sprite))
+}
+async function handleTransparentPixels(content: Blob) {
+    const image = await createImageBitmap(content);
+    const canvas = new OffscreenCanvas(image.width, image.height);
+    const context = canvas.getContext("2d");
+    if (context === null)
+        return content // TODO
+    else {
+        context.drawImage(image, 0, 0);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+
+        for (let i = 3; i < data.length; i += 4)
+            data[i] = data[i] < 128 // TODO configurable
+                ? 0
+                : 255;
+        context.putImageData(imageData, 0, 0);
+        return canvas.convertToBlob({type: "image/png"});
+    }
 }
 
 export {}
