@@ -268,14 +268,14 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         await Promise.all([
                             handleSpriteTarget(15, resolutionFactor, 15, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "crosshair.png"),
-                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
-                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 69, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_progress.png"),
-                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_cooldown.png"),
-                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_background.png"),
-                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 79, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_progress.png"),
+                            handleSpriteTarget(182, resolutionFactor, 5, spriteSheet, 0, 64, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_background.png"),
+                            handleSpriteTarget(182, resolutionFactor, 5, spriteSheet, 0, 69, updatedPack, NEW_HUD_SPRITES_PATH + "experience_bar_progress.png"),
+                            handleSpriteTarget(182, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_cooldown.png"),
+                            handleSpriteTarget(182, resolutionFactor, 5, spriteSheet, 0, 74, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_background.png"),
+                            handleSpriteTarget(182, resolutionFactor, 5, spriteSheet, 0, 79, updatedPack, "assets/minecraft/textures/gui/sprites/boss_bar/pink_progress.png"),
                             // TODO -> recolor the pink progress bar and make the other colors
-                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
-                            handleSpriteTarget(128, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png"),
+                            handleSpriteTarget(182, resolutionFactor, 5, spriteSheet, 0, 84, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_background.png"),
+                            handleSpriteTarget(182, resolutionFactor, 5, spriteSheet, 0, 89, updatedPack, NEW_HUD_SPRITES_PATH + "jump_bar_progress.png"),
 
                             handleHeart(0, 0, "container"),
                             handleHeart(0, 1, "container_blinking"), // TODO -> maybe remove this (?, pretty sure it's fine)
@@ -367,7 +367,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     const resolutionFactor = spriteSheet.height / 256
                     await Promise.all([
                         handleSpriteTarget(182, resolutionFactor, 22, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar.png"),
-                        handleSpriteTarget(22, resolutionFactor, 22, spriteSheet, 0, 22, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar_selection.png"),
+                        handleSpriteTarget(24, resolutionFactor, 23, spriteSheet, 0, 22, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar_selection.png"),
                         handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 46, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_disabled.png"),
                         handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 66, updatedPack, NEW_WIDGET_SPRITES_PATH + "button.png"),
                         handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 86, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_highlighted.png")
@@ -545,14 +545,10 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
                                     break
                                 }
-                                case NEW_GLINT_PATH: {
-                                    updatedPack.file("assets/minecraft/textures/misc/enchanted_glint_entity.png", content)
-                                    break
-                                }
-                                case NEW_GLINT_PATH + ".mcmeta": {
-                                    updatedPack.file(NEW_GLINT_PATH + ".mcmeta", (await file.async("string")).replace(/,\s*"animation"\s*:\s*\{\s*\}/, "")) // TODO wtf
-                                    break
-                                }
+                                // case NEW_GLINT_PATH + ".mcmeta": {
+                                //     updatedPack.file(NEW_GLINT_PATH + ".mcmeta", (await file.async("string")).replace(/,\s*"animation"\s*:\s*\{\s*\}/, "")) // TODO wtf
+                                //     break
+                                // } TODO remove
                                 default: { // TODO -> this is only working because /items/ changes to /item/
                                     async function handleNetherite() {
                                         const blob = await file.async("blob")
@@ -591,7 +587,12 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         if (content === null) // TODO PRETTY SURE THIS IS SAFELY MUTATING UPDATED PACK BECAUSE JAVASCRIPT SINGLE THREADED EVENT LOOP!
                             updatedPack.folder(newFilename);
-                        else
+                        else if (newFilename !== NEW_GLINT_PATH || await new Promise(resolve => {
+                            const image = new Image();
+                            image.onload = () => resolve(image.width > 64 && image.height > 64);
+                            image.onerror = () => resolve(false);
+                            image.src = URL.createObjectURL(content);
+                        }))
                             updatedPack.file(newFilename, content);
                     }
                 }

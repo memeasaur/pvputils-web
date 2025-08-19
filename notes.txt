@@ -2,12 +2,12 @@
 >it auto-centering based on route would be goog
 
 >coolpvp, pvpmen hotbar is fucked
->green satisfying pack, the red wolf, 1.7 default stimpy thing glint is fucked CHECK
 >test faithful backup
 >include default 1.7 backup
 >xd pack doesn't load
 >probably have to use the pack name because of "x queued" persisting
 
+>armor glint isn't working as far as I can tell
 >make workers work even when browser isn't focused?
 >t-zone's font is fucked
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
