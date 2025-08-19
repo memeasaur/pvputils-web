@@ -539,7 +539,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         if (content !== null) {
                             if (content.type.startsWith("image/"))
-                                content = await handleTransparentPixels(content, 25) // TODO -> configurable
+                                content = await handleTransparentPixels(content, 1) // TODO -> configurable
                             switch (newFilename) {
                                 case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
@@ -635,7 +635,7 @@ function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: numbe
 async function handleSpriteIteration(futureSprites: (Promise<Blob | null>)[][], y: number, x: number, updatedPack: JSZip, newFilename: string) {
     const sprite = await futureSprites[y][x]
     if (sprite)
-        updatedPack.file(newFilename, await handleTransparentPixels(sprite, 245)) // TODO configurable
+        updatedPack.file(newFilename, await handleTransparentPixels(sprite, 255)) // TODO configurable
 }
 async function handleTransparentPixels(content: Blob, threshold: number) {
     const image = await createImageBitmap(content);
