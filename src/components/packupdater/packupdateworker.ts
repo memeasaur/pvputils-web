@@ -369,8 +369,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                         handleSpriteTarget(182, resolutionFactor, 22, spriteSheet, 0, 0, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar.png"),
                         handleSpriteTarget(22, resolutionFactor, 22, spriteSheet, 0, 22, updatedPack, NEW_HUD_SPRITES_PATH + "hotbar_selection.png"),
                         handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 46, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_disabled.png"),
-                        handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 66, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_highlighted.png"),
-                        handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 86, updatedPack, NEW_WIDGET_SPRITES_PATH + "button.png")
+                        handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 66, updatedPack, NEW_WIDGET_SPRITES_PATH + "button.png"),
+                        handleSpriteTarget(200, resolutionFactor, 20, spriteSheet, 0, 86, updatedPack, NEW_WIDGET_SPRITES_PATH + "button_highlighted.png")
                     ])
                     break
                 }
@@ -502,7 +502,6 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     updatedPack.file("pack.mcmeta", mcmeta)
                     break
                 }
-                // case "assets/minecraft/textures/misc/enchanted_glint_item.png.mcmeta": {} TODO remove?
                 default: {
                     // const newFilename = Object.entries(replacements)
                     //     .reduce((filename, [oldValue, newValue]) =>
@@ -510,8 +509,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     //     .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
                     //     .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH);
                     const flag = oldFilename.endsWith(".mcmeta")
-                    oldFilename = oldFilename.replace(".mcmeta", "")
-                    const newFilename = (replacements[oldFilename] || oldFilename)
+                    const tempFilename = oldFilename.replace(".mcmeta", "")
+                    const newFilename = (replacements[tempFilename] || tempFilename)
                             .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
                             .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH)
                             .replace("assets/minecraft/shaders/", "assets/minecraft/shaders1/")
@@ -548,6 +547,10 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 }
                                 case NEW_GLINT_PATH: {
                                     updatedPack.file("assets/minecraft/textures/misc/enchanted_glint_armor.png", content)
+                                    break
+                                }
+                                case NEW_GLINT_PATH + ".mcmeta": {
+                                    updatedPack.file(NEW_GLINT_PATH + ".mcmeta", (await file.async("string")).replace(/,\s*"animation"\s*:\s*\{\s*\}/, "")) // TODO wtf
                                     break
                                 }
                                 default: { // TODO -> this is only working because /items/ changes to /item/

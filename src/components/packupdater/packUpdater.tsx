@@ -219,7 +219,7 @@ export default function PackUpdater() {
                         </ul>
                     </div>
                     <div className={"flex flex-col gap-4 grow"}>
-                        {updatedPacks.length > 0 && (
+                        {updatedPacks.length + workersCounter.current + tasks.current.length > 0 && (
                             <button type={"button"} className={"nextButton"} onMouseDown={() => {
                                 updatedPacks.forEach(pack => {
                                     const blobUrl = URL.createObjectURL(pack.updatedPack);
@@ -227,9 +227,9 @@ export default function PackUpdater() {
                                     a.href = blobUrl; // TODO -> handle this cleaner
                                     a.download = pack.updatedPackName
                                     a.click();
-                                    setUpdatedPacks(current => current.filter(iteration => iteration == pack));
                                     setTimeout(() => URL.revokeObjectURL(blobUrl), 2000) // TODO ?
                                 })
+                                setUpdatedPacks([]);
                             }}>
                                 download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}
                             </button>
