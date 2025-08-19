@@ -220,23 +220,23 @@ export default function PackUpdater() {
                         </ul>
                     </div>
                     <div className={"flex flex-col gap-4 grow"}>
-                        {updatedPacks.length > 0 && (
-                            <button type={"button"} className={"nextButton"} onMouseDown={() => {
-                                const zip = new JSZip()
-                                updatedPacks.forEach(pack => zip.file(pack.updatedPackName, pack.updatedPack))
-                                zip.generateAsync({ type: "blob" })
-                                    .then(blob => {
-                                        const blobUrl = URL.createObjectURL(blob);
-                                        const a = document.createElement('a');
-                                        a.href = blobUrl; // TODO -> handle this cleaner
-                                        a.download = "updated-packs.zip";
-                                        a.click();
-                                        URL.revokeObjectURL(blobUrl);
-                                    })
-                            }}>
-                                download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}
-                            </button>
-                        )}
+                        {/*{updatedPacks.length > 0 && (*/}
+                        {/*    <button type={"button"} className={"nextButton"} onMouseDown={() => {*/}
+                        {/*        const zip = new JSZip()*/}
+                        {/*        updatedPacks.forEach(pack => zip.file(pack.updatedPackName, pack.updatedPack))*/}
+                        {/*        zip.generateAsync({ type: "blob" })*/}
+                        {/*            .then(blob => {*/}
+                        {/*                const blobUrl = URL.createObjectURL(blob);*/}
+                        {/*                const a = document.createElement('a');*/}
+                        {/*                a.href = blobUrl; // TODO -> handle this cleaner*/}
+                        {/*                a.download = "updated-packs.zip";*/}
+                        {/*                a.click();*/}
+                        {/*                URL.revokeObjectURL(blobUrl);*/}
+                        {/*            })*/}
+                        {/*    }}>*/}
+                        {/*        download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}*/}
+                        {/*    </button>*/}
+                        {/*)}TODO -> maybe fflate will work for this?*/}
                         <ol className={"font-[family-name:var(--font-geist-mono)]"} reversed>
                             {updatedPacks.map((pack) => (
                                 <li key={pack.updatedPackName}>
@@ -247,6 +247,7 @@ export default function PackUpdater() {
                                                // SUPABASE.from("packupdater_cache")
                                                //     .insert([{ name: , pack_names: [pack.updatedPackName]}]); TODO gut all this
                                                setClickedUpdatedPacksUrls(set => set.add(href));
+                                               setUpdatedPacks(set => set.filter(iteration => iteration !== pack));
                                            }
                                     }}>
                                         {pack.updatedPackName}
