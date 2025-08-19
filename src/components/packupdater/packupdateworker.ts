@@ -37,6 +37,15 @@ const replacements = Object.freeze({
     [OLD_BLOCKS_PATH + "torch_on.png"]: NEW_BLOCKS_PATH + "torch.png",
     [OLD_BLOCKS_PATH + "flower_dandelion.png"]: NEW_BLOCKS_PATH + "dandelion.png",
 
+    [OLD_BLOCKS_PATH + "anvil_base.png"]: NEW_BLOCKS_PATH + "anvil.png",
+    [OLD_BLOCKS_PATH + "anvil_top_damaged_0.png"]: NEW_BLOCKS_PATH + "anvil_top.png",
+    [OLD_BLOCKS_PATH + "anvil_top_damaged_1.png"]: NEW_BLOCKS_PATH + "chipped_anvil_top.png",
+    [OLD_BLOCKS_PATH + "anvil_top_damaged_2.png"]: NEW_BLOCKS_PATH + "damaged_anvil_top.png",
+
+    [OLD_BLOCKS_PATH + "endframe_eye.png"]: NEW_BLOCKS_PATH + "end_portal_frame_eye.png",
+    [OLD_BLOCKS_PATH + "endframe_top.png"]: NEW_BLOCKS_PATH + "end_portal_frame_top.png",
+    [OLD_BLOCKS_PATH + "endframe_side.png"]: NEW_BLOCKS_PATH + "end_portal_frame_side.png",
+
     [OLD_BLOCKS_PATH + "wheat_stage0.png"]: NEW_BLOCKS_PATH + "wheat_stage_0.png",
     [OLD_BLOCKS_PATH + "wheat_stage1.png"]: NEW_BLOCKS_PATH + "wheat_stage_1.png",
     [OLD_BLOCKS_PATH + "wheat_stage2.png"]: NEW_BLOCKS_PATH + "wheat_stage_2.png",
@@ -134,6 +143,7 @@ const replacements = Object.freeze({
     [OLD_ARMOR_PATH + "leather_layer_2.png"]: NEW_LEGGINGS_PATH + "leather.png",
 
     ["assets/minecraft/textures/misc/enchanted_item_glint.png"]: NEW_GLINT_PATH,
+    ["assets/minecraft/textures/entity/sign.png"]: "assets/minecraft/textures/entity/signs/sign.png",
 })
 const diamondWeaponsMap = Object.freeze({
     [NEW_ITEMS_PATH + "diamond_boots.png"]: NEW_ITEMS_PATH + "netherite_boots.png",
@@ -492,10 +502,20 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     updatedPack.file("pack.mcmeta", mcmeta)
                     break
                 }
+                // case "assets/minecraft/textures/misc/enchanted_glint_item.png.mcmeta": {} TODO remove?
                 default: {
+                    // const newFilename = Object.entries(replacements)
+                    //     .reduce((filename, [oldValue, newValue]) =>
+                    //         filename.replace(oldValue, newValue), oldFilename)
+                    //     .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
+                    //     .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH);
+                    const flag = oldFilename.endsWith(".mcmeta")
+                    oldFilename = oldFilename.replace(".mcmeta", "")
                     const newFilename = (replacements[oldFilename] || oldFilename)
-                        .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
-                        .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH)
+                            .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
+                            .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH)
+                            .replace("assets/minecraft/shaders/", "assets/minecraft/shaders1/")
+                        + (flag ? ".mcmeta" : "");
 
                     if (oldFilename !== newFilename) {
                         let content = file.dir // TODO i'd like this to be const?
@@ -520,7 +540,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         if (content !== null) {
                             if (content.type.startsWith("image/"))
-                                content = await handleTransparentPixels(content);
+                                content = await handleTransparentPixels(content, 105) // TODO -> configurable
                             switch (newFilename) {
                                 case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
@@ -616,9 +636,9 @@ function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: numbe
 async function handleSpriteIteration(futureSprites: (Promise<Blob | null>)[][], y: number, x: number, updatedPack: JSZip, newFilename: string) {
     const sprite = await futureSprites[y][x]
     if (sprite)
-        updatedPack.file(newFilename, await handleTransparentPixels(sprite))
+        updatedPack.file(newFilename, await handleTransparentPixels(sprite, 205)) // TODO configurable
 }
-async function handleTransparentPixels(content: Blob) {
+async function handleTransparentPixels(content: Blob, threshold: number) {
     const image = await createImageBitmap(content);
     const canvas = new OffscreenCanvas(image.width, image.height);
     const context = canvas.getContext("2d");
@@ -630,7 +650,7 @@ async function handleTransparentPixels(content: Blob) {
         const data = imageData.data;
 
         for (let i = 3; i < data.length; i += 4)
-            data[i] = data[i] < 128 // TODO configurable
+            data[i] = data[i] < threshold
                 ? 0
                 : 255;
         context.putImageData(imageData, 0, 0);
