@@ -227,6 +227,7 @@ export default function PackUpdater() {
                                     a.href = blobUrl; // TODO -> handle this cleaner
                                     a.download = pack.updatedPackName
                                     a.click();
+                                    setUpdatedPacks(current => current.filter(iteration => iteration == pack));
                                     setTimeout(() => URL.revokeObjectURL(blobUrl), 2000) // TODO ?
                                 })
                             }}>
