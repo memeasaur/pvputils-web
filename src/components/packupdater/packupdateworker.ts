@@ -649,7 +649,7 @@ async function handleTransparentPixels(content: Blob, threshold: number) {
         const data = imageData.data;
 
         for (let i = 3; i < data.length; i += 4)
-            data[i] = data[i] < threshold
+            data[i] = data[i] <= threshold
                 ? 0
                 : 255;
         context.putImageData(imageData, 0, 0);
