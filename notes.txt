@@ -4,6 +4,7 @@
 >coolpvp's hotbar is fucked
 >.mcmetas aren't handled properly for random textures that aren't normally animated?
 >1.7 low fire doesn't load properly?
+>bulk download isn't working
 
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 // TODO -> adjustable brightness and color wither hearts
