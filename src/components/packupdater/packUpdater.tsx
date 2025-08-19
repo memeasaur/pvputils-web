@@ -227,10 +227,10 @@ export default function PackUpdater() {
                                     a.href = blobUrl; // TODO -> handle this cleaner
                                     a.download = pack.updatedPackName
                                     a.click();
+                                    setUpdatedPacks(set => set.filter(iteration => iteration !== pack));
                                     await new Promise(res => setTimeout(res, 100)); // TODO -> file-saver ?
                                     URL.revokeObjectURL(blobUrl)
                                 }
-                                setUpdatedPacks([]);
                             }}>
                                 download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}
                             </button>
