@@ -635,7 +635,7 @@ function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: numbe
 async function handleSpriteIteration(futureSprites: (Promise<Blob | null>)[][], y: number, x: number, updatedPack: JSZip, newFilename: string) {
     const sprite = await futureSprites[y][x]
     if (sprite)
-        updatedPack.file(newFilename, await handleTransparentPixels(sprite, 205)) // TODO configurable
+        updatedPack.file(newFilename, await handleTransparentPixels(sprite, 225)) // TODO configurable
 }
 async function handleTransparentPixels(content: Blob, threshold: number) {
     const image = await createImageBitmap(content);
