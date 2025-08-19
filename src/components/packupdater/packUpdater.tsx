@@ -1,7 +1,6 @@
 'use client';
 import React, {ChangeEvent, useRef, useState} from "react";
 import {PackUpdateWorkerFormData, PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
-import JSZip from "jszip";
 
 const VERSION = 0.9 // TODO -> dynamically get this from supabase
 export default function PackUpdater() {
