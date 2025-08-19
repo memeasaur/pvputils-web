@@ -614,7 +614,7 @@ async function handleSpriteTarget(width: number, resolutionFactor: number, heigh
         const hotbar = await canvas.convertToBlob({type: "image/png"})
         if (hotbar)
             updatedPack.file(filename, filename === "crosshair.png"
-                ? await handleTransparentPixels(hotbar, 128)
+                ? await handleTransparentPixels(hotbar, 255)
                 : hotbar)
     }
 }
