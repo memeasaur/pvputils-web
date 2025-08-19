@@ -546,7 +546,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                     break
                                 }
                                 case NEW_GLINT_PATH: {
-                                    updatedPack.file("assets/minecraft/textures/misc/enchanted_glint_armor.png", content)
+                                    updatedPack.file("assets/minecraft/textures/misc/enchanted_glint_entity.png", content)
                                     break
                                 }
                                 case NEW_GLINT_PATH + ".mcmeta": {

@@ -2,10 +2,11 @@
 >it auto-centering based on route would be goog
 
 >coolpvp, pvpmen hotbar is fucked
->1.7 low fire, eum3 fps, ocyn, redpokemonedit, stimpy remake doesn't load properly? CHECK
 >green satisfying pack, the red wolf, 1.7 default stimpy thing glint is fucked CHECK
->test faithful backup, include default 1.7 backup
+>test faithful backup
+>include default 1.7 backup
 >xd pack doesn't load
+>probably have to use the pack name because of "x queued" persisting
 
 >make workers work even when browser isn't focused?
 >t-zone's font is fucked
