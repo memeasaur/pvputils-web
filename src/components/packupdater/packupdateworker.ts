@@ -587,12 +587,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         if (content === null) // TODO PRETTY SURE THIS IS SAFELY MUTATING UPDATED PACK BECAUSE JAVASCRIPT SINGLE THREADED EVENT LOOP!
                             updatedPack.folder(newFilename);
-                        else if (newFilename !== NEW_GLINT_PATH || await new Promise(resolve => {
-                            const image = new Image();
-                            image.onload = () => resolve(image.width > 64 && image.height > 64);
-                            image.onerror = () => resolve(false);
-                            image.src = URL.createObjectURL(content);
-                        }))
+                        else if (newFilename !== NEW_GLINT_PATH || await createImageBitmap(content).then(img => img.width > 64))
                             updatedPack.file(newFilename, content);
                     }
                 }
