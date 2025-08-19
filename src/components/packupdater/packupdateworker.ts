@@ -143,7 +143,7 @@ const replacements = Object.freeze({
     [OLD_ARMOR_PATH + "leather_layer_2.png"]: NEW_LEGGINGS_PATH + "leather.png",
 
     ["assets/minecraft/textures/misc/enchanted_item_glint.png"]: NEW_GLINT_PATH,
-    ["assets/minecraft/textures/entity/sign.png"]: "assets/minecraft/textures/entity/signs/sign.png",
+    ["assets/minecraft/textures/entity/sign.png"]: "assets/minecraft/textures/entity/signs/oak.png",
 })
 const diamondWeaponsMap = Object.freeze({
     [NEW_ITEMS_PATH + "diamond_boots.png"]: NEW_ITEMS_PATH + "netherite_boots.png",
