@@ -1,10 +1,13 @@
 >low fire texture background sprite image (?)
 >it auto-centering based on route would be goog
 
->coolpvp's hotbar is fucked
+>coolpvp, pvpmen hotbar is fucked
 >.mcmetas aren't handled properly for random textures that aren't normally animated?
->1.7 low fire, swagpending doesn't load properly?
+    >unphair's 16x16 is fucked
+>1.7 low fire, swagpending, eum3 fps, ocyn doesn't load properly?
 >bulk download isn't working
+>t-zone's font is fucked
+>yokabi's bow is fucked up, lower the opacity threshold
 
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 // TODO -> adjustable brightness and color wither hearts
