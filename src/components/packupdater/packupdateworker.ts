@@ -613,7 +613,9 @@ async function handleSpriteTarget(width: number, resolutionFactor: number, heigh
         context.drawImage(spriteSheet, x * resolutionFactor, y * resolutionFactor, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
         const hotbar = await canvas.convertToBlob({type: "image/png"})
         if (hotbar)
-            updatedPack.file(filename, hotbar)
+            updatedPack.file(filename, filename === "crosshair.png"
+                ? await handleTransparentPixels(hotbar, 128)
+                : hotbar)
     }
 }
 
@@ -649,7 +651,7 @@ async function handleTransparentPixels(content: Blob, threshold: number) {
         const data = imageData.data;
 
         for (let i = 3; i < data.length; i += 4)
-            data[i] = data[i] <= threshold
+            data[i] = data[i] < threshold
                 ? 0
                 : 255;
         context.putImageData(imageData, 0, 0);

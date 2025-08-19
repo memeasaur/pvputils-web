@@ -1,7 +1,6 @@
 >low fire texture background sprite image (?)
 >it auto-centering based on route would be goog
 
->coolpvp, pvpmen hotbar is fucked
 >test faithful backup
 >include default 1.7 backup
 >xd pack doesn't load
