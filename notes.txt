@@ -5,9 +5,9 @@
 >1.7 low fire, eum3 fps, ocyn, redpokemonedit, stimpy remake doesn't load properly? CHECK
 >green satisfying pack, the red wolf, 1.7 default stimpy thing glint is fucked CHECK
 >test faithful backup, include default 1.7 backup
->remove console messages when pack is downloaded
 >xd pack doesn't load
 
+>make workers work even when browser isn't focused?
 >t-zone's font is fucked
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 // TODO -> adjustable brightness and color wither hearts

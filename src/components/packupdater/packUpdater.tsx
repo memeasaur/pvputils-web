@@ -19,8 +19,8 @@ export default function PackUpdater() {
     //     })()
     // }) TODO anonymous auth
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
-    const [clickedUpdatedPacksUrls, setClickedUpdatedPacksUrls] = useState<Set<string>>(new Set());
-    const [packUpdaterMessages, setPackUpdaterMessages] = useState<string[]>([]);
+    // const [clickedUpdatedPacksUrls, setClickedUpdatedPacksUrls] = useState<Set<string>>(new Set());
+    const [packUpdaterMessages, setPackUpdaterMessages] = useState<{ pack: Blob; message: string }[]>([]);
     const workersCounter = useRef(0)
     const tasks = useRef<PackUpdateWorkerRequest[]>([])
     return ( // TODO -> this shit should NOT be a form, at least not one that isn't able to message web workers
@@ -184,11 +184,11 @@ export default function PackUpdater() {
                                                 worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
                                                     const data = e.data
                                                     setUpdatedPacks(currentUpdatedPacks => [data, ...currentUpdatedPacks])
-                                                    setPackUpdaterMessages(current => [data.updatedPackName + " finished", ...current])
+                                                    setPackUpdaterMessages(current => [{ pack: data.updatedPack, message: data.updatedPackName + " finished" }, ...current])
                                                     const next = tasks.current.pop()
                                                     if (next) {
                                                         worker.postMessage(next)
-                                                        setPackUpdaterMessages(current => [next.packName + " started", ...current])
+                                                        setPackUpdaterMessages(current => [{ pack: data.updatedPack, message: next.packName + " started" }, ...current])
                                                     } else {
                                                         worker.terminate()
                                                         workersCounter.current = workersCounter.current - 1
@@ -201,10 +201,10 @@ export default function PackUpdater() {
                                                 } as PackUpdateWorkerRequest)
                                             }
                                             workersCounter.current = workersCounter.current + 1
-                                            setPackUpdaterMessages(current => [packName + " started", ...current])
+                                            setPackUpdaterMessages(current => [{pack: pack, message: packName + " started"}, ...current])
                                         } else {
                                             tasks.current.push({pack, packName, formData: packUpdateWorkerFormData})
-                                            setPackUpdaterMessages(current => [pack.name + " queued", ...current])
+                                            setPackUpdaterMessages(current => [{pack, message: pack.name + " queued"}, ...current])
                                         }
                                     }
                                 }
@@ -212,8 +212,8 @@ export default function PackUpdater() {
                         </label>
                         <ul className={"flex flex-col gap-2 grow font-[family-name:var(--font-geist-mono)]"}> {/*TODO -> this scrolls and it's height is determined by updatedPacks ol height*/}
                             {packUpdaterMessages.map((message) => (
-                                <li key={message}> {/*TODO -> this shouldn't remove any repeat messages*/}
-                                    {message}
+                                <li key={message.message + message.pack}>
+                                    {message.message}
                                 </li>
                             ))}
                         </ul>
@@ -228,6 +228,7 @@ export default function PackUpdater() {
                                     a.download = pack.updatedPackName
                                     a.click();
                                     setUpdatedPacks(set => set.filter(iteration => iteration !== pack));
+                                    setPackUpdaterMessages(current => current.filter(iteration => iteration.pack !== pack.updatedPack));
                                     await new Promise(res => setTimeout(res, 100)); // TODO -> file-saver ?
                                     URL.revokeObjectURL(blobUrl)
                                 }
@@ -240,14 +241,14 @@ export default function PackUpdater() {
                                 <li key={pack.updatedPackName}>
                                     <a href={URL.createObjectURL(pack.updatedPack)} download={pack.updatedPackName}
                                        style={{color: 'blue', textDecoration: 'underline'}} onClick={e => {
-                                           const href = e.currentTarget.href
-                                           if (!clickedUpdatedPacksUrls.has(href)) {
-                                               // SUPABASE.from("packupdater_cache")
-                                               //     .insert([{ name: , pack_names: [pack.updatedPackName]}]); TODO gut all this
-                                               setClickedUpdatedPacksUrls(set => set.add(href));
-                                               setUpdatedPacks(set => set.filter(iteration => iteration !== pack));
-                                           }
-                                           setTimeout(() => URL.revokeObjectURL(href), 2000) // TODO ?
+                                           // if (!clickedUpdatedPacksUrls.has(href)) {
+                                           //     // SUPABASE.from("packupdater_cache")
+                                           //     //     .insert([{ name: , pack_names: [pack.updatedPackName]}]); TODO gut all this
+                                           //     setClickedUpdatedPacksUrls(set => set.add(href));
+                                           // }
+                                           setUpdatedPacks(set => set.filter(iteration => iteration !== pack));
+                                           setPackUpdaterMessages(current => current.filter(iteration => iteration.pack !== pack.updatedPack)); // TODO -> method-ize this
+                                           setTimeout(() => URL.revokeObjectURL(e.currentTarget.href), 2000) // TODO ? also 100 is probably enough
                                     }}>
                                         {pack.updatedPackName}
                                     </a>
