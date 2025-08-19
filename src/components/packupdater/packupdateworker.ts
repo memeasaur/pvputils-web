@@ -539,7 +539,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         if (content !== null) {
                             if (content.type.startsWith("image/"))
-                                content = await handleTransparentPixels(content, 105) // TODO -> configurable
+                                content = await handleTransparentPixels(content, 55) // TODO -> configurable
                             switch (newFilename) {
                                 case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)

@@ -6,6 +6,7 @@
 >include default 1.7 backup
 >xd pack doesn't load
 >probably have to use the pack name because of "x queued" persisting
+>make download button not clickable while it's working?
 
 >armor glint isn't working as far as I can tell
 >make workers work even when browser isn't focused?
