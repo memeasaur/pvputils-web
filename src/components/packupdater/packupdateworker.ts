@@ -179,12 +179,18 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
         const blob = await updatedPack.file(OLD_BLOCKS_PATH + "grass_top.png")?.async("blob")
         if (blob) {
             const resolution = (await createImageBitmap(blob)).height
-            if (resolution >= 64 && formData["64xPack"])
+            if (resolution >= 64 && formData["64xPack"]) {
+                console.log("hey")
                 basePack = await new JSZip().loadAsync(formData["64xPack"]);
-            else if (resolution >= 32 && formData["32xPack"])
+            }
+            else if (resolution >= 32 && formData["32xPack"]) {
+                console.log("hi")
                 basePack = await new JSZip().loadAsync(formData["32xPack"])
-            else if (resolution >= 16 && formData["16xPack"])
+            }
+            else if (resolution >= 16 && formData["16xPack"]) {
+                console.log("yo")
                 basePack = await new JSZip().loadAsync(formData["16xPack"]);
+            }
         }
         if (packDefault)
             basePack = basePack || await new JSZip().loadAsync(packDefault)
