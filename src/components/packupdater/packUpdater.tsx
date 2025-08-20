@@ -143,7 +143,7 @@ export default function PackUpdater() {
                     <div className={"flex flex-col gap-4"}>
                         <label className={"nextButton"}>
                             upload packs {/*TODO icon?*/}
-                            <input hidden multiple type="file" onChange={e => {
+                            <input hidden multiple type="file" onChange={async e => { // TODO below -> this shouldn't be async
                                 const packs = e.target.files;
                                 if (!packs)
                                     alert("invalid upload")
@@ -160,10 +160,10 @@ export default function PackUpdater() {
                                         blendMode: formData.get("blendMode") === "multiply"
                                             ? "multiply"
                                             : "overlay",
-                                        defaultPack: packDefault instanceof File ? packDefault : null,
-                                        "64xPack": pack64 instanceof File ? pack64 : null,
-                                        "32xPack": pack32 instanceof File ? pack32 : null,
-                                        "16xPack": pack16 instanceof File ? pack16 : null,
+                                        defaultPack: packDefault instanceof File ? await packDefault.arrayBuffer() : null, // TODO holy fuck javascript (?), apparently files can be passed to this worker, but not through this form, bahahaha. so I guess I should be just doing it not in this form what a fucking joke
+                                        "64xPack": pack64 instanceof File ? await pack64.arrayBuffer() : null,
+                                        "32xPack": pack32 instanceof File ? await pack32.arrayBuffer() : null,
+                                        "16xPack": pack16 instanceof File ? await pack16.arrayBuffer() : null,
                                         isModernBasePackEnabled: formData.get("isModernBasePackEnabled") !== null,
                                         isBlinkingHeartSpriteRemoved: formData.get("isBlinkingHeartSpriteRemoved") !== null,
                                         isWitherHeartSpriteRecolored: formData.get("isWitherHeartSpriteRecolored") !== null,
