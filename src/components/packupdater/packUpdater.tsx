@@ -177,7 +177,7 @@ export default function PackUpdater() {
                                             ? formData.get("packNameWatermark")?.toString()
                                             : null,
                                     }
-                                    console.log(formData)
+                                    console.log(packDefault)
                                     for (const pack of packs) {
                                         const packName = pack.name
                                         if (workersCounter.current < 4) { // TODO -> different handling per device (?)
