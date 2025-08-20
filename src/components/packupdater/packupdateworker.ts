@@ -179,16 +179,13 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
         const blob = await updatedPack.file(OLD_BLOCKS_PATH + "grass_top.png")?.async("blob")
         if (blob) {
             const resolution = (await createImageBitmap(blob)).height
-            if (resolution >= 64 && formData["64xPack"]) {
-                console.log("hey")
+            if (resolution >= 64 && formData["64xPack"]?.size) {
                 basePack = await new JSZip().loadAsync(formData["64xPack"]);
             }
-            else if (resolution >= 32 && formData["32xPack"]) {
-                console.log(formData["32xPack"])
+            else if (resolution >= 32 && formData["32xPack"]?.size) {
                 basePack = await new JSZip().loadAsync(formData["32xPack"])
             }
-            else if (resolution >= 16 && formData["16xPack"]) {
-                console.log("yo")
+            else if (resolution >= 16 && formData["16xPack"]?.size) { // TODO no fucking clue why these are empty files and not null
                 basePack = await new JSZip().loadAsync(formData["16xPack"]);
             }
         }
