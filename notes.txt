@@ -9,7 +9,6 @@
 >t-zone's font is fucked
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
 // TODO -> adjustable brightness and color wither hearts
->fix blur causing fucky (?)
 >TODO -> pick netherite base color
 >TODO -> worker console messaging
 >TODO -> mob_effects
