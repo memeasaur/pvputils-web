@@ -493,7 +493,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                 }
                 case "pack.mcmeta": {
                     let mcmeta = (await file.async("string"))
-                        .replace('"pack_format": 1', '"pack_format": 46')
+                        .replace(/"pack_format":\s*\d+/, '"pack_format": 46')
                     if (formData.packDescriptionWatermark)
                         mcmeta = mcmeta.replace(
                             /("description"\s*:\s*")([^"]*)(")/,
@@ -509,6 +509,12 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                     //     .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
                     //     .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH);
                     const flag = oldFilename.endsWith(".mcmeta")
+                    if (flag) {
+                        updatedPack.file(oldFilename, (await file.async("string"))
+                            .replace(/,\s*]/g, ']') // trailing commas in arrays -> TODO ?
+                            .replace(/,\s*}/g, '}')); // trailing commas in objects -> TODO ?)
+                        file = updatedPack.file(oldFilename)!;
+                    }
                     const tempFilename = oldFilename.replace(".mcmeta", "")
                     const newFilename = (replacements[tempFilename] || tempFilename)
                             .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
@@ -539,7 +545,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         if (content !== null) {
                             if (content.type.startsWith("image/"))
-                                content = await handleTransparentPixels(content, 1) // TODO -> configurable
+                                content = await handleTransparentPixels(content, 128) // TODO -> configurable
                             switch (newFilename) {
                                 case NEW_POTION_PATH: { // TODO -> this is specific to 1.7
                                     updatedPack.file(NEW_ITEMS_PATH + "glass_bottle", content)
@@ -587,13 +593,20 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
 
                         if (content === null) // TODO PRETTY SURE THIS IS SAFELY MUTATING UPDATED PACK BECAUSE JAVASCRIPT SINGLE THREADED EVENT LOOP!
                             updatedPack.folder(newFilename);
-                        else if (newFilename !== NEW_GLINT_PATH || await createImageBitmap(content).then(img => img.width > 64))
+                        else if (newFilename !== NEW_GLINT_PATH || (await createImageBitmap(content)).width > 64)
                             updatedPack.file(newFilename, content);
                     }
                 }
             }
         }))
     // updatedPack.file("pvputils.vercel.app", "v0.9") // TODO (?)
+    const panorama = await updatedPack.file("assets/minecraft/textures/gui/title/background/panorama_0.png")?.async("blob")
+    if (panorama) {
+        const panoramaImg = await createImageBitmap(panorama)
+        if (panoramaImg.width !== panoramaImg.height)
+            updatedPack.folder("assets/minecraft/textures/gui/title/background/")?.forEach((_, bar) =>
+                updatedPack.remove(bar.name))
+    }
     const packName = data.pack.name;
     self.postMessage({
         updatedPack: await updatedPack.generateAsync({type: "blob"}),
@@ -614,7 +627,7 @@ async function handleSpriteTarget(width: number, resolutionFactor: number, heigh
         const hotbar = await canvas.convertToBlob({type: "image/png"})
         if (hotbar)
             updatedPack.file(filename, filename === "crosshair.png"
-                ? await handleTransparentPixels(hotbar, 255)
+                ? await handleTransparentPixels(hotbar, 128)
                 : hotbar)
     }
 }
@@ -637,7 +650,7 @@ function getSpriteTargetBlobPromises(spriteSheet: ImageBitmap, spriteSize: numbe
 async function handleSpriteIteration(futureSprites: (Promise<Blob | null>)[][], y: number, x: number, updatedPack: JSZip, newFilename: string) {
     const sprite = await futureSprites[y][x]
     if (sprite)
-        updatedPack.file(newFilename, await handleTransparentPixels(sprite, 255)) // TODO configurable
+        updatedPack.file(newFilename, await handleTransparentPixels(sprite, 128)) // TODO configurable
 }
 async function handleTransparentPixels(content: Blob, threshold: number) {
     const image = await createImageBitmap(content);

@@ -23,6 +23,7 @@ export default function PackUpdater() {
     const [packUpdaterMessages, setPackUpdaterMessages] = useState<{ pack: Blob; message: string }[]>([]);
     const workersCounter = useRef(0)
     const tasks = useRef<PackUpdateWorkerRequest[]>([])
+    const [isDownloading, setIsDownloading] = useState(false);
     return ( // TODO -> this shit should NOT be a form, at least not one that isn't able to message web workers
         <div className={"grid grid-cols-2 w-max auto-cols-auto gap-4"}>
             <form className={"flex flex-col gap-2"}>
@@ -220,7 +221,8 @@ export default function PackUpdater() {
                     </div>
                     <div className={"flex flex-col gap-4 grow"}>
                         {updatedPacks.length + workersCounter.current + tasks.current.length > 0 && (
-                            <button type={"button"} className={"nextButton"} onMouseDown={async () => {
+                            <button type={"button"} className={"nextButton"} disabled={isDownloading} onMouseDown={async () => {
+                                setIsDownloading(true)
                                 for (const pack of updatedPacks) {
                                     const blobUrl = URL.createObjectURL(pack.updatedPack);
                                     const a = document.createElement('a');
@@ -232,6 +234,7 @@ export default function PackUpdater() {
                                     await new Promise(res => setTimeout(res, 100)); // TODO -> file-saver ?
                                     URL.revokeObjectURL(blobUrl)
                                 }
+                                setIsDownloading(false)
                             }}>
                                 download {updatedPacks.length}/{updatedPacks.length + workersCounter.current + tasks.current.length}
                             </button>
