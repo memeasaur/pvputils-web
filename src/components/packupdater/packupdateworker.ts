@@ -184,7 +184,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                 basePack = await new JSZip().loadAsync(formData["64xPack"]);
             }
             else if (resolution >= 32 && formData["32xPack"]) {
-                console.log("hi")
+                console.log(formData["32xPack"])
                 basePack = await new JSZip().loadAsync(formData["32xPack"])
             }
             else if (resolution >= 16 && formData["16xPack"]) {
