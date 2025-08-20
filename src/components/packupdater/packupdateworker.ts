@@ -515,7 +515,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             .replace(/,\s*}/g, '}')); // trailing commas in objects -> TODO ?)
                         file = updatedPack.file(oldFilename)!;
                     }
-                    const tempFilename = oldFilename.replace(".mcmeta", "")
+                    const tempFilename = oldFilename.replace(".mcmeta", "") // TODO -> this persisting is confusing, this shouldn't be used after this line
                     const newFilename = (replacements[tempFilename] || tempFilename)
                             .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
                             .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH)
@@ -556,33 +556,37 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                                 //     break
                                 // } TODO remove
                                 default: { // TODO -> this is only working because /items/ changes to /item/
-                                    async function handleNetherite() {
-                                        const blob = await file.async("blob")
-                                        if (blob) {
-                                            const sprite = await createImageBitmap(blob)
-                                            const canvas = new OffscreenCanvas(sprite.width, sprite.height);
-                                            const context = canvas.getContext("2d");
-                                            if (context) {
-                                                context.filter = "grayscale(100%)"
-                                                context.drawImage(sprite, 0, 0)
-                                                context.filter = "none"
-
-                                                context.globalCompositeOperation = formNetheriteEffect
-                                                context.fillStyle = "rgba(74, 41, 64, 1.00)";
-                                                context.fillRect(0, 0, canvas.width, canvas.height);
-
-                                                context.globalCompositeOperation = "destination-in"; // this is bringing each pixel's opacity back to source level, reliant on the fill bringing it to 100%
-                                                context.drawImage(sprite, 0, 0);
-                                                updatedPack.file(diamondWeaponsMap[newFilename], await canvas.convertToBlob({type: "image/png"}))
-                                            }
-                                        }
-                                    }
-
                                     if (formData.isNetheriteWeapons) {
-                                        if (diamondWeaponsMap[newFilename])
-                                            await handleNetherite()
-                                        else if (diamondToolsMap[newFilename] && formData.isNetheriteTools)
-                                            await handleNetherite()
+                                        const tempName = newFilename.replace(".mcmeta", "")
+                                        async function handleNetherite(filename: string) {
+                                            const blob = await file.async("blob")
+                                            if (!flag) {
+                                                if (blob) {
+                                                    const sprite = await createImageBitmap(blob)
+                                                    const canvas = new OffscreenCanvas(sprite.width, sprite.height);
+                                                    const context = canvas.getContext("2d");
+                                                    if (context) {
+                                                        context.filter = "grayscale(100%)"
+                                                        context.drawImage(sprite, 0, 0)
+                                                        context.filter = "none"
+
+                                                        context.globalCompositeOperation = formNetheriteEffect
+                                                        context.fillStyle = "rgba(74, 41, 64, 1.00)";
+                                                        context.fillRect(0, 0, canvas.width, canvas.height);
+
+                                                        context.globalCompositeOperation = "destination-in"; // this is bringing each pixel's opacity back to source level, reliant on the fill bringing it to 100%
+                                                        context.drawImage(sprite, 0, 0);
+                                                        updatedPack.file(filename, await canvas.convertToBlob({type: "image/png"}))
+                                                    }
+                                                }
+                                            }
+                                            else
+                                                updatedPack.file(filename + ".mcmeta", blob)
+                                        }
+                                        if (diamondWeaponsMap[tempName])
+                                            await handleNetherite(diamondWeaponsMap[tempName])
+                                        else if (diamondToolsMap[tempName] && formData.isNetheriteTools)
+                                            await handleNetherite(diamondToolsMap[tempName])
                                     }
                                 }
                             }

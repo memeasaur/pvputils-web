@@ -6,6 +6,8 @@
 >probably have to use the pack name because of "x queued" persisting
 >there's two speedocraft packs
 >red's bow .mcmeta isn't working? CHECK
+>phresh r-pack fucks everything up CHECK
+>test netherite tools CHECK
 
 >armor glint isn't working as far as I can tell
 >make workers work even when browser isn't focused?
