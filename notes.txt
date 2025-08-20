@@ -1,11 +1,10 @@
 >low fire texture background sprite image (?)
 >it auto-centering based on route would be goog
 
->test faithful backup
 >include default 1.7 backup
 >probably have to use the pack name because of "x queued" persisting
+>need to differentiate between the base pack and the 1.7 pack for shit like the inventory
 
->armor glint isn't working as far as I can tell
 >make workers work even when browser isn't focused?
 >t-zone's font is fucked
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
