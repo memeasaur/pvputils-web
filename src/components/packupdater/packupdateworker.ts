@@ -171,6 +171,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
     const updatedPack = await new JSZip().loadAsync(data.pack);
     const formData = data.formData
+    console.log(formData.defaultPack)
     const formNetheriteEffect = formData.blendMode;
     if (formData.isModernBasePackEnabled) {
         let basePack: JSZip | null = null

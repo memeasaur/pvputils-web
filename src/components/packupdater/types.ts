@@ -1,9 +1,9 @@
 export type PackUpdateWorkerFormData = {
     blendMode: "multiply" | "overlay";
-    defaultPack: ArrayBuffer | null;
-    "64xPack": ArrayBuffer | null;
-    "32xPack": ArrayBuffer | null;
-    "16xPack": ArrayBuffer | null;
+    defaultPack: File | null;
+    "64xPack": File | null;
+    "32xPack": File | null;
+    "16xPack": File | null;
     isModernBasePackEnabled: boolean;
     isBlinkingHeartSpriteRemoved: boolean;
     isWitherHeartSpriteRecolored: boolean;
