@@ -620,7 +620,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                 basePack = await new JSZip().loadAsync(formData["16xPack"]);
             }
         }
-        if (packDefault)
+        if (packDefault?.size)
             basePack = basePack || await new JSZip().loadAsync(packDefault)
         if (basePack)
             await Promise.all(Object.entries(basePack.files).map(async ([key, value]) => {
