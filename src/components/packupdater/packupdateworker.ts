@@ -511,6 +511,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
                             .replace(OLD_BLOCKS_PATH, NEW_BLOCKS_PATH)
                             .replace(OLD_ITEMS_PATH, NEW_ITEMS_PATH)
                             .replace("assets/minecraft/shaders/", "assets/minecraft/shaders1/")
+                            .replace("assets/minecraft/blockstates/", "assets/minecraft/blockstates1/")
+                            .replace("assets/minecraft/models/", "assets/minecraft/models1/")
                         + (flag ? ".mcmeta" : "");
 
                     if (oldFilename !== newFilename) {

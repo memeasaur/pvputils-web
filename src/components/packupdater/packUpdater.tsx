@@ -62,7 +62,7 @@ export default function PackUpdater() {
                 </div>
 
                 <label className={"flex gap-2"}>
-                    <input name={"isVanillaAssetsBase"} defaultChecked type={"checkbox"}></input>remove
+                    <input name={"isVanillaAssetsBase"} defaultChecked type={"checkbox"}></input>
                     use 1.7/1.8 vanilla assets base
                 </label>
 
