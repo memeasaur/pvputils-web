@@ -218,7 +218,8 @@ export default function PackUpdater() {
                                                 worker.postMessage({
                                                     pack,
                                                     packName,
-                                                    formData: packUpdateWorkerFormData
+                                                    formData: packUpdateWorkerFormData,
+                                                    uuid
                                                 } as PackUpdateWorkerRequest)
                                             }
                                             workersCounter.current = workersCounter.current + 1
