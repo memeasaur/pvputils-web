@@ -1,15 +1,13 @@
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Badge} from "@/components/ui/badge";
-import {Database} from "@/lib/supabase";
+import {supabaseClient} from "@/lib/supabase";
 import React from "react";
 import PackUpdater from "@/components/packupdater/packUpdater";
-import {createClient} from "@supabase/supabase-js";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
 export const revalidate = 302400 // supabase inactivity timeout
 export default async function Page({ params }: { params: {connection: string} }) {
-    const supabaseClient = createClient<Database>('https://xapkbnegosbyhmondqti.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhhcGtibmVnb3NieWhtb25kcXRpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg3OTgxNTMsImV4cCI6MjA2NDM3NDE1M30.qevIYqIPh3BhiGHj_gppbggv-42RQedaF8Zd-aI5fZA')
     const {
         data: pvpUtilsData,
         error
@@ -27,7 +25,7 @@ export default async function Page({ params }: { params: {connection: string} })
     if (error1)
         throw new Error(error1.message)
     const pvpUtilsData0 = pvpUtilsData[0]
-    fetch('https://api.modrinth.com/v2/project/fabric-pvp-utils', {
+    fetch('https://api.modrinth.com/v2/project/fabric-pvp-utils', { // TODO
         method: 'PATCH',
         headers: {
             'Authorization': `Bearer ${process.env.MODRINTH_API_TOKEN}`,

@@ -169,36 +169,23 @@ const INVENTORY_PATH = "assets/minecraft/textures/gui/container/inventory.png"
 
 self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
     const data = e.data
-    const updatedPack = await new JSZip().loadAsync(data.pack);
     const formData = data.formData
-    console.log(formData.defaultPack)
-    const formNetheriteEffect = formData.blendMode;
-    if (formData.isModernBasePackEnabled) {
-        let basePack: JSZip | null = null
-        const packDefault = formData.defaultPack
-        const blob = await updatedPack.file(OLD_BLOCKS_PATH + "grass_top.png")?.async("blob")
-        if (blob) {
-            const resolution = (await createImageBitmap(blob)).height
-            if (resolution >= 64 && formData["64xPack"]?.size) {
-                basePack = await new JSZip().loadAsync(formData["64xPack"]);
-            }
-            else if (resolution >= 32 && formData["32xPack"]?.size) {
-                basePack = await new JSZip().loadAsync(formData["32xPack"])
-            }
-            else if (resolution >= 16 && formData["16xPack"]?.size) { // TODO no fucking clue why these are empty files and not null
-                basePack = await new JSZip().loadAsync(formData["16xPack"]);
-            }
-        }
-        if (packDefault)
-            basePack = basePack || await new JSZip().loadAsync(packDefault)
-        if (basePack)
-            await Promise.all(Object.entries(basePack.files).map(async ([key, value]) => {
-                if (value.dir)
-                    updatedPack.folder(key)
+    const updatedPack = await (formData["1.8Assets"]
+        ? (async () => {
+            const [pack, legacyAssets] = await Promise.all([new JSZip().loadAsync(data.pack), new JSZip().loadAsync(formData["1.8Assets"]!)]);
+            await Promise.all(Object.entries(pack.files).map(async ([name, file]) => {
+                if (file.dir)
+                    legacyAssets.folder(name)
                 else
-                    updatedPack.file(key, await value.async("arraybuffer"))
+                    legacyAssets.file(name, await file.async("arraybuffer"))
             }))
-    }
+            return legacyAssets
+        })()
+        : new JSZip().loadAsync(data.pack));
+    if (formData.isFontDeleted)
+        updatedPack.folder("assets/minecraft/textures/font/")?.forEach((_, bar) => // TODO method-ize
+            updatedPack.remove(bar.name))
+    const formNetheriteEffect = formData.blendMode;
     await Promise.all(Object.entries(updatedPack.files) // apparently object.entries is safely capturing a snapshot of the files, so mutating it is fine
         .map(async ([oldFilename, file]) => {
             // TODO -> progress bar
@@ -615,6 +602,32 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
             updatedPack.folder("assets/minecraft/textures/gui/title/background/")?.forEach((_, bar) =>
                 updatedPack.remove(bar.name))
     }
+    if (formData.isModernBasePackEnabled) {
+        let basePack: JSZip | null = null // TODO -> const here would be nice
+        const packDefault = formData.defaultPack
+        const blob = await updatedPack.file(OLD_BLOCKS_PATH + "grass_top.png")?.async("blob")
+        if (blob) {
+            const resolution = (await createImageBitmap(blob)).height
+            if (resolution >= 64 && formData["64xPack"]?.size) {
+                basePack = await new JSZip().loadAsync(formData["64xPack"]);
+            }
+            else if (resolution >= 32 && formData["32xPack"]?.size) {
+                basePack = await new JSZip().loadAsync(formData["32xPack"])
+            }
+            else if (resolution >= 16 && formData["16xPack"]?.size) { // TODO no fucking clue why these are empty files and not null
+                basePack = await new JSZip().loadAsync(formData["16xPack"]);
+            }
+        }
+        if (packDefault)
+            basePack = basePack || await new JSZip().loadAsync(packDefault)
+        if (basePack)
+            await Promise.all(Object.entries(basePack.files).map(async ([key, value]) => {
+                if (value.dir)
+                    updatedPack.folder(key)
+                else
+                    updatedPack.file(key, await value.async("arraybuffer"))
+            }))
+    }
     const packName = data.pack.name;
     self.postMessage({
         updatedPack: await updatedPack.generateAsync({type: "blob"}),
@@ -623,7 +636,8 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
             (packName.endsWith(".zip")
                 ? packName.slice(0, -4)
                 : packName) + " " + formData.packNameWatermark + ".zip"
-            : packName)
+            : packName),
+        uuid: data.uuid
     } as PackUpdateWorkerResponse);
 }
 

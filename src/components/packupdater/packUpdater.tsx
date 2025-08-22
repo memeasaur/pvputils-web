@@ -1,6 +1,8 @@
 'use client';
 import React, {ChangeEvent, useRef, useState} from "react";
 import {PackUpdateWorkerFormData, PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
+import {supabaseClient} from "@/lib/supabase";
+import {UUID} from "node:crypto";
 
 const VERSION = 0.9 // TODO -> dynamically get this from supabase
 export default function PackUpdater() {
@@ -20,7 +22,7 @@ export default function PackUpdater() {
     // }) TODO anonymous auth
     const [updatedPacks, setUpdatedPacks] = useState<PackUpdateWorkerResponse[]>([]);
     // const [clickedUpdatedPacksUrls, setClickedUpdatedPacksUrls] = useState<Set<string>>(new Set());
-    const [packUpdaterMessages, setPackUpdaterMessages] = useState<{ pack: Blob; message: string }[]>([]);
+    const [packUpdaterMessages, setPackUpdaterMessages] = useState<{ uuid: UUID; message: string }[]>([]);
     const workersCounter = useRef(0)
     const tasks = useRef<PackUpdateWorkerRequest[]>([])
     const [isDownloading, setIsDownloading] = useState(false);
@@ -58,6 +60,11 @@ export default function PackUpdater() {
                                }}/>
                     </div>
                 </div>
+
+                <label className={"flex gap-2"}>
+                    <input name={"isVanillaAssetsBase"} defaultChecked type={"checkbox"}></input>remove
+                    use 1.7/1.8 vanilla assets base
+                </label>
 
                 <label className={"flex gap-2"}>
                     <input name={"isNetheriteWeapons"} defaultChecked type={"checkbox"} onChange={e =>
@@ -132,18 +139,22 @@ export default function PackUpdater() {
                     (large file size)
                 </label>
 
-                <div className={"flex gap-2"}>
-                    <input type={"checkbox"} className={"invisible"}/>
-                    <label>
-                        <input name={"userName"} type={"text"} placeholder={"anon (valid igns only)"}></input>
-                    </label>
-                </div>
+                <label className={"flex gap-2"}>
+                    <input name={"isFontDeleted"} type={"checkbox"}></input>delete pack&#39;s font (some 1.7 pack&#39;s fonts are fucked)
+                </label>
+
+                {/*<div className={"flex gap-2"}>*/}
+                {/*    <input type={"checkbox"} className={"invisible"}/>*/}
+                {/*    <label>*/}
+                {/*        <input name={"userName"} type={"text"} placeholder={"anon (valid igns only)"}></input>*/}
+                {/*    </label>*/}
+                {/*</div>TODO remove?*/}
 
                 <div className={"flex gap-4"}>
                     <div className={"flex flex-col gap-4"}>
                         <label className={"nextButton"}>
                             upload packs {/*TODO icon?*/}
-                            <input hidden multiple type="file" onChange={e => {
+                            <input hidden multiple type="file" onChange={async e => {
                                 const packs = e.target.files;
                                 if (!packs)
                                     alert("invalid upload")
@@ -160,6 +171,13 @@ export default function PackUpdater() {
                                         blendMode: formData.get("blendMode") === "multiply"
                                             ? "multiply"
                                             : "overlay",
+                                        "1.8Assets": formData.get("isVanillaAssetsBase")
+                                            ? (await supabaseClient
+                                                .storage
+                                                .from('packs')
+                                                .download('1.8-assets.zip'))
+                                                .data
+                                            : null,
                                         defaultPack: packDefault instanceof File ? packDefault : null,
                                         "64xPack": pack64 instanceof File ? pack64 : null,
                                         "32xPack": pack32 instanceof File ? pack32 : null,
@@ -176,20 +194,22 @@ export default function PackUpdater() {
                                         packNameWatermark: formData.get("isPackNameWatermarkEnabled")
                                             ? formData.get("packNameWatermark")?.toString()
                                             : null,
+                                        isFontDeleted: formData.get("isFontDeleted") !== null
                                     }
                                     for (const pack of packs) {
                                         const packName = pack.name
+                                        const uuid = crypto.randomUUID() as UUID
                                         if (workersCounter.current < 4) { // TODO -> different handling per device (?)
                                             {
                                                 const worker = new Worker(new URL('./packupdateworker.ts', import.meta.url))
                                                 worker.onmessage = (e: MessageEvent<PackUpdateWorkerResponse>) => {
                                                     const data = e.data
                                                     setUpdatedPacks(currentUpdatedPacks => [data, ...currentUpdatedPacks])
-                                                    setPackUpdaterMessages(current => [{ pack: data.updatedPack, message: data.updatedPackName + " finished" }, ...current])
+                                                    setPackUpdaterMessages(current => [{ uuid: data.uuid, message: data.updatedPackName + " finished" }, ...current])
                                                     const next = tasks.current.pop()
                                                     if (next) {
                                                         worker.postMessage(next)
-                                                        setPackUpdaterMessages(current => [{ pack: data.updatedPack, message: next.packName + " started" }, ...current])
+                                                        setPackUpdaterMessages(current => [{ uuid: data.uuid, message: next.packName + " started" }, ...current])
                                                     } else {
                                                         worker.terminate()
                                                         workersCounter.current = workersCounter.current - 1
@@ -202,10 +222,10 @@ export default function PackUpdater() {
                                                 } as PackUpdateWorkerRequest)
                                             }
                                             workersCounter.current = workersCounter.current + 1
-                                            setPackUpdaterMessages(current => [{pack: pack, message: packName + " started"}, ...current])
+                                            setPackUpdaterMessages(current => [{uuid, message: packName + " started"}, ...current])
                                         } else {
-                                            tasks.current.push({pack, packName, formData: packUpdateWorkerFormData})
-                                            setPackUpdaterMessages(current => [{pack, message: pack.name + " queued"}, ...current])
+                                            tasks.current.push({pack, packName, formData: packUpdateWorkerFormData, uuid})
+                                            setPackUpdaterMessages(current => [{uuid, message: pack.name + " queued"}, ...current])
                                         }
                                     }
                                 }
@@ -213,7 +233,7 @@ export default function PackUpdater() {
                         </label>
                         <ul className={"flex flex-col gap-2 grow font-[family-name:var(--font-geist-mono)]"}> {/*TODO -> this scrolls and it's height is determined by updatedPacks ol height*/}
                             {packUpdaterMessages.map((message) => (
-                                <li key={message.message + message.pack}>
+                                <li key={message.uuid + message.message}>
                                     {message.message}
                                 </li>
                             ))}
@@ -230,7 +250,7 @@ export default function PackUpdater() {
                                     a.download = pack.updatedPackName
                                     a.click();
                                     setUpdatedPacks(set => set.filter(iteration => iteration !== pack));
-                                    setPackUpdaterMessages(current => current.filter(iteration => iteration.pack !== pack.updatedPack));
+                                    setPackUpdaterMessages(current => current.filter(iteration => iteration.uuid !== pack.uuid));
                                     await new Promise(res => setTimeout(res, 100)); // TODO -> file-saver ?
                                     URL.revokeObjectURL(blobUrl)
                                 }
@@ -250,7 +270,7 @@ export default function PackUpdater() {
                                            //     setClickedUpdatedPacksUrls(set => set.add(href));
                                            // }
                                            setUpdatedPacks(set => set.filter(iteration => iteration !== pack));
-                                           setPackUpdaterMessages(current => current.filter(iteration => iteration.pack !== pack.updatedPack)); // TODO -> method-ize this
+                                           setPackUpdaterMessages(current => current.filter(iteration => iteration.uuid !== pack.uuid)); // TODO -> method-ize this
                                            setTimeout(() => URL.revokeObjectURL(e.currentTarget.href), 2000) // TODO ? also 100 is probably enough
                                     }}>
                                         {pack.updatedPackName}
