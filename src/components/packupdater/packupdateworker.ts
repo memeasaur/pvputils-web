@@ -8,7 +8,7 @@ const NEW_BLOCKS_PATH = "assets/minecraft/textures/block/"
 const OLD_ARMOR_PATH = "assets/minecraft/textures/models/armor/"
 const NEW_ARMOR_PATH = "assets/minecraft/textures/entity/equipment/humanoid/"
 const NEW_LEGGINGS_PATH = "assets/minecraft/textures/entity/equipment/humanoid_leggings/"
-const NEW_POTION_PATH = NEW_ITEMS_PATH + "potion"
+const NEW_POTION_PATH = NEW_ITEMS_PATH + "potion.png"
 const NEW_GLINT_PATH = "assets/minecraft/textures/misc/enchanted_glint_item.png"
 const replacements = Object.freeze({
     [OLD_ITEMS_PATH + "potion_bottle_splash.png"]: NEW_ITEMS_PATH + "splash_potion.png",
