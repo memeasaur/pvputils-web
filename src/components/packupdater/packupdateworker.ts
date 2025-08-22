@@ -626,7 +626,7 @@ self.onmessage = async (e: MessageEvent<PackUpdateWorkerRequest>) => {
             await Promise.all(Object.entries(basePack.files).map(async ([key, value]) => {
                 if (value.dir)
                     updatedPack.folder(key)
-                else
+                else if (!updatedPack.file(key))
                     updatedPack.file(key, await value.async("arraybuffer"))
             }))
     }
