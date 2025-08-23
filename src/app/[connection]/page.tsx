@@ -37,10 +37,11 @@ export default async function Page({ params }: { params: {connection: string} })
     const connection = (await params).connection // ?
     return (
         <main
-            style={{backgroundImage: Math.random() < .5
+            style={{
+                backgroundImage: Math.random() < .5
                     ? "url('https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_0.png')"
                     : "url('https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_1.png')",
-                backgroundSize: "100% 3200%",
+                backgroundSize: "100% 3200%", // TODO -> fade in as it loads?
                 // height: "100vh",
                 // backgroundPosition: "center bottom",
                 backgroundAttachment: "fixed",
