@@ -131,7 +131,7 @@ export default async function Page({ params }: { params: {connection: string} })
                 {/*    </AccordionContent>*/}
                 {/*</AccordionItem>TODO */}
             </Accordion>
-            <a
+            <a // TODO -> make this piece of fucking shit hug the top GL
                 href="https://github.com/memeasaur/pvputils-web"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -172,7 +172,6 @@ function ChangelogAccordionTrigger(props: {
         </AccordionTrigger> // {/*TODO -> video embed*/}
     )
 }
-// type PvpUtilsUpdateData = Database["public"]["Tables"]["fabricpvputils_updates"]["Row"]
 function OverviewAccordionContent(props: {
     created_at: string,
     generic_patchnotes: string[],
@@ -191,39 +190,3 @@ function OverviewAccordionContent(props: {
             {props.extra_patchnotes}
         </div>)
 }
-// function FabricPvpUtilsDescription({data}: {data: PvpUtilsUpdateData}) {
-//     return (
-//         <OverviewAccordionContent
-//             created_at={data.created_at}
-//             generic_patchnotes={data.generic_patchnotes}
-//             extra_patchnotes={(
-//                 <>
-//                     <div className={"flex w-full gap-2"}>{/*TODO -> idk why this needs w-full*/}
-//                         <div className={"w-2/4 flex flex-col gap-2"}>
-//                             <p>1.9 combat</p>
-//                             <ol start={data.generic_patchnotes.length + 1}>
-//                                 {data["1.9_patchnotes"].map((item) => (
-//                                     <li key={item}>{item}</li>
-//                                 ))}
-//                             </ol>
-//                         </div>
-//                         <div className={"w-2/4 flex flex-col gap-2"}>
-//                             <p>1.8 combat</p>
-//                             <ol start={data.generic_patchnotes.length + 1}>
-//                                 {data["1.8_patchnotes"].map((item) => (
-//                                     <li key={item}>{item}</li>
-//                                 ))}
-//                             </ol>
-//                         </div>
-//                     </div>
-//                     {data.nullable_recommended_mods_info && (
-//                         <ol>other recommended mods
-//                             {data.nullable_recommended_mods_info.map((item) => (
-//                                 <li key={item.name}>{item.name}</li>
-//                             ))}
-//                         </ol>)}
-//                 </>
-//             )}
-//         />
-//     )
-// }
