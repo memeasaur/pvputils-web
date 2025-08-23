@@ -3,6 +3,10 @@
 
 @custom-variant dark (&:is(.dark *));
 
+@keyframes play {
+  100% { background-position: -100% 0; }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

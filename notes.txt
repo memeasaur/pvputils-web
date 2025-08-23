@@ -1,4 +1,3 @@
->low fire texture background sprite image (?)
 >it auto-centering based on route would be goog
 
 >make workers work even when browser isn't focused?

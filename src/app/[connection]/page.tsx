@@ -37,6 +37,12 @@ export default async function Page({ params }: { params: {connection: string} })
     const connection = (await params).connection // ?
     return (
         <main
+            style={{backgroundImage: Math.random() < .5
+                    ? "https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_0.png"
+                    : "https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_1.png",
+                backgroundSize: "800% 100%",
+                backgroundRepeat: 'no-repeat',
+                animation: "play 1s steps(8) infinite"}}
             className="grid grid-rows-[20vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">{/*TODO -> actually center this*/}
             <Accordion type="single" collapsible className={"w-full row-start-2"} defaultValue={connection === "packupdater" ? "item-2" : connection === "fabric" ? "item-1" : ""}>
                 <AccordionItem value="item-2">
