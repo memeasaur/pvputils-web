@@ -78,7 +78,7 @@ export default async function Page({ params }: { params: {connection: string} })
                         </>}
                         modrinthButton={<a
                             className="nextButton"
-                            href="https://modrinth.com"
+                            href="https://modrinth.com/mod/fabric-pvp-utils"
                             target="_blank"
                             rel="noopener noreferrer"
                         >
