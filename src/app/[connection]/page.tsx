@@ -41,10 +41,12 @@ export default async function Page({ params }: { params: {connection: string} })
                     ? "url('https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_0.png')"
                     : "url('https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_1.png')",
                 backgroundSize: "100% 3200%",
+                // height: "100vh",
+                // backgroundPosition: "center bottom",
                 backgroundAttachment: "fixed",
                 imageRendering: "pixelated",
                 animation: "play 3.2s steps(32) infinite"}}
-            className="grid grid-rows-[20vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">{/*TODO -> actually center this*/}
+            className="grid grid-rows-[20vh_1fr_auto] p-8 sm:p-20 place-items-center w-full min-h-screen">{/*TODO -> actually center this*/}
             <Accordion type="single" collapsible
                        className={"w-full row-start-2"}
                        style={{
