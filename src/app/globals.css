@@ -4,8 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @keyframes play {
-  from { background-position: 0% 0%; }
-  to { background-position: 0% -3100%; }
+  from { background-position: 0 0; }
+  to { background-position: 0 -3200%; }
 }
 
 @theme inline {
