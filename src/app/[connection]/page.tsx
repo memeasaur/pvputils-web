@@ -40,6 +40,8 @@ export default async function Page({ params }: { params: {connection: string} })
             style={{backgroundImage: Math.random() < .5
                     ? "https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_0.png"
                     : "https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_1.png",
+                width: '100vw',
+                height: '100vh'
                 }}
             className="grid grid-rows-[20vh_1fr_auto] p-8 sm:p-20 place-items-center w-full">{/*TODO -> actually center this*/}
             <Accordion type="single" collapsible className={"w-full row-start-2"} defaultValue={connection === "packupdater" ? "item-2" : connection === "fabric" ? "item-1" : ""}>
