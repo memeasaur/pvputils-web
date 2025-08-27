@@ -1,5 +1,4 @@
 >auto-centering based on route
->add minecraft-style vignette
 
 >make workers work even when browser isn't focused?
 >t-zone's font is fucked, probably impossible to salvage
