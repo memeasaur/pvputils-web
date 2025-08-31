@@ -141,7 +141,6 @@ export default async function Page({ params }: { params: {connection: string} })
                 <a // TODO -> make this piece of fucking shit hug the top GL
                     href="https://github.com/memeasaur/pvputils-web"
                     target="_blank"
-                    rel="noopener noreferrer"
                     className={"row-start-3 justify-self-end"}
                 >
                     <Badge variant="secondary">github</Badge>
