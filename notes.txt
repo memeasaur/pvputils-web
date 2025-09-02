@@ -1,5 +1,10 @@
 >auto-centering based on route
 
+>start at black and fade background to white?
+>fade in effects
+>animated favicon?
+>use current.scrollIntoView({ behavior: "smooth", block: "start" });
+
 >make workers work even when browser isn't focused?
 >t-zone's font is fucked, probably impossible to salvage
 >anonymous auth (?), formatted messages like (verified minecraft name title="this isn't verified") updated (amount) packs. (packs if public)
