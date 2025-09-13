@@ -81,6 +81,22 @@ export default async function Page({ params }: { params: {connection: string} })
                                 generic_patchnotes={packUpdaterData[0].generic_patchnotes}
                                 extra_patchnotes={null}
                             />
+                            <br/>
+                            <div className={"flex flex-col items-center self-start"}>
+                                my 1.7 pack archive
+                                <div className={"flex"}>
+                                    <a className={"nextButton"} href={"https://app.mediafire.com/folder/3p9q3lunpfgh7/packarchive"}>
+                                        individual
+                                    </a>
+                                    <a className={"nextButton"} href={"https://www.mediafire.com/file/sw1sg26wvjj4vms/packarchive.zip/file"}>
+                                        bulk
+                                    </a>
+                                </div>
+                                <iframe className={"w-[25vw] aspect-video"}
+                                        src={`https://www.youtube.com/embed/UQZeqrTQDbU?autoplay=1&mute=1&loop=1`}
+                                        allow="autoplay"
+                                        allowFullScreen/>
+                            </div>
                         </AccordionContent>
                     </AccordionItem>
                     <AccordionItem value="item-1" className={"w-full"}>
