@@ -1,51 +1,36 @@
 import {Accordion, AccordionContent, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
 import {Badge} from "@/components/ui/badge";
-import {supabaseClient} from "@/lib/supabase";
 import React from "react";
 import PackUpdater from "@/components/packupdater/packUpdater";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import {MOD_DATA, UPDATER_DATA} from "../../../data";
 
 export const revalidate = 302400 // supabase inactivity timeout
 export default async function Page({ params }: { params: {connection: string} }) {
-    const {
-        data: pvpUtilsData,
-        error
-    } = await supabaseClient
-        .from('fabricpvputils_updates')
-        .select('*')
-    if (error)
-        throw new Error(error.message)
-    const {
-        data: packUpdaterData,
-        error: error1
-    } = await supabaseClient
-        .from('packupdater_updates')
-        .select('*')
-    if (error1)
-        throw new Error(error1.message)
-    const pvpUtilsData0 = pvpUtilsData[0]
+    const modData0 = MOD_DATA[0]
     fetch('https://api.modrinth.com/v2/project/fabric-pvp-utils', { // TODO
         method: 'PATCH',
         headers: {
             'Authorization': `Bearer ${process.env.MODRINTH_API_TOKEN}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ body: pvpUtilsData0.markdown}),
+        body: JSON.stringify({ body: modData0.markdown }),
     })
+    const updaterData0 = UPDATER_DATA[0]
 
     const connection = (await params).connection // ?
     return (
         <div style={{
-            backgroundImage: "url('https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/vignette.png')",
+            backgroundImage: "url('/vignette.png')",
             backgroundSize: 'cover',
             mixBlendMode: 'multiply'
         }}>
             <main
                 style={{
                     backgroundImage: Math.random() < .5
-                        ? "url('https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_0.png')"
-                        : "url('https://xapkbnegosbyhmondqti.supabase.co/storage/v1/object/public/packs/fire_layer_1.png')",
+                        ? "url('/fire_layer_0.png')"
+                        : "url('/fire_layer_1.png')",
                     backgroundSize: "100% 3200%", // TODO -> fade in as it loads?
                     // height: "100vh",
                     // backgroundPosition: "center bottom",
@@ -66,8 +51,8 @@ export default async function Page({ params }: { params: {connection: string} })
                     <AccordionItem value="item-2">
                         <ChangelogAccordionTrigger
                             title={"pack-updater"}
-                            version={packUpdaterData[0].version}
-                            summary={packUpdaterData[0].summary}
+                            version={updaterData0.version}
+                            summary={updaterData0.summary}
                             updateData={
                                 <>
                                     accepts (1.7.10).zip, returns (1.21.4).zip
@@ -77,8 +62,8 @@ export default async function Page({ params }: { params: {connection: string} })
                         <AccordionContent className={"flex flex-col gap-4"}>
                             <PackUpdater></PackUpdater>{/*TODO -> allow non-compressed files (?)*/}
                             <OverviewAccordionContent
-                                created_at={packUpdaterData[0].created_at}
-                                generic_patchnotes={packUpdaterData[0].generic_patchnotes}
+                                created_at={updaterData0.created_at}
+                                generic_patchnotes={updaterData0.generic_patchnotes}
                                 extra_patchnotes={null}
                             />
                             <br/>
@@ -102,12 +87,12 @@ export default async function Page({ params }: { params: {connection: string} })
                     <AccordionItem value="item-1" className={"w-full"}>
                         <ChangelogAccordionTrigger
                             title={"fabric-pvputils"}
-                            version={pvpUtilsData0.version}
-                            summary={pvpUtilsData0.summary}
+                            version={modData0.version}
+                            summary={modData0.summary}
                             updateData={<>
-                                ({pvpUtilsData0.minecraft_versions}) {pvpUtilsData0.nullable_dependencies && (
+                                ({modData0.minecraft_versions}) {modData0.nullable_dependencies && (
                                 <>
-                                    depends: {pvpUtilsData0.nullable_dependencies.map((item, index) => (
+                                    depends: {modData0.nullable_dependencies.map((item, index) => (
                                     <React.Fragment key={index}>
                                         {index > 0 && ', '}
                                         {item}
@@ -141,7 +126,7 @@ export default async function Page({ params }: { params: {connection: string} })
                                 <Badge variant="secondary">github</Badge>
                             </a>
                             <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                {pvpUtilsData0.markdown}
+                                {modData0.markdown}
                             </ReactMarkdown>
                         </AccordionContent>
                     </AccordionItem>

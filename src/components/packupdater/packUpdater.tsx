@@ -1,7 +1,6 @@
 'use client';
 import React, {ChangeEvent, useRef, useState} from "react";
 import {PackUpdateWorkerFormData, PackUpdateWorkerRequest, PackUpdateWorkerResponse} from './types';
-import {supabaseClient} from "@/lib/supabase";
 import {UUID} from "node:crypto";
 
 const VERSION = 0.9 // TODO -> dynamically get this from supabase
@@ -172,11 +171,13 @@ export default function PackUpdater() {
                                             ? "multiply"
                                             : "overlay",
                                         "1.8Assets": formData.get("isVanillaAssetsBase")
-                                            ? (await supabaseClient
-                                                .storage
-                                                .from('packs')
-                                                .download('1.8-assets.zip'))
-                                                .data
+                                            ? (await (await fetch("/1.8-assets.zip"))
+                                                .blob())
+                                            // (await supabaseClient
+                                            //     .storage
+                                            //     .from('packs')
+                                            //     .download('1.8-assets.zip'))
+                                            //     .data
                                             : null,
                                         defaultPack: packDefault instanceof File ? packDefault : null,
                                         "64xPack": pack64 instanceof File ? pack64 : null,
